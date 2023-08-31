@@ -38,11 +38,30 @@ echo         after completing the steps below...
 echo --------------------------------------------------------------------------
 
 
-:: 4. Build the SSH tunnel using the chosen port
+:: Build the SSH tunnel using the chosen port
 echo Building SSH tunnel using port !chosen_port!...
 set /p cwl_name="Enter your CWL name: "
 
-:: Insert your ssh command here, e.g.,
-ssh -L !chosen_port!:localhost:!destination_port! !cwl_name!@remote.students.cs.ubc.ca
 
+:: Try to find ssh in the system's PATH
+where /q ssh
+if errorlevel 0 (
+    ssh -L !chosen_port!:localhost:!destination_port! !cwl_name!@remote.students.cs.ubc.ca
+    goto :end
+)
+
+:: Check for Plink availability and run the appropriate command
+if exist %ProgramFiles%\PuTTY\plink.exe (
+    %ProgramFiles%\PuTTY\plink.exe -L !chosen_port!:localhost:!destination_port! !cwl_name!@remote.students.cs.ubc.ca
+) else if exist %ProgramFiles(x86)%\PuTTY\plink.exe (
+    %ProgramFiles(x86)%\PuTTY\plink.exe -L !chosen_port!:localhost:!destination_port! !cwl_name!@remote.students.cs.ubc.ca
+) else (
+    echo Neither SSH nor PuTTY's Plink was found on your system.
+    echo If you have SSH or PuTTY installed, please ensure they are in the expected paths or add them to your PATH variable.
+    echo Otherwise, you might need to manually set up the SSH tunnel using your preferred SSH client.
+    pause
+    exit /b 1
+)
+
+:end
 exit /b 0

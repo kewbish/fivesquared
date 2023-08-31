@@ -20,6 +20,7 @@ echo "# Start Node application"
 echo "exec node server.js"
 ) > ../../local-start.sh
 
+# Change the permissions of the script to make it executable
 chmod +x ../../local-start.sh
 echo "--------------------------------------------------------------------------"
 echo "Setup complete. Run 'sh local-start.sh' in your project folder to start your Node.js application."

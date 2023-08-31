@@ -54,7 +54,7 @@ for /l %%i in (%START%,1,%END%) do (
 
 :foundPort
 if "%chosen_port%"=="" (
-    echo No free port found in range 50000-60000.
+    echo No free port found in range 50000-55000.
     exit /b 1
 )
 
@@ -81,6 +81,27 @@ del %TMP_FILE_PATH% >nul
 echo Building SSH tunnel on port %chosen_port% to your oracle database...
 
 set /p cwl_name=Enter your CWL name:
-ssh -L %chosen_port%:dbhost.students.cs.ubc.ca:1522 %cwl_name%@remote.students.cs.ubc.ca
 
+:: Try to find ssh in the system's PATH
+where /q ssh
+if errorlevel 0 (
+    ssh -L !chosen_port!:dbhost.students.cs.ubc.ca:1522 !cwl_name!@remote.students.cs.ubc.ca
+    goto :end
+)
+
+:: Check for Plink availability and run the appropriate command
+if exist %ProgramFiles%\PuTTY\plink.exe (
+    %ProgramFiles%\PuTTY\plink.exe -L !chosen_port!:dbhost.students.cs.ubc.ca:1522 !cwl_name!@remote.students.cs.ubc.ca
+) else if exist %ProgramFiles(x86)%\PuTTY\plink.exe (
+    %ProgramFiles(x86)%\PuTTY\plink.exe -L !chosen_port!:dbhost.students.cs.ubc.ca:1522 !cwl_name!@remote.students.cs.ubc.ca
+) else (
+    echo Neither SSH nor PuTTY's Plink was found on your system.
+    echo If you have SSH or PuTTY installed, please ensure they are in the expected paths or add them to your PATH variable.
+    echo Otherwise, you might need to manually set up the SSH tunnel using your preferred SSH client.
+    pause
+    exit /b 1
+)
+
+:end
 exit /b 0
+
