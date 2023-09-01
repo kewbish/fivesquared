@@ -23,6 +23,10 @@ export NODE_PATH=/cs/local/generic/lib/cs304/node_modules
 # File path
 ENV_SERVER_PATH="./.env"
 
+# Check the database host name and port
+sed -i "/^ORACLE_HOST=/c\ORACLE_HOST=dbhost.students.cs.ubc.ca" $ENV_SERVER_PATH
+sed -i "/^ORACLE_PORT=/c\ORACLE_PORT=1522" $ENV_SERVER_PATH
+
 # Define a range
 START=50000
 END=60000
@@ -35,7 +39,7 @@ for PORT in $(seq $START $END); do
         nc -l -p $PORT &
         TEMP_PID=$!
 
-        # Update the .env file
+        # Update the port number in the .env file
         sed -i "/^PORT=/c\PORT=$PORT" $ENV_SERVER_PATH
         echo "Updated $ENV_SERVER_PATH with PORT=$PORT."
 

@@ -11,7 +11,7 @@ echo :: Change to the directory where the script is located
 echo cd %%~dp0
 echo.
 echo :: Configure the oracle instant client env variable
-echo set PATH=%%PATH%%;%oraclePath%
+echo set PATH=%%PATH%%;"%oraclePath%"
 echo.
 echo :: Start Node application
 echo node server.js

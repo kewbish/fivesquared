@@ -90,10 +90,12 @@ if errorlevel 0 (
 )
 
 :: Check for Plink availability and run the appropriate command
-if exist %ProgramFiles%\PuTTY\plink.exe (
-    %ProgramFiles%\PuTTY\plink.exe -L !chosen_port!:dbhost.students.cs.ubc.ca:1522 !cwl_name!@remote.students.cs.ubc.ca
-) else if exist %ProgramFiles(x86)%\PuTTY\plink.exe (
-    %ProgramFiles(x86)%\PuTTY\plink.exe -L !chosen_port!:dbhost.students.cs.ubc.ca:1522 !cwl_name!@remote.students.cs.ubc.ca
+if exist "%ProgramFiles%"\PuTTY\plink.exe (
+    "%ProgramFiles%"\PuTTY\plink.exe -L !chosen_port!:dbhost.students.cs.ubc.ca:1522 !cwl_name!@remote.students.cs.ubc.ca
+    goto :end
+) else if exist "%ProgramFiles(x86)%"\PuTTY\plink.exe (
+    "%ProgramFiles(x86)%"\PuTTY\plink.exe -L !chosen_port!:dbhost.students.cs.ubc.ca:1522 !cwl_name!@remote.students.cs.ubc.ca
+    goto :end
 ) else (
     echo Neither SSH nor PuTTY's Plink was found on your system.
     echo If you have SSH or PuTTY installed, please ensure they are in the expected paths or add them to your PATH variable.
