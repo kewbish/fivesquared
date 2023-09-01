@@ -17,9 +17,8 @@ else
 fi
 
 
-# need to change after packages installed in such specific directory
-#export NODE_PATH=/Users/Shared/node_shared_libs
-
+# Configure the shared Node library on the undergrad server.
+export NODE_PATH=/cs/local/generic/lib/cs304/node_modules
 
 # File path
 ENV_SERVER_PATH="./.env"
