@@ -1,29 +1,31 @@
 import { useState, useEffect } from "react";
 import "./App.css";
+import Post from "./Post";
 
 function App() {
-  const [status, setStatus] = useState("disconnected");
+  const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    const fetchDBConnectionStatus = async () => {
-      const response = await fetch(
-        "http://localhost:65535/check-db-connection",
-        {
-          method: "GET",
-        }
-      );
-      const text = await response.text();
-      setStatus(text);
+    const fetchPosts = async () => {
+      const response = await fetch("http://localhost:65535/posts", {
+        method: "GET",
+      });
+      const pjson = await response.json();
+      setPosts(pjson.posts);
     };
 
-    fetchDBConnectionStatus();
+    fetchPosts();
   }, []);
 
   return (
     <div className="App">
-      <header className="App-header">
-        <p>Status: {status}</p>
-      </header>
+      <div className="flex justify-center py-10">
+        <div className="w-6/12 flex flex-col gap-10">
+          {posts.map((post) => (
+            <Post post={post} key={post["post_id"]} />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
