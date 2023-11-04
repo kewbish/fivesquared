@@ -126,8 +126,22 @@ async function getPosts() {
   });
 }
 
+async function likePost(post_id) {
+  return await withOracleDB(async (connection) => {
+    await connection.execute(
+      `UPDATE Post SET num_likes = num_likes + 1 WHERE post_id = :postId`,
+      [post_id],
+      { autoCommit: true }
+    );
+    return true;
+  }).catch(() => {
+    return false;
+  });
+}
+
 module.exports = {
   testOracleConnection,
   getPosts,
+  likePost,
 };
 

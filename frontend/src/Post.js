@@ -1,4 +1,21 @@
+import { useState } from "react";
+
 function Post({ post }) {
+  const [likes, setLikes] = useState(post["num_likes"]);
+
+  const likePost = async () => {
+    const response = await fetch(
+      "http://localhost:65535/posts/like/" + post["post_id"],
+      {
+        method: "POST",
+      }
+    );
+    const pjson = await response.json();
+    if (pjson.success) {
+      setLikes((likes) => likes + 1);
+    }
+  };
+
   return (
     <div className="flex flex-col bg-white border shadow-sm rounded-xl">
       <img
@@ -26,9 +43,10 @@ function Post({ post }) {
           </p>
           <button
             type="button"
-            class="py-[.344rem] px-2 inline-flex justify-center items-center gap-2 rounded-md border-2 border-gray-200 font-semibold text-red-400 hover:text-white hover:bg-red-200 hover:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 transition-all text-sm "
+            className="py-[.344rem] px-2 inline-flex justify-center items-center gap-2 rounded-md border-2 border-gray-200 font-semibold text-red-400 hover:bg-red-200 hover:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 transition-all text-sm "
+            onClick={likePost}
           >
-            {post["num_likes"]} ❤️
+            {likes} ❤️
           </button>
         </div>
       </div>

@@ -72,5 +72,12 @@ router.get("/posts", async (req, res) => {
   });
 });
 
+router.post("/posts/like/:postId", async (req, res) => {
+  const result = await appService.likePost(Number.parseInt(req.params.postId));
+  res.json({
+    success: result,
+  });
+});
+
 module.exports = router;
 
