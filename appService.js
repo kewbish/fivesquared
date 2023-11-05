@@ -110,7 +110,9 @@ async function countDemotable() {
 
 async function getPosts() {
   return await withOracleDB(async (connection) => {
-    const result = await connection.execute("SELECT * FROM Post");
+    const result = await connection.execute(
+      "SELECT p.*, ap.title FROM Post p, ArtPiece ap WHERE p.piece_id = ap.piece_id"
+    );
     return result.rows.map((row) => ({
       post_id: row[0],
       text: row[1],
@@ -119,7 +121,7 @@ async function getPosts() {
       datetime: row[4],
       age_restricted: row[5],
       username: row[6],
-      piece_id: row[7],
+      piece_id: row[8],
     }));
   }).catch(() => {
     return [];

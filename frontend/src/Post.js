@@ -27,7 +27,8 @@ function Post({ post }) {
         {post["text"] &&
           (post["age_restricted"] === 0 ? (
             <p className="my-1 text-gray-800 ">
-              {post["text"]} — @ art piece {post["piece_id"]}
+              {post["text"]} —{" "}
+              <span className="italic">on {post["piece_id"]}</span>
             </p>
           ) : (
             <p className="my-1 text-gray-800 ">Age restricted.</p>
