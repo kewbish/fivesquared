@@ -1,21 +1,21 @@
-const express = require('express');
-const appService = require('./appService');
+const express = require("express");
+const appService = require("./appService");
 
 const router = express.Router();
 
 // ----------------------------------------------------------
 // API endpoints
 // Modify or extend these routes based on your project's needs.
-router.get('/check-db-connection', async (req, res) => {
-    const isConnect = await appService.testOracleConnection();
-    if (isConnect) {
-        res.send('connected');
-    } else {
-        res.send('unable to connect');
-    }
+router.get("/check-db-connection", async (req, res) => {
+  const isConnect = await appService.testOracleConnection();
+  if (isConnect) {
+    res.send("connected");
+  } else {
+    res.send("unable to connect");
+  }
 });
 
-router.get('/demotable', async (req, res) => {
+/*router.get('/demotable', async (req, res) => {
     const tableContent = await appService.fetchDemotableFromDb();
     res.json({data: tableContent});
 });
@@ -62,7 +62,22 @@ router.get('/count-demotable', async (req, res) => {
             count: tableCount
         });
     }
+});*/
+
+router.get("/posts", async (req, res) => {
+  const posts = await appService.getPosts();
+  res.json({
+    success: true,
+    posts,
+  });
 });
 
+router.post("/posts/like/:postId", async (req, res) => {
+  const result = await appService.likePost(Number.parseInt(req.params.postId));
+  res.json({
+    success: result,
+  });
+});
 
 module.exports = router;
+
