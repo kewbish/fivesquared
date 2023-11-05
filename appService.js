@@ -139,9 +139,40 @@ async function likePost(post_id) {
   });
 }
 
+async function createPost(body) {
+  if (
+    !("image_url" in body) ||
+    !("username" in body) ||
+    !("piece_id" in body)
+  ) {
+    return false;
+  }
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute("SELECT max(post_id) FROM Post");
+    const id = result.rows[0][0] + 1;
+    const insert = await connection.execute(
+      `INSERT INTO Post VALUES (:postId, :text, :image_url, :num_likes, :datetime, :age_restricted, :username, :piece_id)`,
+      [
+        id,
+        body["text"] || null,
+        body["image_url"],
+        0,
+        new Date(),
+        body["age_restricted"] || 0,
+        body["username"],
+        body["piece_id"],
+      ],
+      { autoCommit: true }
+    );
+    return true;
+  }).catch(() => {
+    return false;
+  });
+}
+
 module.exports = {
   testOracleConnection,
   getPosts,
   likePost,
+  createPost,
 };
-

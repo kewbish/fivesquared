@@ -79,5 +79,11 @@ router.post("/posts/like/:postId", async (req, res) => {
   });
 });
 
-module.exports = router;
+router.post("/posts", async (req, res) => {
+  const result = await appService.createPost(req.body);
+  res.json({
+    success: result,
+  });
+});
 
+module.exports = router;

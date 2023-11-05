@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "./App.css";
+import CreatePost from "./CreatePost";
 import Post from "./Post";
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
     <div className="App">
       <div className="flex justify-center py-10">
         <div className="w-6/12 flex flex-col gap-10">
+          <CreatePost />
           {posts.map((post) => (
             <Post post={post} key={post["post_id"]} />
           ))}
