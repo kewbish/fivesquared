@@ -7,6 +7,9 @@ function loadEnvFile(filePath) {
         const envVars = envFile.split('\n').reduce((acc, line) => {
             const [key, value] = line.split('=');
             acc[key] = value;
+            if (typeof acc[key] !== 'undefined') {
+                acc[key] = acc[key].replace("\r", "");
+            }
             return acc;
         }, {});
 

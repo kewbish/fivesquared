@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import "./App.css";
-import Post from "./Post";
+import "./Posts.css";
+import Post from "../../components/Post";
 
-function App() {
+function Posts() {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
@@ -30,4 +30,4 @@ function App() {
   );
 }
 
-export default App;
+export default Posts;

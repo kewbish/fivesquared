@@ -1,14 +1,26 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./index.css";
-import App from "./App";
+import Posts from "./pages/posts/Posts";
+import Nothing from "./pages/nothing/Nothing";
+import Nav from "./pages/nav/Nav";
 import reportWebVitals from "./reportWebVitals";
 import "preline";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Nav />}>
+          <Route index element={<Posts />} />
+          <Route path="posts" element={<Posts />} />
+          <Route path="failtest" element={<Nothing />} />
+          <Route path="*" element={<Nothing />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>
 );
 

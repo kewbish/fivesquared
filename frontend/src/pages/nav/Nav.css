@@ -1,0 +1,23 @@
+.navigation-bar {
+    background-color: rgb(189, 185, 185);
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.navigation-bar a {
+    text-decoration: none;
+    display: block;
+    padding: 15px 25px;
+    text-align: center;
+    background-color: rgb(189, 185, 185);
+    color: #464141;
+    margin: 0;
+    font-family: sans-serif;
+    float: left;
+    height: 100%;
+  }
+
+.navigation-bar a:hover {
+background-color: #777777;
+color: #ffffff;
+}
