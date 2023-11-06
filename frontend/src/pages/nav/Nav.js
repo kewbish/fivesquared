@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 import './Nav.css';
 import { useCookies } from "react-cookie";
 import { useState } from 'react';
-import Login from "../login/Login";
+import Login from "../../components/login/Login";
 
 const Nav = () => {
   const [loggedIn, setLoggedIn] = useState(false);
