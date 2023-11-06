@@ -79,5 +79,23 @@ router.post("/posts/like/:postId", async (req, res) => {
   });
 });
 
+router.post("/login/verify/", (req, res) => {
+    username = req.body.username;
+    password = req.body.password;
+
+    // ORACLE PASSWORD-CHECKING LOGIC TO GO HERE
+
+    // TEMPORARY CODE TO TEST SUCCESS AND FAILURE CASES:
+    let status = false;
+    if (password === "12345") {
+        status = true;
+    }
+    // END TEMPORARY CODE
+
+    res.json({ 
+       success: status
+    });
+  });
+
 module.exports = router;
 

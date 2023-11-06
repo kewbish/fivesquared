@@ -2,9 +2,9 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./index.css";
-import Posts from "./pages/posts/Posts.js";
-import Nothing from "./pages/nothing/Nothing.js";
-import Nav from "./pages/nav/Nav.js";
+import Posts from "./pages/posts/Posts";
+import Nothing from "./pages/nothing/Nothing";
+import Nav from "./pages/nav/Nav";
 import reportWebVitals from "./reportWebVitals";
 import "preline";
 

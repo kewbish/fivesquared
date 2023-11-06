@@ -17,7 +17,25 @@
     height: 100%;
   }
 
+.navigation-bar button {
+  text-decoration: none;
+  display: block;
+  padding: 15px 25px;
+  text-align: center;
+  background-color: rgb(189, 185, 185);
+  color: #464141;
+  margin: 0;
+  font-family: sans-serif;
+  float: left;
+  height: 100%;
+}  
+
 .navigation-bar a:hover {
 background-color: #777777;
 color: #ffffff;
 }
+
+.navigation-bar button:hover {
+  background-color: #777777;
+  color: #ffffff;
+  }
