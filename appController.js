@@ -79,6 +79,13 @@ router.post("/posts/:postId/likes", async (req, res) => {
   });
 });
 
+router.post("/posts", async (req, res) => {
+  const result = await appService.createPost(req.body);
+  res.json({
+    success: result,
+  });
+});
+
 router.get("/posts/:postId/comments", async (req, res) => {
   const result = await appService.getComments(Number.parseInt(req.params.postId));
   res.json({
@@ -106,10 +113,9 @@ router.post("/login/verify/", (req, res) => {
     }
     // END TEMPORARY CODE
 
-    res.json({ 
+    res.json({
        success: status
     });
   });
 
 module.exports = router;
-
