@@ -41,7 +41,7 @@ function Comment({ comment }) {
             className="py-[.344rem] px-2 inline-flex justify-center items-center gap-2 rounded-md border-2 border-gray-200 font-semibold text-red-400 hover:bg-red-200 hover:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 transition-all text-sm "
             onClick={likeComment}
           >
-            {likes} ❤️
+            {likes} ❤
           </button>
         </div>
       </div>

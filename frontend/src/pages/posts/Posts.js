@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import "./Posts.css";
 import Post from "../../components/Post";
+import CreatePost from "./CreatePost";
 
 function Posts() {
     const [posts, setPosts] = useState([]);
@@ -21,6 +22,7 @@ function Posts() {
         <div className="App">
             <div className="flex justify-center py-10">
                 <div className="w-6/12 flex flex-col gap-10">
+                    <CreatePost/>
                     {posts.map((post) => (
                         <Post post={post} key={post["post_id"]}/>
                     ))}

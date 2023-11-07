@@ -30,11 +30,12 @@ function Post({post}) {
         fetchComments();
     }, []);
 
-    // const makeComment = async () => {
-    //   const response = await fetch(
-    //       "http://localhost:65535/" + post["post_id"] + "/comments"
-    //   )
-    // }
+    const makeComment = async () => {
+      const response = await fetch("http://localhost:65535/" + post["post_id"] + "/comments", {
+          method: "POST",
+      });
+      
+    }
 
     return (
         <div className="flex flex-col bg-white border shadow-sm rounded-xl text-left">
@@ -57,7 +58,7 @@ function Post({post}) {
                         Posted by @{post["username"]}
                     </p>
                 </div>
-                <div className="flex justify-between align-end">
+                <div className="flex justify-between">
                     <p className="text-gray-400 text-small">
                         {new Date(post["datetime"]).toGMTString()}
                     </p>
@@ -66,7 +67,7 @@ function Post({post}) {
                             type="button"
                             className="py-[.344rem] px-2 inline-flex justify-center items-center gap-2 rounded-md border-2 border-gray-200 font-semibold text-amber-400 hover:bg-amber-200 hover:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 transition-all text-sm "
                         >
-                            💬
+                            ❝❞
                         </button>
                         &nbsp;&nbsp;
                         <button
@@ -74,7 +75,7 @@ function Post({post}) {
                             className="py-[.344rem] px-2 inline-flex justify-center items-center gap-2 rounded-md border-2 border-gray-200 font-semibold text-red-400 hover:bg-red-200 hover:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 transition-all text-sm "
                             onClick={likePost}
                         >
-                            {likes} ❤️
+                            {likes} ❤
                         </button>
                     </div>
                 </div>
