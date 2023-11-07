@@ -9,7 +9,7 @@ function Login({showLogin}) {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const [incorrectPassword, setIncorrectPassword] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(showLogin);
-  
+
   useEffect(() => {
     setIsModalOpen(showLogin);
   }, [showLogin]);
@@ -39,7 +39,7 @@ function Login({showLogin}) {
     } else {
         setIncorrectPassword(true);
     }
-  };  
+  };
 
   const modalStyle = {
     'display': 'flex',
@@ -47,10 +47,10 @@ function Login({showLogin}) {
 
   return (
     <Modal style={modalStyle} maskClosable={true} open={isModalOpen} footer={null} closeIcon={false} className="Modal" width={'30vw'}>
-      <button className="close" onClick={onClose}>X</button>
+      <button className="close" onClick={onClose}>×</button>
       <p className="title">Log In</p>
       <form className="Form" onSubmit={handleSubmit(onSubmit)}>
-        <input type="text" placeholder="Username" {...register("username", { required: true })} />
+        <input className="" type="text" placeholder="Username" {...register("username", { required: true })} />
         <input type="password" placeholder="Password" {...register("password", { required: true })} />
         {incorrectPassword ? <p style={{ color: "red"}}>Incorrect username or password.</p> : <></>}
         <input type={"submit"} style={{ backgroundColor: "gray" }} />

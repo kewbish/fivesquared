@@ -26,7 +26,7 @@ function CreatePost() {
 
   if (!cookies.login_cookie) {
     return (
-        <div className="p-2 text-center">
+        <div className="text-center flex flex-col bg-white border shadow-sm rounded-xl p-6">
           <h2 className="font-bold text-gray-800">
             {/*Should add the ability to click this to log in*/}
             Log in to post
