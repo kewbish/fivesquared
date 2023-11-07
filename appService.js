@@ -110,7 +110,9 @@ async function countDemotable() {
 
 async function getPosts() {
   return await withOracleDB(async (connection) => {
-    const result = await connection.execute("SELECT * FROM Post");
+    const result = await connection.execute(
+      "SELECT p.*, ap.title FROM Post p, ArtPiece ap WHERE p.piece_id = ap.piece_id"
+    );
     return result.rows.map((row) => ({
       post_id: row[0],
       text: row[1],
@@ -119,7 +121,7 @@ async function getPosts() {
       datetime: row[4],
       age_restricted: row[5],
       username: row[6],
-      piece_id: row[7],
+      piece_id: row[8],
     }));
   }).catch(() => {
     return [];
@@ -156,10 +158,75 @@ async function verifyLogin(username, password) {
   });
 }
 
+async function createPost(body) {
+  if (
+    !("image_url" in body) ||
+    !("username" in body) ||
+    !("piece_id" in body)
+  ) {
+    return false;
+  }
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute("SELECT max(post_id) FROM Post");
+    const id = result.rows[0][0] + 1;
+    const insert = await connection.execute(
+      `INSERT INTO Post VALUES (:postId, :text, :image_url, :num_likes, :datetime, :age_restricted, :username, :piece_id)`,
+      [
+        id,
+        body["text"] || null,
+        body["image_url"],
+        0,
+        new Date(),
+        body["age_restricted"] || 0,
+        body["username"],
+        body["piece_id"],
+      ],
+      { autoCommit: true }
+    );
+    return true;
+  }).catch(() => {
+    return false;
+  });
+}
+
+async function getComments(post_id) {
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(`SELECT * FROM CommentPost WHERE post_id = :postId`,
+        [post_id],
+        { autoCommit: true});
+    return result.rows.map((row) => ({
+      comment_id: row[0],
+      text: row[1],
+      num_likes: row[2],
+      datetime: row[3],
+      age_restricted: row[4],
+      username: row[5],
+      post_id: row[6],
+    }));
+  }).catch(() => {
+    return [];
+  });
+}
+
+async function likeComment(post_id, comment_id) {
+  return await withOracleDB(async (connection) => {
+    await connection.execute(
+      `UPDATE CommentPost SET num_likes = num_likes + 1 WHERE post_id = :postId AND comment_id = :commentId`,
+      [post_id, comment_id],
+      { autoCommit: true }
+    );
+    return true;
+  }).catch(() => {
+    return false;
+  });
+}
+
 module.exports = {
   testOracleConnection,
   getPosts,
   likePost,
+  createPost,
+  getComments,
+  likeComment,
   verifyLogin,
 };
-
