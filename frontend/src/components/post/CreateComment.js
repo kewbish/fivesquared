@@ -34,7 +34,7 @@ function CreateComment({ postId }) {
   } else {
     return (
         <div className="flex flex-col">
-          <div className="flex flex-col bg-white rounded-xl p-6 text-left gap-4">
+          <div className="flex flex-col bg-white rounded-xl p-6 md:pr-4 text-left gap-4">
             <h3 className="text-lg font-bold text-gray-800">New comment</h3>
             <textarea
                 className="px-4 block w-full border-gray-200 rounded-md shadow-sm text-sm focus:border-blue-500 focus:ring-blue-500"
@@ -43,7 +43,7 @@ function CreateComment({ postId }) {
                 value={text}
                 onChange={(e) => setText(e.target.value)}
             ></textarea>
-            <div className="flex justify-between content-top">
+            <div className="flex justify-between items-center">
               <div>
                 <label className="text-sm text-gray-500">
                   <input id="hs-default-checkbox"
