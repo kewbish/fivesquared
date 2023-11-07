@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
-import Comment from "../Comment";
+import Comment from "./Comment";
+import CreateComment from "./CreateComment";
 
 function Post({post}) {
     const [likes, setLikes] = useState(post["num_likes"]);
@@ -29,13 +30,6 @@ function Post({post}) {
     useEffect(() => {
         fetchComments();
     }, []);
-
-    const makeComment = async () => {
-        const response = await fetch("http://localhost:65535/" + post["post_id"] + "/comments", {
-            method: "POST",
-        });
-
-    }
 
     return (
         <div className="flex flex-col bg-white border shadow-sm rounded-xl text-left">
@@ -81,8 +75,14 @@ function Post({post}) {
                     </div>
                 </div>
             </div>
+                <div>
+                    <hr></hr>
+                </div>
+            <div>
+                <CreateComment postId={post["post_id"]}/>
+            </div>
             {comments.length > 0 && <>
-                <div className="pb-4 pt-2">
+                <div className="pb-4">
                     <hr></hr>
                 </div>
                 <div className="ml-10 flex flex-col justify-center mb-4">

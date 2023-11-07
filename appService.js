@@ -160,7 +160,7 @@ async function verifyLogin(username, password) {
 
 async function createPost(body) {
   if (
-    !("image_url" in body) ||
+    // !("image_url" in body) ||
     !("username" in body) ||
     !("piece_id" in body)
   ) {
@@ -221,6 +221,39 @@ async function likeComment(post_id, comment_id) {
   });
 }
 
+async function createComment(post_id, body) {
+  console.log(body);
+  if (
+      !("username" in body) ||
+      !("post_id" in body) ||
+      body["post_id"] !== post_id
+  ) {
+    return false;
+  }
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(`SELECT max(comment_id) FROM CommentPost WHERE post_id = :postId`,
+        [post_id]);
+    const id = result.rows[0][0] + 1;
+    console.log(id);
+    const insert = await connection.execute(
+      `INSERT INTO CommentPost VALUES (:comment_id, :text, :num_likes, :datetime, :age_restricted, :username, :post_id)`,
+      [
+        id,
+        body["text"] || null,
+        0,
+        new Date(),
+        body["age_restricted"] || 0,
+        body["username"],
+        post_id,
+      ],
+      { autoCommit: true }
+    );
+    return true;
+  }).catch(() => {
+    return false;
+  });
+}
+
 module.exports = {
   testOracleConnection,
   getPosts,
@@ -228,5 +261,6 @@ module.exports = {
   createPost,
   getComments,
   likeComment,
+  createComment,
   verifyLogin,
 };
