@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import "./Posts.css";
-import Post from "../../components/Post";
+import Post from "../../components/post/Post";
 import CreatePost from "./CreatePost";
 
 function Posts() {

@@ -8,7 +8,7 @@ function CreatePost() {
   const [ageRestricted, setAgeRestricted] = useState(false);
 
   const createPost = async () => {
-    const response = await fetch("http://localhost:65535/posts/", {
+    const response = await fetch("http://localhost:65535/posts/create", {
       method: "POST",
       body: JSON.stringify({
         username,

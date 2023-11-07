@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import Comment from "./Comment";
+import Comment from "../Comment";
 
 function Post({post}) {
     const [likes, setLikes] = useState(post["num_likes"]);

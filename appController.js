@@ -79,7 +79,7 @@ router.post("/posts/:postId/likes", async (req, res) => {
   });
 });
 
-router.post("/posts", async (req, res) => {
+router.post("/posts/create", async (req, res) => {
   const result = await appService.createPost(req.body);
   res.json({
     success: result,
