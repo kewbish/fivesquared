@@ -31,19 +31,20 @@ function Post({post}) {
     }, []);
 
     const makeComment = async () => {
-      const response = await fetch("http://localhost:65535/" + post["post_id"] + "/comments", {
-          method: "POST",
-      });
-      
+        const response = await fetch("http://localhost:65535/" + post["post_id"] + "/comments", {
+            method: "POST",
+        });
+
     }
 
     return (
         <div className="flex flex-col bg-white border shadow-sm rounded-xl text-left">
-            <img
+            {post["image_url"] && <>
+                <img
                 className="w-full h-auto rounded-t-xl"
                 src={post["image_url"]}
                 alt={"Photo of piece ID " + post["piece_id"]}
-            />
+            /></>}
             <div className="p-4 md:p-4">
                 {post["text"] &&
                     (post["age_restricted"] === 0 ? (
