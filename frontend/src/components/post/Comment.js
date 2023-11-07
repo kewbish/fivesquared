@@ -5,7 +5,7 @@ function Comment({ comment }) {
 
   const likeComment = async () => {
     const response = await fetch(
-      `http://localhost:65535/posts/${comment["post_id"]}/${comment["comment_id"]}/likes`,
+      `http://localhost:65535/posts/${comment["post_id"]}/comments/${comment["comment_id"]}/likes`,
       {
         method: "POST",
       }

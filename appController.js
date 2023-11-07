@@ -93,8 +93,16 @@ router.get("/posts/:postId/comments", async (req, res) => {
   });
 });
 
-router.post("/posts/:postId/:commentId/likes", async (req, res) => {
+router.post("/posts/:postId/comments/:commentId/likes", async (req, res) => {
   const result = await appService.likeComment(Number.parseInt(req.params.postId), Number.parseInt(req.params.commentId));
+  res.json({
+    success: result,
+  });
+});
+
+router.post("/posts/:postId/comments/create", async (req, res) => {
+  console.log("we are here!");
+  const result = await appService.createComment(Number.parseInt(req.params.postId), req.body);
   res.json({
     success: result,
   });

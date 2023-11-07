@@ -40,7 +40,7 @@ const Nav = () => {
         <a href="/failtest">404 Test</a>
         {!loggedIn ? <button onClick={onLogInClick}>Log In</button> : <></>}
         {loggedIn ? <button onClick={onLogOutClick}>Log Out</button> : <></>}
-      </div>    
+      </div>
 
       <Outlet />
       <Login showLogin={showLogin}/>
