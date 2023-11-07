@@ -139,9 +139,27 @@ async function likePost(post_id) {
   });
 }
 
+async function verifyLogin(username, password) {
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(`SELECT username FROM AppUser WHERE username = :username AND password = :password`,
+      [username, password],
+      { autoCommit: true });
+    if (result.rows.length > 0) {
+      return result.rows[0];
+    } else {
+      return null;
+    }
+
+    return result.rows;
+  }).catch(() => {
+    return [];
+  });
+}
+
 module.exports = {
   testOracleConnection,
   getPosts,
   likePost,
+  verifyLogin,
 };
 

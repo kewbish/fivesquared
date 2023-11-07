@@ -79,21 +79,14 @@ router.post("/posts/like/:postId", async (req, res) => {
   });
 });
 
-router.post("/login/verify/", (req, res) => {
+router.post("/login/verify/", async (req, res) => {
     username = req.body.username;
     password = req.body.password;
 
-    // ORACLE PASSWORD-CHECKING LOGIC TO GO HERE
-
-    // TEMPORARY CODE TO TEST SUCCESS AND FAILURE CASES:
-    let status = false;
-    if (password === "12345") {
-        status = true;
-    }
-    // END TEMPORARY CODE
+    const result = await appService.verifyLogin(username, password);
 
     res.json({ 
-       success: status
+       success: result
     });
   });
 
