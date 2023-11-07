@@ -72,8 +72,22 @@ router.get("/posts", async (req, res) => {
   });
 });
 
-router.post("/posts/like/:postId", async (req, res) => {
+router.post("/posts/:postId/likes", async (req, res) => {
   const result = await appService.likePost(Number.parseInt(req.params.postId));
+  res.json({
+    success: result,
+  });
+});
+
+router.get("/posts/:postId/comments", async (req, res) => {
+  const result = await appService.getComments(Number.parseInt(req.params.postId));
+  res.json({
+    success: result,
+  });
+});
+
+router.post("/posts/:postId/:commentId/likes", async (req, res) => {
+  const result = await appService.likeComment(Number.parseInt(req.params.postId), Number.parseInt(req.params.commentId));
   res.json({
     success: result,
   });

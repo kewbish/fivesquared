@@ -139,9 +139,43 @@ async function likePost(post_id) {
   });
 }
 
+async function getComments(post_id) {
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(`SELECT * FROM CommentPost WHERE post_id = :postId`,
+        [post_id],
+        { autoCommit: true});
+    return result.rows.map((row) => ({
+      comment_id: row[0],
+      text: row[1],
+      num_likes: row[2],
+      datetime: row[3],
+      age_restricted: row[4],
+      username: row[5],
+      post_id: row[6],
+    }));
+  }).catch(() => {
+    return [];
+  });
+}
+
+async function likeComment(post_id, comment_id) {
+  return await withOracleDB(async (connection) => {
+    await connection.execute(
+      `UPDATE CommentPost SET num_likes = num_likes + 1 WHERE post_id = :postId AND comment_id = :commentId`,
+      [post_id, comment_id],
+      { autoCommit: true }
+    );
+    return true;
+  }).catch(() => {
+    return false;
+  });
+}
+
 module.exports = {
   testOracleConnection,
   getPosts,
   likePost,
+  getComments,
+  likeComment,
 };
 
