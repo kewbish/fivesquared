@@ -72,8 +72,22 @@ router.get("/posts", async (req, res) => {
   });
 });
 
-router.post("/posts/:postId/likes", async (req, res) => {
-  const result = await appService.likePost(Number.parseInt(req.params.postId));
+router.get("/posts/:postId/like", async (req, res) => {
+  const result = await appService.getPostLikes(req.params.postId);
+  res.json({
+    success: result,
+  });
+});
+
+router.post("/posts/:postId/like", async (req, res) => {
+  const result = await appService.likePost(req.body);
+  res.json({
+    success: result,
+  });
+});
+
+router.delete("/posts/:postId/like", async (req, res) => {
+  const result = await appService.unlikePost(req.body);
   res.json({
     success: result,
   });
@@ -93,8 +107,22 @@ router.get("/posts/:postId/comments", async (req, res) => {
   });
 });
 
-router.post("/posts/:postId/comments/:commentId/likes", async (req, res) => {
-  const result = await appService.likeComment(Number.parseInt(req.params.postId), Number.parseInt(req.params.commentId));
+router.get("/posts/:postId/comments/:commentId/like", async (req, res) => {
+  const result = await appService.getCommentLikes(req.params['postId'], req.params['commentId']);
+  res.json({
+    success: result,
+  });
+});
+
+router.post("/posts/:postId/comments/:commentId/like", async (req, res) => {
+  const result = await appService.likeComment(req.body);
+  res.json({
+    success: result,
+  });
+});
+
+router.delete("/posts/:postId/comments/:commentId/like", async (req, res) => {
+  const result = await appService.unlikeComment(req.body);
   res.json({
     success: result,
   });

@@ -4,24 +4,12 @@ import CreateComment from "./CreateComment";
 import {useCookies} from "react-cookie";
 
 function Post({post}) {
-    const [likes, setLikes] = useState(post["num_likes"]);
-    const [comments, setComments] = useState([]);
     const [cookies, setCookie, removeCookie] = useCookies(['login_cookie']);
+    const [comments, setComments] = useState([]);
+    const [likes, setLikes] = useState(0);
+    const [liked, setLiked] = useState(false);
 
-    const likePost = async () => {
-        const response = await fetch(
-            `http://localhost:65535/posts/${post["post_id"]}/likes`,
-            {
-                method: "POST",
-            }
-        );
-        const pjson = await response.json();
-        if (pjson.success) {
-            setLikes((likes) => likes + 1);
-        }
-    };
-
-    const fetchComments = async () => {
+    const getComments = async () => {
         const response = await fetch("http://localhost:65535/posts/" + post["post_id"] + "/comments", {
             method: "GET",
         });
@@ -29,16 +17,57 @@ function Post({post}) {
         setComments(cjson.success);
     };
 
-    useEffect(() => {
-        fetchComments();
-    }, []);
+    const getPostLikes = async () => {
+        const response = await fetch(
+            `http://localhost:65535/posts/${post["post_id"]}/like`,
+            {
+                method: "GET"
+            }
+        );
+        const cjson = await response.json();
+        setLikes(cjson.success);
+    };
 
-    // const viewPost = async () => {
-    //     const response = await fetch ("http://localhost:65535/posts/" + post["post_id"], {
-    //         method: "GET",
-    //     });
-    //
-    // }
+    const likePost = async () => {
+        if (!cookies.login_cookie) return null;
+        const response = await fetch(
+            `http://localhost:65535/posts/${post["post_id"]}/like`, {
+                method: "POST",
+                body: JSON.stringify({
+                    username: cookies.login_cookie,
+                    post_id: post["post_id"]
+                }),
+                headers: { "Content-Type": "application/json" },
+            });
+        const cjson = await response.json();
+        if (cjson.success) {
+            setLikes((likes) => likes + 1);
+            setLiked(true);
+        }
+    };
+
+    const unlikePost = async () => {
+        if (!cookies.login_cookie) return null;
+        const response = await fetch(
+            `http://localhost:65535/posts/${post["post_id"]}/like`, {
+                method: "DELETE",
+                body: JSON.stringify({
+                    username: cookies.login_cookie,
+                    post_id: post["post_id"]
+                }),
+                headers: { "Content-Type": "application/json" },
+            });
+        const cjson = await response.json();
+        if (cjson.success) {
+            setLikes((likes) => likes - 1);
+            setLiked(false);
+        }
+    };
+
+    useEffect(() => {
+        getPostLikes();
+        getComments();
+    }, []);
 
     return (
         <div className="flex flex-col bg-white border shadow-sm rounded-xl text-left">
@@ -79,7 +108,7 @@ function Post({post}) {
                         <button
                             type="button"
                             className="py-[.344rem] px-2 inline-flex justify-center items-center gap-2 rounded-md border-2 border-gray-200 font-semibold text-red-400 hover:bg-red-200 hover:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 transition-all text-sm "
-                            onClick={cookies.login_cookie ? likePost : null}
+                            onClick={cookies.login_cookie ? liked ? unlikePost : likePost : null}
                         >
                             {likes} ❤
                         </button>
