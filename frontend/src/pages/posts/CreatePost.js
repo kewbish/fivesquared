@@ -1,13 +1,13 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useCookies } from "react-cookie";
 
 function CreatePost() {
   const [imageUrl, setImageUrl] = useState("");
-  const [fileName, setFileName] = useState("");
   const [text, setText] = useState("");
   const [pieceId, setPieceId] = useState(0);
   const [ageRestricted, setAgeRestricted] = useState(false);
   const [cookies, setCookie, removeCookie] = useCookies(["login_cookie"]);
+  const fileUploadRef = useRef(null);
 
   const createPost = async () => {
     const response = await fetch("http://localhost:65535/posts/create", {
@@ -33,7 +33,6 @@ function CreatePost() {
     fileReader.onload = (fileLoadedEvent) => {
       const file = fileLoadedEvent.target.result;
       setImageUrl(file);
-      setFileName(files[0].name);
     };
     fileReader.readAsDataURL(files[0]);
   };
@@ -60,15 +59,24 @@ function CreatePost() {
             onChange={(e) => setText(e.target.value)}
           ></textarea>
           {imageUrl ? (
-            <img
-              src={imageUrl}
-              className="block w-full border border-gray-200 rounded-md shadow-sm text-sm text-gray-800"
-              alt="File upload preview"
-            />
+            <div className="relative">
+              <button
+                type="button"
+                class="absolute top-4 right-4 py-1 px-2 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 disabled:opacity-50 disabled:pointer-events-none"
+                onClick={() => setImageUrl("")}
+              >
+                X
+              </button>
+              <img
+                src={imageUrl}
+                className="block w-full border border-gray-200 rounded-md shadow-sm text-sm text-gray-800"
+                alt="File upload preview"
+              />
+            </div>
           ) : (
             <div>
               <label
-                for="af-submit-app-upload-images"
+                htmlFor="af-submit-app-upload-images"
                 class="group p-4 sm:p-7 block cursor-pointer text-center border-2 border-dashed border-gray-200 rounded-lg focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2"
               >
                 <input
@@ -77,6 +85,7 @@ function CreatePost() {
                   type="file"
                   class="sr-only"
                   onChange={fileUpload}
+                  ref={fileUploadRef}
                 />
                 <svg
                   class="w-10 h-10 mx-auto text-gray-400"
@@ -102,30 +111,30 @@ function CreatePost() {
             </div>
           )}
           <div className="flex justify-between items-center">
-            <div>
+            <div className="flex gap-4 items-center">
               <div className="flex rounded-md">
-                <span className="px-4 inline-flex items-center min-w-fit text-sm text-gray-500">
+                <span className="pr-4 inline-flex items-center min-w-fit text-sm text-gray-500">
                   Piece ID
                 </span>
                 <input
                   type="number"
-                  className="py-3 px-4 block w-full border-gray-200 rounded text-sm focus:border-blue-500 focus:ring-blue-500 shadow-sm"
+                  className="py-2 px-4 block w-20 border-gray-200 rounded text-sm focus:border-blue-500 focus:ring-blue-500 shadow-sm"
                   value={pieceId}
                   onChange={(e) => setPieceId(e.target.value)}
                 />
               </div>
-            </div>
-            <div>
-              <label className="text-sm text-gray-500">
-                <input
-                  id="hs-default-checkbox"
-                  type="checkbox"
-                  className="w-4 h-4 text-blue-600 border-gray-200 rounded focus:ring-blue-500 focus:ring-2 mr-2"
-                  checked={ageRestricted}
-                  onChange={() => setAgeRestricted((ar) => !ar)}
-                />
-                Age restricted
-              </label>
+              <div>
+                <label className="text-sm text-gray-500">
+                  <input
+                    id="hs-default-checkbox"
+                    type="checkbox"
+                    className="w-4 h-4 text-blue-600 border-gray-200 rounded focus:ring-blue-500 focus:ring-2 mr-2"
+                    checked={ageRestricted}
+                    onChange={() => setAgeRestricted((ar) => !ar)}
+                  />
+                  Age restricted
+                </label>
+              </div>
             </div>
             <button
               type="button"
