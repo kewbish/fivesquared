@@ -8,6 +8,7 @@ function Comment({comment}) {
     const [loaded, setLoaded] = useState(false);
 
     const getCommentLikes = async () => {
+        setLoaded(false);
         const response = await fetch(
             `http://localhost:65535/posts/${comment["post_id"]}/comments/${comment["comment_id"]}/like`,
             {
@@ -16,6 +17,7 @@ function Comment({comment}) {
         );
         const cjson = await response.json();
         setLikes(cjson.success);
+        setLoaded(true);
     };
 
     const likeComment = async () => {
@@ -63,6 +65,7 @@ function Comment({comment}) {
     const isCommentLiked = async () => {
         if (!cookies['login_cookie']) return;
 
+        setLoaded(false);
         const response = await fetch(
             `http://localhost:65535/posts/${comment["post_id"]}/comments/${comment["comment_id"]}/like/${cookies['login_cookie']}`,
             {
@@ -71,12 +74,12 @@ function Comment({comment}) {
         );
         const cjson = await response.json();
         setLiked(cjson.success);
+        setLoaded(false);
     }
 
     useEffect(() => {
         getCommentLikes();
         isCommentLiked();
-        setLoaded(true);
     }, []);
 
     return (

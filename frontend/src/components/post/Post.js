@@ -19,6 +19,7 @@ function Post({post}) {
     };
 
     const getPostLikes = async () => {
+        setLoaded(false);
         const response = await fetch(
             `http://localhost:65535/posts/${post["post_id"]}/like`,
             {
@@ -27,6 +28,7 @@ function Post({post}) {
         );
         const cjson = await response.json();
         setLikes(cjson.success);
+        setLoaded(true);
     };
 
     const likePost = async () => {
@@ -72,6 +74,7 @@ function Post({post}) {
     const isPostLiked = async () => {
         if (!cookies['login_cookie']) return;
 
+        setLoaded(false);
         const response = await fetch(
             `http://localhost:65535/posts/${post["post_id"]}/like/${cookies['login_cookie']}`,
             {
@@ -80,12 +83,12 @@ function Post({post}) {
         );
         const cjson = await response.json();
         setLiked(cjson.success);
+        setLoaded(true);
     }
 
     useEffect(() => {
         getPostLikes();
         isPostLiked();
-        setLoaded(true);
         getComments();
     }, []);
 
