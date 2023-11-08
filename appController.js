@@ -93,6 +93,13 @@ router.delete("/posts/:postId/like", async (req, res) => {
   });
 });
 
+router.get("/posts/:postId/like/:username", async (req, res) => {
+  const result = await appService.isPostLiked(req.params['postId'], req.params['username']);
+  res.json({
+    success: result,
+  });
+});
+
 router.post("/posts/create", async (req, res) => {
   const result = await appService.createPost(req.body);
   res.json({
@@ -123,6 +130,13 @@ router.post("/posts/:postId/comments/:commentId/like", async (req, res) => {
 
 router.delete("/posts/:postId/comments/:commentId/like", async (req, res) => {
   const result = await appService.unlikeComment(req.body);
+  res.json({
+    success: result,
+  });
+});
+
+router.get("/posts/:postId/comments/:commentId/like/:username", async (req, res) => {
+  const result = await appService.isCommentLiked(req.params['postId'], req.params['commentId'], req.params['username']);
   res.json({
     success: result,
   });

@@ -8,6 +8,7 @@ function Post({post}) {
     const [comments, setComments] = useState([]);
     const [likes, setLikes] = useState(0);
     const [liked, setLiked] = useState(false);
+    const [loaded, setLoaded] = useState(false);
 
     const getComments = async () => {
         const response = await fetch("http://localhost:65535/posts/" + post["post_id"] + "/comments", {
@@ -41,8 +42,10 @@ function Post({post}) {
             });
         const cjson = await response.json();
         if (cjson.success) {
-            setLikes((likes) => likes + 1);
+            setLoaded(false);
+            await getPostLikes();
             setLiked(true);
+            setLoaded(true);
         }
     };
 
@@ -59,13 +62,30 @@ function Post({post}) {
             });
         const cjson = await response.json();
         if (cjson.success) {
-            setLikes((likes) => likes - 1);
+            setLoaded(false);
+            await getPostLikes();
             setLiked(false);
+            setLoaded(true);
         }
     };
 
+    const isPostLiked = async () => {
+        if (!cookies['login_cookie']) return;
+
+        const response = await fetch(
+            `http://localhost:65535/posts/${post["post_id"]}/like/${cookies['login_cookie']}`,
+            {
+                method: "GET"
+            }
+        );
+        const cjson = await response.json();
+        setLiked(cjson.success);
+    }
+
     useEffect(() => {
         getPostLikes();
+        isPostLiked();
+        setLoaded(true);
         getComments();
     }, []);
 
@@ -107,8 +127,9 @@ function Post({post}) {
                         &nbsp;&nbsp;
                         <button
                             type="button"
-                            className="py-[.344rem] px-2 inline-flex justify-center items-center gap-2 rounded-md border-2 border-gray-200 font-semibold text-red-400 hover:bg-red-200 hover:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 transition-all text-sm "
+                            className="py-[.344rem] px-2 inline-flex justify-center items-center gap-2 rounded-md font-semibold text-red-400 transition-all"
                             onClick={cookies.login_cookie ? liked ? unlikePost : likePost : null}
+                            disabled={!loaded}
                         >
                             {likes} ❤
                         </button>

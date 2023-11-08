@@ -5,6 +5,7 @@ function Comment({comment}) {
     const [cookies, setCookie, removeCookie] = useCookies(['login_cookie']);
     const [likes, setLikes] = useState(0);
     const [liked, setLiked] = useState(false);
+    const [loaded, setLoaded] = useState(false);
 
     const getCommentLikes = async () => {
         const response = await fetch(
@@ -31,8 +32,10 @@ function Comment({comment}) {
             });
         const cjson = await response.json();
         if (cjson.success) {
-            setLikes((likes) => likes + 1);
+            setLoaded(false);
+            await getCommentLikes();
             setLiked(true);
+            setLoaded(true);
         }
     };
 
@@ -50,13 +53,30 @@ function Comment({comment}) {
             });
         const cjson = await response.json();
         if (cjson.success) {
-            setLikes((likes) => likes - 1);
+            setLoaded(false);
+            await getCommentLikes();
             setLiked(false);
+            setLoaded(true);
         }
     };
 
+    const isCommentLiked = async () => {
+        if (!cookies['login_cookie']) return;
+
+        const response = await fetch(
+            `http://localhost:65535/posts/${comment["post_id"]}/comments/${comment["comment_id"]}/like/${cookies['login_cookie']}`,
+            {
+                method: "GET"
+            }
+        );
+        const cjson = await response.json();
+        setLiked(cjson.success);
+    }
+
     useEffect(() => {
         getCommentLikes();
+        isCommentLiked();
+        setLoaded(true);
     }, []);
 
     return (
@@ -82,8 +102,9 @@ function Comment({comment}) {
                     <div className="flex justify-between">
                         <button
                             type="button"
-                            className="py-[.344rem] px-2 inline-flex justify-center items-center gap-2 rounded-md border-2 border-gray-200 font-semibold text-red-400 hover:bg-red-200 hover:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2 transition-all text-sm "
+                            className="py-[.344rem] px-2 inline-flex justify-center items-center gap-2 rounded-md font-semibold text-red-400 transition-all"
                             onClick={cookies.login_cookie ? liked ? unlikeComment : likeComment : null}
+                            disabled={!loaded}
                         >
                             {likes} ❤
                         </button>

@@ -189,6 +189,18 @@ async function unlikePost(body) {
   });
 }
 
+async function isPostLiked(post_id, username) {
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(
+        `SELECT * FROM LikesPost WHERE post_id = :postId AND username = :username`,
+        [post_id, username]
+    );
+    return !!result.rows[0] && !!result.rows[0][0];
+  }).catch(() => {
+    return false;
+  });
+}
+
 async function createPost(body) {
   if (
     // !("image_url" in body) ||
@@ -278,6 +290,18 @@ async function unlikeComment(body) {
   });
 }
 
+async function isCommentLiked(post_id, comment_id, username) {
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(
+        `SELECT * FROM LikesComment WHERE post_id = :postId AND comment_id = :commentId AND username = :username`,
+        [post_id, comment_id, username]
+    );
+    return !!result.rows[0] && !!result.rows[0][0];
+  }).catch(() => {
+    return false;
+  });
+}
+
 async function createComment(post_id, body) {
   console.log(body);
   if (
@@ -319,11 +343,13 @@ module.exports = {
   getPostLikes,
   likePost,
   unlikePost,
+  isPostLiked,
   createPost,
   getComments,
   getCommentLikes,
   likeComment,
   unlikeComment,
+  isCommentLiked,
   createComment,
   verifyLogin,
 };
