@@ -111,16 +111,17 @@ async function countDemotable() {
 async function getPosts() {
   return await withOracleDB(async (connection) => {
     const result = await connection.execute(
-      "SELECT p.*, ap.title FROM Post p, ArtPiece ap WHERE p.piece_id = ap.piece_id"
+      "SELECT p.*, ap.title, to_clob(p.image_url) FROM Post p, ArtPiece ap WHERE p.piece_id = ap.piece_id"
     );
+    oracledb.fetchAsString = [oracledb.CLOB];
     return result.rows.map((row) => ({
       post_id: row[0],
       text: row[1],
-      image_url: row[2],
-      num_likes: row[3],
-      datetime: row[4],
-      age_restricted: row[5],
-      username: row[6],
+      num_likes: row[2],
+      datetime: row[3],
+      age_restricted: row[4],
+      username: row[5],
+      image_url: row[9],
       piece_id: row[8],
     }));
   }).catch(() => {
@@ -143,9 +144,11 @@ async function likePost(post_id) {
 
 async function verifyLogin(username, password) {
   return await withOracleDB(async (connection) => {
-    const result = await connection.execute(`SELECT username FROM AppUser WHERE username = :username AND password = :password`,
+    const result = await connection.execute(
+      `SELECT username FROM AppUser WHERE username = :username AND password = :password`,
       [username, password],
-      { autoCommit: true });
+      { autoCommit: true }
+    );
     if (result.rows.length > 0) {
       return result.rows[0];
     } else {
@@ -170,17 +173,17 @@ async function createPost(body) {
     const result = await connection.execute("SELECT max(post_id) FROM Post");
     const id = result.rows[0][0] + 1;
     const insert = await connection.execute(
-      `INSERT INTO Post VALUES (:postId, :text, :image_url, :num_likes, :datetime, :age_restricted, :username, :piece_id)`,
-      [
-        id,
-        body["text"] || null,
-        body["image_url"],
-        0,
-        new Date(),
-        body["age_restricted"] || 0,
-        body["username"],
-        body["piece_id"],
-      ],
+      `INSERT INTO Post VALUES (:postId, :text, :num_likes, :datetime, :age_restricted, :username, :piece_id, utl_raw.cast_to_raw(:image_url))`,
+      {
+        postId: id,
+        text: body["text"] || null,
+        num_likes: 0,
+        datetime: new Date(),
+        age_restricted: body["age_restricted"] || 0,
+        username: body["username"],
+        piece_id: body["piece_id"],
+        image_url: body["image_url"],
+      },
       { autoCommit: true }
     );
     return true;
@@ -191,9 +194,11 @@ async function createPost(body) {
 
 async function getComments(post_id) {
   return await withOracleDB(async (connection) => {
-    const result = await connection.execute(`SELECT * FROM CommentPost WHERE post_id = :postId`,
-        [post_id],
-        { autoCommit: true});
+    const result = await connection.execute(
+      `SELECT * FROM CommentPost WHERE post_id = :postId`,
+      [post_id],
+      { autoCommit: true }
+    );
     return result.rows.map((row) => ({
       comment_id: row[0],
       text: row[1],
@@ -224,15 +229,17 @@ async function likeComment(post_id, comment_id) {
 async function createComment(post_id, body) {
   console.log(body);
   if (
-      !("username" in body) ||
-      !("post_id" in body) ||
-      body["post_id"] !== post_id
+    !("username" in body) ||
+    !("post_id" in body) ||
+    body["post_id"] !== post_id
   ) {
     return false;
   }
   return await withOracleDB(async (connection) => {
-    const result = await connection.execute(`SELECT max(comment_id) FROM CommentPost WHERE post_id = :postId`,
-        [post_id]);
+    const result = await connection.execute(
+      `SELECT max(comment_id) FROM CommentPost WHERE post_id = :postId`,
+      [post_id]
+    );
     const id = result.rows[0][0] + 1;
     console.log(id);
     const insert = await connection.execute(
