@@ -5,6 +5,7 @@ import "./index.css";
 import Posts from "./pages/posts/Posts";
 import Nothing from "./pages/nothing/Nothing";
 import Nav from "./pages/nav/Nav";
+import Login from "./pages/login/Login";
 import reportWebVitals from "./reportWebVitals";
 import "preline";
 import Profile from "./pages/profile/Profile";
@@ -17,6 +18,7 @@ root.render(
         <Route path="/" element={<Nav />}>
           <Route index element={<Posts />} />
           <Route path="posts" element={<Posts />} />
+          <Route path="login" element={<Login />} />
           <Route path=":tag" pa element={<Profile />} />
           <Route path="*" element={<Nothing />} />
         </Route>

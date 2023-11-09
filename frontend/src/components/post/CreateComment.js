@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
 
 function CreateComment({ postId }) {
   const [text, setText] = useState("");
   const [ageRestricted, setAgeRestricted] = useState(false);
   const [cookies, setCookie, removeCookie] = useCookies(['login_cookie']);
-
+  const navigate = useNavigate();
 
   const createComment = async () => {
     const response = await fetch(`http://localhost:65535/posts/${postId}/comments/create`, {
@@ -22,10 +23,14 @@ function CreateComment({ postId }) {
     console.log(cjson);
   };
 
+  const goToLogin = () => {
+    navigate("/login");
+  }
+
   if (!cookies.login_cookie) {
     return (
         <div className="p-2 text-center">
-          <h2 className="font-bold text-gray-800">
+          <h2 className="font-bold text-gray-800 cursor-pointer" onClick={goToLogin}>
             {/*Should add the ability to click this to log in*/}
             Log in to comment
           </h2>

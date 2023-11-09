@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
 
 function CreatePost() {
   const [imageUrl, setImageUrl] = useState("");
@@ -8,6 +9,7 @@ function CreatePost() {
   const [ageRestricted, setAgeRestricted] = useState(false);
   const [cookies, setCookie, removeCookie] = useCookies(["login_cookie"]);
   const fileUploadRef = useRef(null);
+  const navigate = useNavigate();
 
   const createPost = async () => {
     const response = await fetch("http://localhost:65535/posts/create", {
@@ -37,10 +39,14 @@ function CreatePost() {
     fileReader.readAsDataURL(files[0]);
   };
 
+  const goToLogin = () => {
+    navigate("/login");
+  }
+
   if (!cookies.login_cookie) {
     return (
       <div className="text-center flex flex-col bg-white border shadow-sm rounded-xl p-6">
-        <h2 className="font-bold text-gray-800">
+        <h2 className="font-bold text-gray-800 cursor-pointer" onClick={goToLogin}>
           {/*Should add the ability to click this to log in*/}
           Log in to post
         </h2>

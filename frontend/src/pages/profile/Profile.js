@@ -1,13 +1,14 @@
 import { useParams } from 'react-router-dom'
 import { useCookies } from "react-cookie";
 import { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
     const [cookies, setCookie, removeCookie] = useCookies(["login_cookie"]);
     const [profileData, setProfileData] = useState(null);
     const [following, setFollowing] = useState(false);
     const { tag } = useParams();
-
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -44,10 +45,14 @@ const Profile = () => {
       }
     }
 
+    const goToLogin = () => {
+      navigate("/login");
+    }
+
     if (!cookies.login_cookie) {
         return (
           <div className="text-center flex flex-col bg-white border shadow-sm rounded-xl p-6">
-            <h2 className="font-bold text-gray-800">
+            <h2 className="font-bold text-gray-800 cursor-pointer" onClick={goToLogin}>
               Log in to view user profiles.
             </h2>
           </div>
