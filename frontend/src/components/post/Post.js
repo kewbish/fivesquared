@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import Comment from "./Comment";
 import CreateComment from "./CreateComment";
 import {useCookies} from "react-cookie";
+import { useNavigate } from "react-router-dom";
 
 function Post({post}) {
     const [cookies, setCookie, removeCookie] = useCookies(['login_cookie', 'y_pos']);
@@ -30,6 +31,7 @@ function Post({post}) {
         setLikes(pjson.success);
         setLoaded(true);
     };
+    const navigate = useNavigate();
 
     const likePost = async () => {
         if (!(cookies.login_cookie && cookies.login_cookie === post['username'])) return null;
@@ -96,6 +98,10 @@ function Post({post}) {
         const pjson = await response.json();
     }
 
+    const tagClicked = () => {
+        navigate("/" + post["username"]);
+    }
+
     useEffect(() => {
         getPostLikes();
         isPostLiked();
@@ -133,7 +139,7 @@ function Post({post}) {
                 <div className="flex flex-row justify-between items-end">
                     <div>
                         <div>
-                            <p className="text-gray-400 text-small text-left">
+                            <p className="text-gray-400 text-small text-left underline cursor-pointer" onClick={tagClicked}>
                                 Posted by @{post["username"]}
                             </p>
                             <p className="text-gray-400 text-small">

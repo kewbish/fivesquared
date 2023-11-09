@@ -297,32 +297,26 @@ async function getProfile(username, tag) {
     const appUserResult = await connection.execute(`SELECT bio, pfp_url FROM AppUser WHERE username = :tag`,
     [tag],
     { autoCommit: true });
-    // await new Promise(r => setTimeout(r, 100));
 
     const appUserAgeResult = await connection.execute(`SELECT age FROM AppUser au, AppUserAge aug WHERE au.username = :tag AND au.dob = aug.dob`,
     [tag],
     { autoCommit: true });
-    // await new Promise(r => setTimeout(r, 100));
 
     const followeesResult = await connection.execute(`SELECT * FROM Follows WHERE follower = :tag`,
     [tag],
     { autoCommit: true });
-    // await new Promise(r => setTimeout(r, 100));
 
     const followersResult = await connection.execute(`SELECT * FROM Follows WHERE followee = :tag`,
     [tag],
-    { autoCommit: true });
-    // await new Promise(r => setTimeout(r, 100));
+    { autoCommit: true });   
 
     const followingResult = await connection.execute(`SELECT * FROM Follows WHERE followee = :tag AND follower = :username`,
     [tag, username],
     { autoCommit: true });
-    // await new Promise(r => setTimeout(r, 100));
 
     const badgesResult = await connection.execute(`SELECT name, description, icon_url FROM Badge b, Earns e WHERE e.username = :tag AND e.badge_name = b.name`,
     [tag],
     { autoCommit: true });
-    // await new Promise(r => setTimeout(r, 100));
 
     const followeesCount = followeesResult.rows.length;
     const followersCount = followersResult.rows.length;
@@ -561,12 +555,6 @@ module.exports = {
   deleteComment,
   verifyLogin,
   getProfile,
-  getAppUserAge,
-  getAppUserData,
-  getBadgesData,
-  getFollowersData,
-  getFollowingData,
-  getfolloweesData,
   follow,
   unfollow,
 };

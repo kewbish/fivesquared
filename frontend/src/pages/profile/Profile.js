@@ -1,13 +1,14 @@
 import { useParams } from 'react-router-dom'
 import { useCookies } from "react-cookie";
 import { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
     const [cookies, setCookie, removeCookie] = useCookies(["login_cookie"]);
     const [profileData, setProfileData] = useState(null);
     const [following, setFollowing] = useState(false);
     const { tag } = useParams();
-
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -44,10 +45,14 @@ const Profile = () => {
       }
     }
 
+    const goToLogin = () => {
+      navigate("/login");
+    }
+
     if (!cookies.login_cookie) {
         return (
           <div className="text-center flex flex-col bg-white border shadow-sm rounded-xl p-6">
-            <h2 className="font-bold text-gray-800">
+            <h2 className="font-bold text-gray-800 cursor-pointer" onClick={goToLogin}>
               Log in to view user profiles.
             </h2>
           </div>
@@ -56,7 +61,7 @@ const Profile = () => {
         console.log(profileData);
         return (
             <div class="p-16">
-<div class="p-8 bg-white shadow mt-24">
+<div class="p-8 bg-white border shadow-sm rounded-xl mt-24">
   <div class="grid grid-cols-1 md:grid-cols-3">
     <div class="grid grid-cols-3 text-center order-last md:order-first mt-20 md:mt-0">
       <div>
@@ -88,7 +93,7 @@ const Profile = () => {
     </div>
   </div>
 
-  <div class="mt-20 text-center border-b pb-12">
+  <div class="mt-20 text-center pb-12">
     <h1 class="text-4xl font-medium text-gray-700">{tag}, <span class="font-light text-gray-500">{profileData.age}</span></h1>
     <p class="font-light text-gray-600 mt-3">{profileData.bio}</p>
 
