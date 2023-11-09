@@ -110,10 +110,10 @@ async function countDemotable() {
 
 async function getPosts() {
   return await withOracleDB(async (connection) => {
+    oracledb.fetchAsBuffer = [oracledb.BLOB];
     const result = await connection.execute(
-      "SELECT p.*, ap.title, to_clob(p.image_url) FROM Post p, ArtPiece ap WHERE p.piece_id = ap.piece_id"
+      "SELECT p.*, ap.title, p.image_url FROM Post p, ArtPiece ap WHERE p.piece_id = ap.piece_id"
     );
-    oracledb.fetchAsString = [oracledb.CLOB];
     return result.rows.map((row) => ({
       post_id: row[0],
       text: row[1],
@@ -121,7 +121,7 @@ async function getPosts() {
       datetime: row[3],
       age_restricted: row[4],
       username: row[5],
-      image_url: row[9],
+      image_url: row[9] ? row[9].toString() : "",
       piece_id: row[8],
     }));
   }).catch(() => {
