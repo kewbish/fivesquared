@@ -2,11 +2,13 @@ import {useEffect, useState} from "react";
 import Comment from "./Comment";
 import CreateComment from "./CreateComment";
 import {useCookies} from "react-cookie";
+import { useNavigate } from "react-router-dom";
 
 function Post({post}) {
     const [likes, setLikes] = useState(post["num_likes"]);
     const [comments, setComments] = useState([]);
     const [cookies, setCookie, removeCookie] = useCookies(['login_cookie']);
+    const navigate = useNavigate();
 
     const likePost = async () => {
         const response = await fetch(
@@ -28,6 +30,10 @@ function Post({post}) {
         const cjson = await response.json();
         setComments(cjson.success);
     };
+
+    const tagClicked = () => {
+        navigate("/" + post["username"]);
+    }
 
     useEffect(() => {
         fetchComments();
@@ -60,7 +66,7 @@ function Post({post}) {
                 <div className="flex flex-row justify-between items-end">
                     <div>
                         <div>
-                            <p className="text-gray-400 text-small text-left">
+                            <p className="text-gray-400 text-small text-left underline cursor-pointer" onClick={tagClicked}>
                                 Posted by @{post["username"]}
                             </p>
                             <p className="text-gray-400 text-small">
@@ -73,7 +79,7 @@ function Post({post}) {
                             type="button"
                             className="py-[.344rem] px-2 inline-flex justify-center items-center gap-2 rounded-md border-2 border-gray-200 font-semibold text-amber-400 hover:bg-amber-200 hover:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 transition-all text-sm "
                         >
-                            ❝❞
+                            ❝ ❞
                         </button>
                         &nbsp;&nbsp;
                         <button

@@ -37,7 +37,6 @@ const Nav = () => {
       <div className="page-layout">
       <div className="navigation-bar">
         <a href="/posts">Posts</a>
-        <a href="/failtest">404 Test</a>
         {loggedIn ? <a href={cookies[cookieName]}>Profile</a> : <></>}
         {!loggedIn ? <button onClick={onLogInClick}>Log In</button> : <></>}
         {loggedIn ? <button onClick={onLogOutClick}>Log Out</button> : <></>}

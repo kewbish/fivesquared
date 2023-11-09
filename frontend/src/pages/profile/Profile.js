@@ -56,7 +56,7 @@ const Profile = () => {
         console.log(profileData);
         return (
             <div class="p-16">
-<div class="p-8 bg-white shadow mt-24">
+<div class="p-8 bg-white border shadow-sm rounded-xl mt-24">
   <div class="grid grid-cols-1 md:grid-cols-3">
     <div class="grid grid-cols-3 text-center order-last md:order-first mt-20 md:mt-0">
       <div>
@@ -88,7 +88,7 @@ const Profile = () => {
     </div>
   </div>
 
-  <div class="mt-20 text-center border-b pb-12">
+  <div class="mt-20 text-center pb-12">
     <h1 class="text-4xl font-medium text-gray-700">{tag}, <span class="font-light text-gray-500">{profileData.age}</span></h1>
     <p class="font-light text-gray-600 mt-3">{profileData.bio}</p>
 

@@ -1,9 +1,11 @@
 import {useState} from "react";
 import {useCookies} from "react-cookie";
+import { useNavigate } from "react-router-dom";
 
 function Comment({comment}) {
     const [likes, setLikes] = useState(comment["num_likes"]);
     const [cookies, setCookie, removeCookie] = useCookies(['login_cookie']);
+    const navigate = useNavigate();
 
     const likeComment = async () => {
         const response = await fetch(
@@ -18,6 +20,10 @@ function Comment({comment}) {
         }
     };
 
+    const tagClicked = () => {
+        navigate("/" + comment["username"]);
+    }
+
     return (
         <div className="w-12/12 flex flex-col bg-white">
             <div className="pr-4 md:pr-4">
@@ -31,7 +37,7 @@ function Comment({comment}) {
                     ))}
                 <div className="flex flex-row justify-between items-end">
                     <div>
-                        <p className="text-gray-400 text-small text-left">
+                        <p className="text-gray-400 text-small text-left underline cursor-pointer" onClick={tagClicked}>
                             Commented by @{comment["username"]}
                         </p>
                         <p className="text-gray-400 text-small">

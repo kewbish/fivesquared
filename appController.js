@@ -138,54 +138,11 @@ router.delete("/unfollow/:username/:tag", async (req, res) => {
 router.get("/profile/:username/:tag", async (req, res) => {
     // username is the currently signed-in user. tag is the profile being viewed
     const result = await appService.getProfile(req.params.username, req.params.tag);
-    // const appUserResult = await appService.getAppUserData(req.params.tag);
-    
-    // const appUserAgeResult = await appService.getAppUserAge(req.params.tag);
-
-    // const followeesResult = await appService.getfolloweesData(req.params.tag);
-
-    // const followersResult = await appService.getFollowersData(req.params.tag);
-    
-    // const followingResult = await appService.getFollowingData(req.params.username, req.params.tag);
-    
-    // const badgesResult = await appService.getBadgesData(req.params.tag);
     
     res.json({
         profile: result,
     });
 
-    // try {
-    //     const followeesCount = followeesResult.rows.length;
-    //     const followersCount = followersResult.rows.length;
-    //     const followingStatus = followingResult.rows.length > 0 ? true : false;
-    //     const age = appUserAgeResult.rows[0][0];
-    
-    //     const badges = badgesResult.rows.map((row) => ({
-    //       name: row[0],
-    //       description: row[1],
-    //       icon_url: row[2],
-    //     }));
-    
-    //     const result = {
-    //       bio: appUserResult.rows[0][0],
-    //       pfp_url: appUserResult.rows[0][1],
-    //       age: age,
-    //       followeesCount: followeesCount,
-    //       followersCount: followersCount,
-    //       followingStatus: followingStatus,
-    //       badges: badges
-    //     };
-
-    //     res.json({
-    //         success: true,
-    //         profile: result,
-    //       });
-    // } catch {
-    //     res.json({
-    //         success: false,
-    //         profile: result,
-    //       });
-    // }
   });
 
 module.exports = router;

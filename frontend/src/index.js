@@ -17,7 +17,6 @@ root.render(
         <Route path="/" element={<Nav />}>
           <Route index element={<Posts />} />
           <Route path="posts" element={<Posts />} />
-          <Route path="failtest" element={<Nothing />} />
           <Route path=":tag" pa element={<Profile />} />
           <Route path="*" element={<Nothing />} />
         </Route>
