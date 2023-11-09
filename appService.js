@@ -132,7 +132,7 @@ async function getPosts() {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsBuffer = [oracledb.BLOB];
     const result = await connection.execute(
-      "SELECT p.*, ap.title, p.image_url FROM Post p, ArtPiece ap WHERE p.piece_id = ap.piece_id"
+      "SELECT p.*, ap.title, p.image_url FROM Post p, ArtPiece ap WHERE p.piece_id = ap.piece_id ORDER BY p.datetime DESC"
     );
     return result.rows.map((row) => ({
       post_id: row[0],
@@ -487,7 +487,7 @@ async function isCommentLiked(post_id, comment_id, username) {
 }
 
 async function createComment(post_id, body) {
-  console.log(body);
+  // console.log(body);
   if (
     !("username" in body) ||
     !("post_id" in body) ||
@@ -501,7 +501,7 @@ async function createComment(post_id, body) {
       [post_id]
     );
     const id = result.rows[0][0] + 1;
-    console.log(id);
+    // console.log(id);
     const insert = await connection.execute(
       `INSERT INTO CommentPost VALUES (:comment_id, :text, :datetime, :age_restricted, :username, :post_id)`,
       [
@@ -527,7 +527,7 @@ async function deleteComment(post_id, comment_id) {
       [post_id, comment_id],
       { autoCommit: true }
     );
-    console.log(`comment ${post_id}.${comment_id} deleted!`);
+    // console.log(`comment ${post_id}.${comment_id} deleted!`);
     return true;
   }).catch(() => {
     return false;

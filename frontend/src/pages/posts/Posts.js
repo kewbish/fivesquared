@@ -6,25 +6,25 @@ import CreatePost from "./CreatePost";
 function Posts() {
     const [posts, setPosts] = useState([]);
 
-    useEffect(() => {
-        const fetchPosts = async () => {
-            const response = await fetch("http://localhost:65535/posts", {
-                method: "GET",
-            });
-            const pjson = await response.json();
-            setPosts(pjson.posts);
-        };
+    const getPosts = async () => {
+        const response = await fetch("http://localhost:65535/posts", {
+            method: "GET",
+        });
+        const pjson = await response.json();
+        setPosts(pjson.posts);
+    };
 
-        fetchPosts();
+    useEffect(() => {
+        getPosts();
     }, []);
 
     return (
         <div className="App">
             <div className="flex justify-center py-10">
                 <div className="w-6/12 flex flex-col gap-10">
-                    <CreatePost/>
+                    <CreatePost onUpdate={getPosts}/>
                     {posts.map((post) => (
-                        <Post post={post} key={post["post_id"]}/>
+                        <Post post={post} onUpdate={getPosts} key={post["post_id"]}/>
                     ))}
                 </div>
             </div>

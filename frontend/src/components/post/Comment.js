@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {useCookies} from "react-cookie";
 import { useNavigate } from "react-router-dom";
 
-function Comment({comment}) {
+function Comment({comment, onUpdate}) {
     const [cookies, setCookie, removeCookie] = useCookies(['login_cookie', 'y_pos']);
     const [likes, setLikes] = useState(0);
     const [liked, setLiked] = useState(false);
@@ -88,6 +88,7 @@ function Comment({comment}) {
                 method: "DELETE",
             });
         const pjson = await response.json();
+        onUpdate();
     }
 
     useEffect(() => {

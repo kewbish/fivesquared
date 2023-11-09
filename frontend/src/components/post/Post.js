@@ -4,7 +4,7 @@ import CreateComment from "./CreateComment";
 import {useCookies} from "react-cookie";
 import { useNavigate } from "react-router-dom";
 
-function Post({post}) {
+function Post({post, onUpdate}) {
     const [cookies, setCookie, removeCookie] = useCookies(['login_cookie', 'y_pos']);
     const [comments, setComments] = useState([]);
     const [likes, setLikes] = useState(0);
@@ -96,6 +96,7 @@ function Post({post}) {
                 method: "DELETE",
             });
         const pjson = await response.json();
+        onUpdate();
     }
 
     const tagClicked = () => {
@@ -170,7 +171,7 @@ function Post({post}) {
                 <hr></hr>
             </div>
             <div>
-                <CreateComment postId={post["post_id"]}/>
+                <CreateComment postId={post["post_id"]} onUpdate={getComments}/>
             </div>
             {comments.length > 0 && <>
                 <div className="pb-4">
@@ -179,7 +180,7 @@ function Post({post}) {
                 <div className="ml-6 flex flex-col justify-center">
                     {comments.map((comment) => (
                             <div>
-                                <Comment comment={comment} key={comment["comment_id"]}/>
+                                <Comment comment={comment} onUpdate={getComments} key={comment["comment_id"]}/>
                                 &nbsp;
                             </div>
                         )
