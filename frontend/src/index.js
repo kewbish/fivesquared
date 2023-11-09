@@ -7,6 +7,7 @@ import Nothing from "./pages/nothing/Nothing";
 import Nav from "./pages/nav/Nav";
 import reportWebVitals from "./reportWebVitals";
 import "preline";
+import Profile from "./pages/profile/Profile";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -17,6 +18,7 @@ root.render(
           <Route index element={<Posts />} />
           <Route path="posts" element={<Posts />} />
           <Route path="failtest" element={<Nothing />} />
+          <Route path=":tag" pa element={<Profile />} />
           <Route path="*" element={<Nothing />} />
         </Route>
       </Routes>

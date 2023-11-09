@@ -9,6 +9,7 @@ function loadEnvFile(filePath) {
             acc[key] = value;
             if (typeof acc[key] !== 'undefined') {
                 acc[key] = acc[key].replace("\r", "");
+                acc[key] = acc[key].replace(" ", "");
             }
             return acc;
         }, {});
