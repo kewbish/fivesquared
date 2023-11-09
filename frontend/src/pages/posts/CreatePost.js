@@ -6,11 +6,11 @@ function CreatePost() {
   const [text, setText] = useState("");
   const [pieceId, setPieceId] = useState(0);
   const [ageRestricted, setAgeRestricted] = useState(false);
-  const [cookies, setCookie, removeCookie] = useCookies(["login_cookie"]);
+  const [cookies, setCookie, removeCookie] = useCookies(['login_cookie', 'y_pos']);
   const fileUploadRef = useRef(null);
 
   const createPost = async () => {
-    const response = await fetch("http://localhost:65535/posts/create", {
+    const response = await fetch("http://localhost:65535/posts", {
       method: "POST",
       body: JSON.stringify({
         username: cookies.login_cookie,

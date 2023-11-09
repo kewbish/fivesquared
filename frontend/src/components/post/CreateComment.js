@@ -4,11 +4,11 @@ import { useCookies } from "react-cookie";
 function CreateComment({ postId }) {
   const [text, setText] = useState("");
   const [ageRestricted, setAgeRestricted] = useState(false);
-  const [cookies, setCookie, removeCookie] = useCookies(['login_cookie']);
+  const [cookies, setCookie, removeCookie] = useCookies(['login_cookie', 'y_pos']);
 
 
   const createComment = async () => {
-    const response = await fetch(`http://localhost:65535/posts/${postId}/comments/create`, {
+    const response = await fetch(`http://localhost:65535/posts/${postId}/comments`, {
       method: "POST",
       body: JSON.stringify({
         username: cookies.login_cookie,
@@ -19,7 +19,6 @@ function CreateComment({ postId }) {
       headers: { "Content-Type": "application/json" },
     });
     const cjson = await response.json();
-    console.log(cjson);
   };
 
   if (!cookies.login_cookie) {

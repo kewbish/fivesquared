@@ -1,5 +1,6 @@
 const oracledb = require("oracledb");
 const loadEnvFile = require("./utils/envUtil");
+const {connectString} = require("oracledb/examples/dbconfig");
 
 const envVariables = loadEnvFile("./.env");
 
@@ -130,7 +131,7 @@ async function verifyLogin(username, password) {
 async function getPosts() {
   return await withOracleDB(async (connection) => {
     const result = await connection.execute(
-      "SELECT p.*, ap.title, to_clob(p.image_url) FROM Post p, ArtPiece ap WHERE p.piece_id = ap.piece_id"
+      "SELECT p.*, ap.title, to_clob(p.image_url) FROM Post p, ArtPiece ap WHERE p.piece_id = ap.piece_id ORDER BY p.datetime DESC"
     );
     oracledb.fetchAsString = [oracledb.CLOB];
     return result.rows.map((row) => ({
@@ -232,10 +233,23 @@ async function createPost(body) {
   });
 }
 
+async function deletePost(post_id) {
+    return await withOracleDB(async (connection) => {
+    await connection.execute(
+      `DELETE FROM Post WHERE post_id = :postId`,
+      [post_id],
+      { autoCommit: true }
+    );
+    return true;
+  }).catch(() => {
+    return false;
+  });
+}
+
 async function getComments(post_id) {
   return await withOracleDB(async (connection) => {
     const result = await connection.execute(
-      `SELECT * FROM CommentPost WHERE post_id = :postId`,
+      `SELECT * FROM CommentPost WHERE post_id = :postId ORDER BY datetime`,
       [post_id]
     );
     return result.rows.map((row) => ({
@@ -337,6 +351,20 @@ async function createComment(post_id, body) {
   });
 }
 
+async function deleteComment(post_id, comment_id) {
+    return await withOracleDB(async (connection) => {
+    await connection.execute(
+      `DELETE FROM CommentPost WHERE post_id = :postId AND comment_id = :commentId`,
+      [post_id, comment_id],
+      { autoCommit: true }
+    );
+    console.log(`comment ${post_id}.${comment_id} deleted!`);
+    return true;
+  }).catch(() => {
+    return false;
+  });
+}
+
 module.exports = {
   testOracleConnection,
   getPosts,
@@ -345,11 +373,13 @@ module.exports = {
   unlikePost,
   isPostLiked,
   createPost,
+  deletePost,
   getComments,
   getCommentLikes,
   likeComment,
   unlikeComment,
   isCommentLiked,
   createComment,
+  deleteComment,
   verifyLogin,
 };

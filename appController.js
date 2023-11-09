@@ -100,8 +100,15 @@ router.get("/posts/:postId/like/:username", async (req, res) => {
   });
 });
 
-router.post("/posts/create", async (req, res) => {
+router.post("/posts", async (req, res) => {
   const result = await appService.createPost(req.body);
+  res.json({
+    success: result,
+  });
+});
+
+router.delete("/posts/:postId", async (req, res) => {
+  const result = await appService.deletePost(req.params['postId']);
   res.json({
     success: result,
   });
@@ -142,9 +149,16 @@ router.get("/posts/:postId/comments/:commentId/like/:username", async (req, res)
   });
 });
 
-router.post("/posts/:postId/comments/create", async (req, res) => {
+router.post("/posts/:postId/comments", async (req, res) => {
   console.log("we are here!");
   const result = await appService.createComment(Number.parseInt(req.params.postId), req.body);
+  res.json({
+    success: result,
+  });
+});
+
+router.delete("/posts/:postId/comments/:commentId", async (req, res) => {
+  const result = await appService.deleteComment(req.params['postId'], req.params['commentId']);
   res.json({
     success: result,
   });

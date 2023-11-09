@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {useCookies} from "react-cookie";
 
 function Comment({comment}) {
-    const [cookies, setCookie, removeCookie] = useCookies(['login_cookie']);
+    const [cookies, setCookie, removeCookie] = useCookies(['login_cookie', 'y_pos']);
     const [likes, setLikes] = useState(0);
     const [liked, setLiked] = useState(false);
     const [loaded, setLoaded] = useState(false);
@@ -74,7 +74,18 @@ function Comment({comment}) {
         );
         const cjson = await response.json();
         setLiked(cjson.success);
-        setLoaded(false);
+        setLoaded(true);
+    }
+
+    const deleteComment = async () => {
+        if (!cookies['login_cookie']) return null;
+
+        const response = await fetch(
+            `http://localhost:65535/posts/${comment["post_id"]}/comments/${comment["comment_id"]}`,
+            {
+                method: "DELETE",
+            });
+        const pjson = await response.json();
     }
 
     useEffect(() => {
@@ -85,7 +96,8 @@ function Comment({comment}) {
     return (
         <div className="w-12/12 flex flex-col bg-white">
             <div className="pr-4 md:pr-4">
-                {comment["text"] &&
+                <div className="flex flex-row items-start justify-between">
+                    {comment["text"] &&
                     (comment["age_restricted"] === 0 ? (
                         <p className="my-1 text-gray-800 ">
                             {comment["text"]}
@@ -93,6 +105,16 @@ function Comment({comment}) {
                     ) : (
                         <p className="my-1 text-gray-800 ">Age restricted.</p>
                     ))}
+                    {(cookies.login_cookie === comment.username) &&
+                        <button
+                            type="button"
+                            className="py-[.344rem] px-2 inline-flex self-end gap-2 rounded-md font-semibold text-gray-400 transition-all"
+                            onClick={deleteComment}
+                        >
+                            🗑
+                        </button>
+                    }
+                </div>
                 <div className="flex flex-row justify-between items-end">
                     <div>
                         <p className="text-gray-400 text-small text-left">

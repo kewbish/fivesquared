@@ -4,7 +4,7 @@ import CreateComment from "./CreateComment";
 import {useCookies} from "react-cookie";
 
 function Post({post}) {
-    const [cookies, setCookie, removeCookie] = useCookies(['login_cookie']);
+    const [cookies, setCookie, removeCookie] = useCookies(['login_cookie', 'y_pos']);
     const [comments, setComments] = useState([]);
     const [likes, setLikes] = useState(0);
     const [liked, setLiked] = useState(false);
@@ -14,8 +14,8 @@ function Post({post}) {
         const response = await fetch("http://localhost:65535/posts/" + post["post_id"] + "/comments", {
             method: "GET",
         });
-        const cjson = await response.json();
-        setComments(cjson.success);
+        const pjson = await response.json();
+        setComments(pjson.success);
     };
 
     const getPostLikes = async () => {
@@ -26,13 +26,13 @@ function Post({post}) {
                 method: "GET"
             }
         );
-        const cjson = await response.json();
-        setLikes(cjson.success);
+        const pjson = await response.json();
+        setLikes(pjson.success);
         setLoaded(true);
     };
 
     const likePost = async () => {
-        if (!cookies.login_cookie) return null;
+        if (!(cookies.login_cookie && cookies.login_cookie === post['username'])) return null;
         const response = await fetch(
             `http://localhost:65535/posts/${post["post_id"]}/like`, {
                 method: "POST",
@@ -40,10 +40,10 @@ function Post({post}) {
                     username: cookies.login_cookie,
                     post_id: post["post_id"]
                 }),
-                headers: { "Content-Type": "application/json" },
+                headers: {"Content-Type": "application/json"},
             });
-        const cjson = await response.json();
-        if (cjson.success) {
+        const pjson = await response.json();
+        if (pjson.success) {
             setLoaded(false);
             await getPostLikes();
             setLiked(true);
@@ -60,10 +60,10 @@ function Post({post}) {
                     username: cookies.login_cookie,
                     post_id: post["post_id"]
                 }),
-                headers: { "Content-Type": "application/json" },
+                headers: {"Content-Type": "application/json"},
             });
-        const cjson = await response.json();
-        if (cjson.success) {
+        const pjson = await response.json();
+        if (pjson.success) {
             setLoaded(false);
             await getPostLikes();
             setLiked(false);
@@ -79,11 +79,21 @@ function Post({post}) {
             `http://localhost:65535/posts/${post["post_id"]}/like/${cookies['login_cookie']}`,
             {
                 method: "GET"
-            }
-        );
-        const cjson = await response.json();
-        setLiked(cjson.success);
+            });
+        const pjson = await response.json();
+        setLiked(pjson.success);
         setLoaded(true);
+    }
+
+    const deletePost = async () => {
+        if (!cookies['login_cookie']) return null;
+
+        const response = await fetch(
+            `http://localhost:65535/posts/${post["post_id"]}`,
+            {
+                method: "DELETE",
+            });
+        const pjson = await response.json();
     }
 
     useEffect(() => {
@@ -101,14 +111,25 @@ function Post({post}) {
                     alt={"Photo of piece ID " + post["piece_id"]}
                 /></>}
             <div className="p-4 md:p-4">
-                {post["text"] &&
+                <div className="flex flex-row items-start justify-between">
+                    {post["text"] &&
                     (post["age_restricted"] === 0 ? (
-                        <p className="my-1 text-gray-800 ">
+                        <p className="my-1 text-gray-800 self-start">
                             {post["text"]} — @ art piece {post["piece_id"]}
                         </p>
                     ) : (
-                        <p className="my-1 text-gray-800 ">Age restricted.</p>
+                        <p className="my-1 text-gray-800 self-start">Age restricted.</p>
                     ))}
+                    {(cookies.login_cookie === post.username) &&
+                        <button
+                            type="button"
+                            className="py-[.344rem] px-2 inline-flex self-end gap-2 rounded-md font-semibold text-gray-400 transition-all"
+                            onClick={deletePost}
+                        >
+                            🗑
+                        </button>
+                    }
+                </div>
                 <div className="flex flex-row justify-between items-end">
                     <div>
                         <div>
@@ -123,9 +144,9 @@ function Post({post}) {
                     <div>
                         <button
                             type="button"
-                            className="py-[.344rem] px-2 inline-flex justify-center items-center gap-2 rounded-md border-2 border-gray-200 font-semibold text-amber-400 hover:bg-amber-200 hover:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 transition-all text-sm "
+                            className="py-[.344rem] px-2 inline-flex justify-center items-center gap-2 rounded-md font-semibold text-gray-400 transition-all"
                         >
-                            ❝❞
+                            {comments.length} 💬
                         </button>
                         &nbsp;&nbsp;
                         <button
