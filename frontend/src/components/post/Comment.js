@@ -123,7 +123,7 @@ function Comment({comment}) {
                 </div>
                 <div className="flex flex-row justify-between items-end">
                     <div>
-                        <p className="text-gray-400 text-small text-left underline">
+                        <p className="text-gray-400 text-small text-left">
                             Commented by <a className="cursor-pointer" onClick={tagClicked}>@{comment["username"]}</a>
                         </p>
                         <p className="text-gray-400 text-small">
