@@ -139,8 +139,8 @@ function Post({post}) {
                 <div className="flex flex-row justify-between items-end">
                     <div>
                         <div>
-                            <p className="text-gray-400 text-small text-left underline cursor-pointer" onClick={tagClicked}>
-                                Posted by @{post["username"]}
+                            <p className="text-gray-400 text-small text-left">
+                                Posted by <a className="cursor-pointer" onClick={tagClicked}>@{post["username"]}</a>
                             </p>
                             <p className="text-gray-400 text-small">
                                 {new Date(post["datetime"]).toGMTString()}
