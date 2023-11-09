@@ -137,11 +137,11 @@ async function getPosts() {
     return result.rows.map((row) => ({
       post_id: row[0],
       text: row[1],
-      datetime: row[3],
-      age_restricted: row[4],
-      username: row[5],
-      image_url: row[9] ? row[9].toString() : "",
-      piece_id: row[8],
+      datetime: row[2],
+      age_restricted: row[3],
+      username: row[4],
+      piece_id: row[7],
+      image_url: row[8] ? row[8].toString() : "",
     }));
   }).catch(() => {
     return [];
@@ -359,11 +359,10 @@ async function createPost(body) {
     const result = await connection.execute("SELECT max(post_id) FROM Post");
     const id = result.rows[0][0] + 1;
     const insert = await connection.execute(
-      `INSERT INTO Post VALUES (:postId, :text, :num_likes, :datetime, :age_restricted, :username, :piece_id, utl_raw.cast_to_raw(:image_url))`,
+      `INSERT INTO Post VALUES (:postId, :text, :datetime, :age_restricted, :username, :piece_id, utl_raw.cast_to_raw(:image_url))`,
       {
         postId: id,
         text: body["text"] || null,
-        num_likes: 0,
         datetime: new Date(),
         age_restricted: body["age_restricted"] || 0,
         username: body["username"],
@@ -400,11 +399,10 @@ async function getComments(post_id) {
     return result.rows.map((row) => ({
       comment_id: row[0],
       text: row[1],
-      num_likes: row[2],
-      datetime: row[3],
-      age_restricted: row[4],
-      username: row[5],
-      post_id: row[6],
+      datetime: row[2],
+      age_restricted: row[3],
+      username: row[4],
+      post_id: row[5],
     }));
   }).catch(() => {
     return [];
@@ -505,11 +503,10 @@ async function createComment(post_id, body) {
     const id = result.rows[0][0] + 1;
     console.log(id);
     const insert = await connection.execute(
-      `INSERT INTO CommentPost VALUES (:comment_id, :text, :num_likes, :datetime, :age_restricted, :username, :post_id)`,
+      `INSERT INTO CommentPost VALUES (:comment_id, :text, :datetime, :age_restricted, :username, :post_id)`,
       [
         id,
         body["text"] || null,
-        0,
         new Date(),
         body["age_restricted"] || 0,
         body["username"],
