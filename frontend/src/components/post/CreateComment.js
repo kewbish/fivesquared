@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 
-function CreateComment({ postId }) {
+function CreateComment({ postId, onUpdate }) {
   const [text, setText] = useState("");
   const [ageRestricted, setAgeRestricted] = useState(false);
   const [cookies, setCookie, removeCookie] = useCookies(['login_cookie', 'y_pos']);
@@ -20,6 +20,8 @@ function CreateComment({ postId }) {
       headers: { "Content-Type": "application/json" },
     });
     const cjson = await response.json();
+    setText("");
+    onUpdate();
   };
 
   const goToLogin = () => {
@@ -50,11 +52,12 @@ function CreateComment({ postId }) {
             <div className="flex justify-between items-center">
               <div>
                 <label className="text-sm text-gray-500">
-                  <input id="hs-default-checkbox"
-                         type="checkbox"
-                         className="w-4 h-4 text-blue-600 border-gray-200 rounded focus:ring-blue-500 focus:ring-2 mr-2"
-                         checked={ageRestricted}
-                         onChange={() => setAgeRestricted((ar) => !ar)}
+                  <input
+                      id="hs-small-switch-soft"
+                      type="checkbox"
+                      className="mr-2 peer relative w-11 h-6 p-px bg-gray-100 border border-gray-200 text-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:ring-blue-600 disabled:opacity-50 disabled:pointer-events-none checked:bg-none checked:text-blue-100 checked:border-blue-200 focus:checked:border-blue-200 before:inline-block before:w-5 before:h-5 before:bg-white checked:before:bg-blue-600 before:translate-x-0 checked:before:translate-x-full before:rounded-full before:transform before:ring-0 before:transition before:ease-in-out before:duration-200"
+                      checked={ageRestricted}
+                      onChange={() => setAgeRestricted((ar) => !ar)}
                   />
                   Age restricted
                 </label>
