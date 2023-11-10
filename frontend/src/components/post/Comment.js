@@ -72,8 +72,7 @@ function Comment({comment, onUpdate}) {
             `http://localhost:65535/posts/${comment["post_id"]}/comments/${comment["comment_id"]}/like/${cookies['login_cookie']}`,
             {
                 method: "GET"
-            }
-        );
+            });
         const cjson = await response.json();
         setLiked(cjson.success);
         setLoaded(true);
@@ -87,18 +86,18 @@ function Comment({comment, onUpdate}) {
             {
                 method: "DELETE",
             });
-        const pjson = await response.json();
+        const cjson = await response.json();
         onUpdate();
+    }
+
+    const tagClicked = () => {
+        navigate("/" + comment["username"]);
     }
 
     useEffect(() => {
         getCommentLikes();
         isCommentLiked();
     }, []);
-
-    const tagClicked = () => {
-        navigate("/" + comment["username"]);
-    }
 
     return (
         <div className="w-12/12 flex flex-col bg-white">
@@ -134,11 +133,14 @@ function Comment({comment, onUpdate}) {
                     <div className="flex justify-between">
                         <button
                             type="button"
-                            className="py-[.344rem] px-2 inline-flex justify-center items-center gap-2 rounded-md font-semibold text-red-400 transition-all"
+                            className={liked ?
+                                "py-[.344rem] px-2 inline-flex justify-center items-center gap-2 rounded-md font-semibold text-red-400 transition-all":
+                                "py-[.344rem] px-2 inline-flex justify-center items-center gap-2 rounded-md font-semibold text-gray-400 transition-all"
+                            }
                             onClick={cookies.login_cookie ? liked ? unlikeComment : likeComment : null}
                             disabled={!loaded}
                         >
-                            {likes} ❤
+                            {likes} {liked ? "❤️" : "🩶"}
                         </button>
                     </div>
                 </div>
