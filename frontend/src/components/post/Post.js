@@ -141,7 +141,7 @@ function Post({post, onUpdate}) {
                     <div>
                         <div>
                             <p className="text-gray-400 text-small text-left">
-                                Posted by <a className="cursor-pointer" onClick={tagClicked}>@{post["username"]}</a>
+                                Posted by <a className="cursor-pointer underline" onClick={tagClicked}>@{post["username"]}</a>
                             </p>
                             <p className="text-gray-400 text-small">
                                 {new Date(post["datetime"]).toGMTString()}

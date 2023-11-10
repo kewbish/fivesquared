@@ -9,6 +9,7 @@ import Login from "./pages/login/Login";
 import reportWebVitals from "./reportWebVitals";
 import "preline";
 import Profile from "./pages/profile/Profile";
+import Signup from "./pages/signup/Signup";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -19,6 +20,7 @@ root.render(
           <Route index element={<Posts />} />
           <Route path="posts" element={<Posts />} />
           <Route path="login" element={<Login />} />
+          <Route path="signup" element={<Signup />} />
           <Route path=":tag" pa element={<Profile />} />
           <Route path="*" element={<Nothing />} />
         </Route>

@@ -28,6 +28,7 @@ const Nav = () => {
         <a href="/posts">Posts</a>
         {loggedIn ? <a href={cookies[cookieName]}>Profile</a> : <></>}
         {!loggedIn ? <a href="/login">Log in</a> : <></>}
+        {!loggedIn ? <a href="/signup">Sign up</a> : <></>}
         {loggedIn ? <button onClick={onLogOutClick}>Log Out</button> : <></>}
       </div>
 

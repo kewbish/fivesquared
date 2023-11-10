@@ -125,7 +125,7 @@ function Comment({comment, onUpdate}) {
                 <div className="flex flex-row justify-between items-end">
                     <div>
                         <p className="text-gray-400 text-small text-left">
-                            Commented by <a className="cursor-pointer" onClick={tagClicked}>@{comment["username"]}</a>
+                            Commented by <a className="cursor-pointer underline" onClick={tagClicked}>@{comment["username"]}</a>
                         </p>
                         <p className="text-gray-400 text-small">
                             {new Date(comment["datetime"]).toGMTString()}

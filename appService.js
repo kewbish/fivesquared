@@ -128,6 +128,36 @@ async function verifyLogin(username, password) {
   });
 }
 
+async function signup(username, password, bio, dob, img_url, age) {
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute("SELECT * FROM AppUserAge WHERE dob = TO_DATE(:dob, 'YYYY-MM-DD')",
+    [dob],
+    { autoCommit: true }
+    );
+    if (result.rows.length === 0) {
+      await connection.execute(
+        `INSERT INTO AppUserAge VALUES (TO_DATE(:dob, 'YYYY-MM-DD'), :age)`,
+        [dob, age],
+        { autoCommit: true }
+      );
+    }
+
+    let result2 = await connection.execute(
+      `INSERT INTO AppUser VALUES (:username, :bio, 'deprecated', TO_DATE(:dob, 'YYYY-MM-DD'), :password, utl_raw.cast_to_raw(:image_url))`,
+      [username, bio, dob, password, img_url],
+      { autoCommit: true }
+    );
+
+    if (result2.errorNum) {
+      return false;
+    }
+
+    return true;
+  }).catch(() => {
+    return false;
+  });
+}
+
 async function getPosts() {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsBuffer = [oracledb.BLOB];
@@ -294,7 +324,7 @@ async function getBadgesData(tag) {
 async function getProfile(username, tag) {
   return await withOracleDB(async (connection) => {
 
-    const appUserResult = await connection.execute(`SELECT bio, pfp_url FROM AppUser WHERE username = :tag`,
+    const appUserResult = await connection.execute(`SELECT bio, utl_raw.cast_to_varchar2(dbms_lob.substr(pfp_blob)) FROM AppUser WHERE username = :tag`,
     [tag],
     { autoCommit: true });
 
@@ -554,4 +584,5 @@ module.exports = {
   getProfile,
   follow,
   unfollow,
+  signup,
 };

@@ -23,6 +23,7 @@ function CreatePost({onUpdate}) {
             }),
             headers: {"Content-Type": "application/json"},
         });
+        console.log("imageUrl:", imageUrl)
         const pjson = await response.json();
         setText("");
         setImageUrl("");

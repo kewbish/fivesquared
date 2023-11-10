@@ -17,6 +17,7 @@ const Profile = () => {
                     method: "GET",
                 });
                 const pjson = await response.json();
+                console.log("PJSON:", pjson);
                 setProfileData(pjson.profile);
                 if (pjson.profile) {
                   setFollowing(pjson.profile.followingStatus);

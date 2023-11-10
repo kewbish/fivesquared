@@ -100,7 +100,7 @@ function Login() {
 
           <p className="mt-10 text-center text-sm text-gray-500">
             Not a member?{' '}
-            <a href="#" className="font-semibold leading-6 text-blue-500 hover:text-blue-500">
+            <a href="/signup" className="font-semibold leading-6 text-blue-500 hover:text-blue-500">
               Sign up now
             </a>
           </p>

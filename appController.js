@@ -175,6 +175,25 @@ router.post("/login/verify/", async (req, res) => {
     });
 });
 
+router.post("/signup", async (req, res) => {
+  username = req.body.username;
+  password = req.body.password;
+  bio = req.body.bio;
+  dob = req.body.dob;
+  img_url = req.body.img_url;
+
+  let bday = Date.parse(dob);
+  let now = new Date();
+  let diff = now-bday;
+  let age = Math.floor(diff/31557600000);
+
+  const result = await appService.signup(username, password, bio, dob, img_url, age);
+
+  res.json({
+     success: result
+  });
+});
+
 router.post("/follow/:username/:tag", async (req, res) => {
   const result = await appService.follow(req.params.username, req.params.tag);
 
