@@ -34,7 +34,8 @@ function Post({post, onUpdate}) {
     const navigate = useNavigate();
 
     const likePost = async () => {
-        if (!(cookies.login_cookie && cookies.login_cookie === post['username'])) return null;
+        if (!cookies.login_cookie) return null;
+        console.log("liked!");
         const response = await fetch(
             `http://localhost:65535/posts/${post["post_id"]}/like`, {
                 method: "POST",
@@ -55,6 +56,7 @@ function Post({post, onUpdate}) {
 
     const unlikePost = async () => {
         if (!cookies.login_cookie) return null;
+        console.log("unliked!");
         const response = await fetch(
             `http://localhost:65535/posts/${post["post_id"]}/like`, {
                 method: "DELETE",
@@ -158,11 +160,14 @@ function Post({post, onUpdate}) {
                         &nbsp;&nbsp;
                         <button
                             type="button"
-                            className="py-[.344rem] px-2 inline-flex justify-center items-center gap-2 rounded-md font-semibold text-red-400 transition-all"
-                            onClick={cookies.login_cookie ? liked ? unlikePost : likePost : null}
+                            className={liked ?
+                                "py-[.344rem] px-2 inline-flex justify-center items-center gap-2 rounded-md font-semibold text-red-400 transition-all":
+                                "py-[.344rem] px-2 inline-flex justify-center items-center gap-2 rounded-md font-semibold text-gray-400 transition-all"
+                            }
+                            onClick={cookies.login_cookie ? (liked ? unlikePost : likePost) : null}
                             disabled={!loaded}
                         >
-                            {likes} ❤
+                            {likes} {liked ? "❤️" : "🩶"}
                         </button>
                     </div>
                 </div>
