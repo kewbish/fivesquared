@@ -220,4 +220,13 @@ router.get("/profile/:username/:tag", async (req, res) => {
 
   });
 
+  router.get("/search/profiles/:term", async (req, res) => {
+    const result = await appService.getProfiles(req.params.term);
+    
+    res.json({
+        profile: result,
+    });
+
+  });  
+
 module.exports = router;

@@ -5,9 +5,10 @@ import { useState } from 'react';
 
 const Nav = () => {
   const [loggedIn, setLoggedIn] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const [cookies, setCookie, removeCookie] = useCookies(['login_cookie']);
   const cookieName = 'login_cookie';
-  const navigate = useNavigate
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!!cookies[cookieName]) {
@@ -21,9 +22,17 @@ const Nav = () => {
     removeCookie(['login_cookie']);
   }
 
-  const goHome = () => {
-    navigate("/posts");
+  const search = () => {
+    if (searchTerm !== "") {
+      navigate("/search/" + searchTerm);
+    }
   }
+
+  const handleKeyPress = (e) => {
+    if(e.key == 'Enter'){
+       search();
+     }
+   }
 
   return (
     <>
@@ -49,9 +58,9 @@ const Nav = () => {
             <div class="relative mx-auto text-gray-600 lg:block hidden">
 
                 <input
-                    class="border-2 border-gray-300 bg-white h-10 pl-2 pr-8 rounded-lg text-sm focus:outline-none"
+                    onKeyDown={handleKeyPress} onChange={(e) => setSearchTerm(e.target.value)} class="border-2 border-gray-300 bg-white h-10 pl-2 pr-8 rounded-lg text-sm focus:outline-none"
                     type="search" name="search" placeholder="Search"/>
-                <button type="submit" class="absolute right-0 top-0 mt-3 mr-2">
+                <button onClick={search} type="submit" class="absolute right-0 top-0 mt-3 mr-2">
                     <svg class="text-gray-600 h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg"
                          version="1.1" id="Capa_1" x="0px" y="0px"
                          viewBox="0 0 56.966 56.966" 

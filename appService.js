@@ -377,6 +377,25 @@ async function getProfile(username, tag) {
   });
 }
 
+async function getProfiles(term) {
+  return await withOracleDB(async (connection) => {
+    let pattern = "%" + term + "%";
+
+    const result = await connection.execute(`SELECT bio, utl_raw.cast_to_varchar2(dbms_lob.substr(pfp_blob)), username FROM AppUser WHERE username LIKE  :pattern`,
+    [pattern],
+    { autoCommit: true });
+
+    return result.rows.map((row) => ({
+      bio: row[0],
+      pfp_url: row[1],
+      username: row[2],
+    }));
+
+  }).catch(() => {
+    return null;
+  });
+}
+
 async function createPost(body) {
   if (
     // !("image_url" in body) ||
@@ -585,4 +604,5 @@ module.exports = {
   follow,
   unfollow,
   signup,
+  getProfiles,
 };
