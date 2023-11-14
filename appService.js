@@ -290,6 +290,96 @@ async function isPostLiked(post_id, username) {
   });
 }
 
+async function getAppUserData(tag) {
+  return await withOracleDB(async (connection) => {
+    oracledb.fetchAsString = [oracledb.CLOB];
+    const appUserResult = await connection.execute(
+      `SELECT bio, pfp_url FROM AppUser WHERE username = :tag`,
+      [tag],
+      { autoCommit: true }
+    );
+
+    return appUserResult;
+  }).catch(() => {
+    return null;
+  });
+}
+
+async function getAppUserAge(tag) {
+  return await withOracleDB(async (connection) => {
+    const appUserAgeResult = await connection.execute(
+      `SELECT age FROM AppUser au, AppUserAge aug WHERE au.username = :tag AND au.dob = aug.dob`,
+      [tag],
+      { autoCommit: true }
+    );
+    await new Promise((r) => setTimeout(r, 100));
+
+    return appUserAgeResult;
+  }).catch(() => {
+    return null;
+  });
+}
+
+async function getfolloweesData(tag) {
+  return await withOracleDB(async (connection) => {
+    const followeesResult = await connection.execute(
+      `SELECT * FROM Follows WHERE follower = :tag`,
+      [tag],
+      { autoCommit: true }
+    );
+    await new Promise((r) => setTimeout(r, 100));
+
+    return followeesResult;
+  }).catch(() => {
+    return null;
+  });
+}
+
+async function getFollowersData(tag) {
+  return await withOracleDB(async (connection) => {
+    const followersResult = await connection.execute(
+      `SELECT * FROM Follows WHERE followee = :tag`,
+      [tag],
+      { autoCommit: true }
+    );
+    await new Promise((r) => setTimeout(r, 100));
+
+    return followersResult;
+  }).catch(() => {
+    return null;
+  });
+}
+
+async function getFollowingData(username, tag) {
+  return await withOracleDB(async (connection) => {
+    const followingResult = await connection.execute(
+      `SELECT * FROM Follows WHERE followee = :tag AND follower = :username`,
+      [username, tag],
+      { autoCommit: true }
+    );
+    await new Promise((r) => setTimeout(r, 100));
+
+    return followingResult;
+  }).catch(() => {
+    return null;
+  });
+}
+
+async function getBadgesData(tag) {
+  return await withOracleDB(async (connection) => {
+    const badgesResult = await connection.execute(
+      `SELECT name, description, icon_url FROM Badge b, Earns e WHERE e.username = :tag AND e.badge_name = b.name`,
+      [tag],
+      { autoCommit: true }
+    );
+    await new Promise((r) => setTimeout(r, 100));
+
+    return badgesResult;
+  }).catch(() => {
+    return null;
+  });
+}
+
 async function getProfile(username, tag) {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];

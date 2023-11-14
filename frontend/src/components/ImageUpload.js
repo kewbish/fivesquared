@@ -12,7 +12,7 @@ const ImageUpload = ({ setImageUrl }) => {
     }
     setLoading(true);
     const compressedFile = await imageCompression(files[0], {
-      maxSizeMB: 0.002,
+      maxSizeMB: 0.0015,
       useWebWorker: true,
     });
     const fileReader = new FileReader();
