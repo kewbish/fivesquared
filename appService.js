@@ -342,7 +342,9 @@ async function getProfile(username, tag) {
 
     const result = {
       bio: appUserResult.rows[0][0],
-      pfp_url: appUserResult.rows[0][1] || "https://placehold.co/400x400/grey/white?text=pfp",
+      pfp_url:
+        appUserResult.rows[0][1] ||
+        "https://placehold.co/400x400/grey/white?text=pfp",
       age: age,
       followeesCount: followeesCount,
       followersCount: followersCount,
