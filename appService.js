@@ -168,9 +168,9 @@ async function signup(username, password, bio, dob, img_url, age) {
 
 async function getPosts() {
   return await withOracleDB(async (connection) => {
-    oracledb.fetchAsBuffer = [oracledb.BLOB];
+    oracledb.fetchAsString = [oracledb.CLOB];
     const result = await connection.execute(
-      "SELECT p.*, ap.title, p.image_url FROM Post p, ArtPiece ap WHERE p.piece_id = ap.piece_id ORDER BY p.datetime DESC"
+      "SELECT p.post_id, p.text, p.datetime, p.age_restricted, p.username, ap.title, p.image_url FROM Post p, ArtPiece ap WHERE p.piece_id = ap.piece_id ORDER BY p.datetime DESC"
     );
     return result.rows.map((row) => ({
       post_id: row[0],
@@ -178,8 +178,8 @@ async function getPosts() {
       datetime: row[2],
       age_restricted: row[3],
       username: row[4],
-      piece_id: row[7],
-      image_url: row[8] ? row[8].toString() : "",
+      piece_id: row[5],
+      image_url: row[6] || "",
     }));
   }).catch(() => {
     return [];
@@ -427,7 +427,7 @@ async function createPost(body) {
     const result = await connection.execute("SELECT max(post_id) FROM Post");
     const id = result.rows[0][0] + 1;
     const insert = await connection.execute(
-      `INSERT INTO Post VALUES (:postId, :text, :datetime, :age_restricted, :username, :piece_id, utl_raw.cast_to_raw(:image_url))`,
+      `INSERT INTO Post VALUES (:postId, :text, :datetime, :age_restricted, :username, :piece_id, :image_url)`,
       {
         postId: id,
         text: body["text"] || null,
@@ -435,7 +435,7 @@ async function createPost(body) {
         age_restricted: body["age_restricted"] || 0,
         username: body["username"],
         piece_id: body["piece_id"],
-        image_url: body["image_url"],
+        image_url: { val: body["image_url"], type: oracledb.CLOB },
       },
       { autoCommit: true }
     );

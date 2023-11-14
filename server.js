@@ -12,7 +12,7 @@ const PORT = envVariables.PORT || 65534; // Adjust the PORT if needed (e.g., if 
 
 // Middleware setup
 // app.use(express.static('public'));  // don't serve static files, we're using react instead
-app.use(express.json()); // Parse incoming JSON payloads
+app.use(express.json({ limit: "50mb" })); // Parse incoming JSON payloads
 app.use(cors());
 
 // If you prefer some other file as default page other than 'index.html',
