@@ -59,6 +59,10 @@ function Signup() {
     fileReader.readAsDataURL(files[0]);
 };
 
+  // NOTE: As was explicitly discussed and permitted by our TA Terry during the Milestone 3 review, we have based parts of the following component around
+  // a component library example: https://tailwindui.com/components/application-ui/forms/sign-in-forms . The code was not auto-generated, and we made significant
+  // changes to the template to style it with our project's specific goals.
+
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 ">

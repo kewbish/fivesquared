@@ -34,6 +34,9 @@ const Nav = () => {
      }
    }
 
+  // NOTE: As was explicitly discussed and permitted by our TA Terry during the Milestone 3 review, we have based parts of the following component around
+  // a component library example: https://tailwindcomponents.com/component/responsive-navbar-2 . The code was not auto-generated, and we made significant
+  // changes to the template to style it with our project's specific goals.
   return (
     <>
 <nav

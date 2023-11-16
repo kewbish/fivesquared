@@ -1,20 +1,9 @@
 function ProfileResultCard({profileData}) {
 
-
+  // NOTE: As was explicitly discussed and permitted by our TA Terry during the Milestone 3 review, we have based parts of the following component around
+  // a component library example: https://freefrontend.com/tailwind-profiles/ . The code was not auto-generated, and we made significant
+  // changes to the template to style it with our project's specific goals.
     return(
-//         <div class="flex flex-col items-start space-y-4 sm:flex-row sm:space-y-0 sm:space-x-6 p-4 border rounded-lg">
-//     <img class="object-cover w-20 h-20 mt-3 mr-3 rounded-full" src={profileData.pfp_url} />
-//     <div>
-//         <p class="font-display mb-2 text-2xl font-semibold text-black" itemprop="author">
-//             <a href="#" rel="author">{profileData.username}</a>
-//         </p>
-//         <div class="mb-4 prose prose-sm text-gray-400">
-//             <p>{profileData.bio}</p>
-//         </div>
-
-//     </div>
-// </div>
-
 <div className="flex flex-col justify-center max-w-xs p-6 shadow-md rounded-xl sm:px-12 bg-gray-50 text-gray-900">
 	<img src={profileData.pfp_url} alt="" className="w-32 h-32 mx-auto rounded-full bg-gray-500 aspect-square" />
 	<div className="space-y-4 text-center divide-y dark:divide-gray-700">

@@ -60,6 +60,9 @@ const Profile = () => {
         );
     } else if (profileData) {
         console.log(profileData);
+        // NOTE: As was explicitly discussed and permitted by our TA Terry during the Milestone 3 review, we have based parts of the following component around
+        // a component library example: https://freefrontend.com/tailwind-profiles/ . The code was not auto-generated, and we made significant
+        // changes to the template to style it with our project's specific goals.
         return (
             <div class="p-16">
 <div class="p-8 bg-white border shadow-sm rounded-xl mt-24">
