@@ -21,3 +21,5 @@ Thumbs.db
 *.lnk
 
 local-start.sh
+
+frontend/public/dist/output.css

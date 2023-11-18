@@ -121,37 +121,23 @@ const Profile = () => {
                 style={{ backgroundImage: `url(${profileData.pfp_url})` }}
               ></div>
             </div>
+          </div>
 
-            <div class="mt-20 text-center pb-12">
-              <h1 class="text-4xl font-medium text-gray-700">
-                {tag},{" "}
-                <span class="font-light text-gray-500">{profileData.age}</span>
-              </h1>
-              <p class="font-light text-gray-600 mt-3">{profileData.bio}</p>
+          <div class="mt-20 text-center pb-12">
+            <h1 class="text-4xl font-medium text-gray-700">
+              {tag},{" "}
+              <span class="font-light text-gray-500">{profileData.age}</span>
+            </h1>
+            <p class="font-light text-gray-600 mt-3">{profileData.bio}</p>
+          </div>
 
-              <p class="mt-8 text-gray-500">
-                (We could put recent posts here once we make up an endpoint for
-                specific user posts. Didn't want to touch this right now while
-                you guys are working on other posts functionality.)
-              </p>
-            </div>
-
-            <div class="mt-20 text-center pb-12">
-              <h1 class="text-4xl font-medium text-gray-700">
-                {tag},{" "}
-                <span class="font-light text-gray-500">{profileData.age}</span>
-              </h1>
-              <p class="font-light text-gray-600 mt-3">{profileData.bio}</p>
-
-              {/* <p class="mt-8 text-gray-500">(We could put recent posts here once we make up an endpoint for specific user posts. Didn't want to touch this right now while you guys are working on other posts functionality.)</p> */}
-            </div>
-
-            <div class="mt-12 flex flex-col justify-center gap-5">
+          <div className="flex justify-center">
+            <div class="flex flex-col gap-5 w-3/5">
               <h2 class="font-bold text-center text-gray-800">Recent Posts</h2>
               {posts.map((post) => (
                 <Post post={post} onUpdate={getPosts} key={post["post_id"]} />
               ))}
-              {posts.length == 0 ? (
+              {posts.length === 0 ? (
                 <div className="p-2 text-center">
                   <h2 className="text-gray-800">
                     {/*Should add the ability to click this to log in*/}

@@ -1000,6 +1000,14 @@ select {
   width: 100%;
 }
 
+.w-60 {
+  width: 15rem;
+}
+
+.w-3\/5 {
+  width: 60%;
+}
+
 .min-w-fit {
   min-width: -webkit-fit-content;
   min-width: -moz-fit-content;
