@@ -561,13 +561,18 @@ async function assignBadges(username) {
     );
     const already_earned = already_earned_rows.rows.map((row) => row[0]);
     const post_counts = (
-      await connection.execute("SELECT count(post_id) FROM Post")
+      await connection.execute(
+        "SELECT count(post_id) FROM Post WHERE username = :username",
+        [username]
+      )
     ).rows[0][0];
     const post_from_location = await connection.execute(
-      "SELECT count(p.post_id) FROM Post p, ArtPiece ap, Collection c WHERE p.piece_id = ap.piece_id AND ap.collection_title = c.title AND ap.collection_curator = c.curator GROUP BY c.location_name HAVING count(p.post_id) > 3"
+      "SELECT count(p.post_id) FROM Post p, ArtPiece ap, Collection c WHERE p.piece_id = ap.piece_id AND ap.collection_title = c.title AND ap.collection_curator = c.curator AND p.username = :username GROUP BY c.location_name HAVING count(p.post_id) > 3",
+      [username]
     );
     const locations = await connection.execute(
-      "SELECT count(c.location_name) FROM Post p, ArtPiece ap, Collection c WHERE p.piece_id = ap.piece_id AND ap.collection_title = c.title AND ap.collection_curator = c.curator"
+      "SELECT count(c.location_name) FROM Post p, ArtPiece ap, Collection c WHERE p.piece_id = ap.piece_id AND ap.collection_title = c.title AND ap.collection_curator = c.curator AND p.username = :username",
+      [username]
     );
     if (post_counts >= 3 && !already_earned.includes("Enthusiast")) {
       award("Enthusiast");
