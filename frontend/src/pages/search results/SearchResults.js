@@ -44,8 +44,8 @@ const SearchResults = () => {
         {/* We can have different sections on this page, the below div for profiles, 
             one for art pieces, etc. Such that the different things are all displayed on this page 
             in separate vertical chunks. */}
-        <body class="px-10 py-20">
-        <h2 className="text-xl font-semibold sm:text-2xl margin-bottom: 10px">Profile Results:</h2>
+        <body class="px-10 py-20 gap-5">
+          <h2 className="text-xl font-semibold sm:text-2xl mb-4 text-center">Profile Results</h2>
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
             {profileResults.map((profile) => (
               <ProfileResultCard profileData={profile} />
