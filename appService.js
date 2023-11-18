@@ -151,8 +151,14 @@ async function signup(username, password, bio, dob, img_url, age) {
     }
 
     let result2 = await connection.execute(
-      `INSERT INTO AppUser VALUES (:username, :bio, 'deprecated', TO_DATE(:dob, 'YYYY-MM-DD'), :password, utl_raw.cast_to_raw(:image_url))`,
-      [username, bio, dob, password, img_url],
+      `INSERT INTO AppUser VALUES (:username, :bio, TO_DATE(:dob, 'YYYY-MM-DD'), :password, :image_url)`,
+      {
+        username: username,
+        bio: bio,
+        dob: dob,
+        password: password,
+        image_url: { val: img_url, type: oracledb.CLOB },
+      },
       { autoCommit: true }
     );
 
@@ -240,99 +246,11 @@ async function isPostLiked(post_id, username) {
   });
 }
 
-async function getAppUserData(tag) {
-  return await withOracleDB(async (connection) => {
-    const appUserResult = await connection.execute(
-      `SELECT bio, pfp_url FROM AppUser WHERE username = :tag`,
-      [tag],
-      { autoCommit: true }
-    );
-
-    return appUserResult;
-  }).catch(() => {
-    return null;
-  });
-}
-
-async function getAppUserAge(tag) {
-  return await withOracleDB(async (connection) => {
-    const appUserAgeResult = await connection.execute(
-      `SELECT age FROM AppUser au, AppUserAge aug WHERE au.username = :tag AND au.dob = aug.dob`,
-      [tag],
-      { autoCommit: true }
-    );
-    await new Promise((r) => setTimeout(r, 100));
-
-    return appUserAgeResult;
-  }).catch(() => {
-    return null;
-  });
-}
-
-async function getfolloweesData(tag) {
-  return await withOracleDB(async (connection) => {
-    const followeesResult = await connection.execute(
-      `SELECT * FROM Follows WHERE follower = :tag`,
-      [tag],
-      { autoCommit: true }
-    );
-    await new Promise((r) => setTimeout(r, 100));
-
-    return followeesResult;
-  }).catch(() => {
-    return null;
-  });
-}
-
-async function getFollowersData(tag) {
-  return await withOracleDB(async (connection) => {
-    const followersResult = await connection.execute(
-      `SELECT * FROM Follows WHERE followee = :tag`,
-      [tag],
-      { autoCommit: true }
-    );
-    await new Promise((r) => setTimeout(r, 100));
-
-    return followersResult;
-  }).catch(() => {
-    return null;
-  });
-}
-
-async function getFollowingData(username, tag) {
-  return await withOracleDB(async (connection) => {
-    const followingResult = await connection.execute(
-      `SELECT * FROM Follows WHERE followee = :tag AND follower = :username`,
-      [username, tag],
-      { autoCommit: true }
-    );
-    await new Promise((r) => setTimeout(r, 100));
-
-    return followingResult;
-  }).catch(() => {
-    return null;
-  });
-}
-
-async function getBadgesData(tag) {
-  return await withOracleDB(async (connection) => {
-    const badgesResult = await connection.execute(
-      `SELECT name, description, icon_url FROM Badge b, Earns e WHERE e.username = :tag AND e.badge_name = b.name`,
-      [tag],
-      { autoCommit: true }
-    );
-    await new Promise((r) => setTimeout(r, 100));
-
-    return badgesResult;
-  }).catch(() => {
-    return null;
-  });
-}
-
 async function getProfile(username, tag) {
   return await withOracleDB(async (connection) => {
+    oracledb.fetchAsString = [oracledb.CLOB];
     const appUserResult = await connection.execute(
-      `SELECT bio, utl_raw.cast_to_varchar2(dbms_lob.substr(pfp_blob)) FROM AppUser WHERE username = :tag`,
+      `SELECT bio, pfp_clob FROM AppUser WHERE username = :tag`,
       [tag],
       { autoCommit: true }
     );
@@ -380,7 +298,7 @@ async function getProfile(username, tag) {
 
     const result = {
       bio: appUserResult.rows[0][0],
-      pfp_url: appUserResult.rows[0][1],
+      pfp_url: appUserResult.rows[0][1] || "https://placehold.co/400x400/grey/white?text=pfp",
       age: age,
       followeesCount: followeesCount,
       followersCount: followersCount,
@@ -398,16 +316,16 @@ async function getProfile(username, tag) {
 async function getProfiles(term) {
   return await withOracleDB(async (connection) => {
     let pattern = "%" + term + "%";
-
+    oracledb.fetchAsString = [oracledb.CLOB];
     const result = await connection.execute(
-      `SELECT bio, utl_raw.cast_to_varchar2(dbms_lob.substr(pfp_blob)), username FROM AppUser WHERE username LIKE  :pattern`,
+      `SELECT bio, pfp_clob, username FROM AppUser WHERE username LIKE  :pattern`,
       [pattern],
       { autoCommit: true }
     );
 
     return result.rows.map((row) => ({
       bio: row[0],
-      pfp_url: row[1],
+      pfp_url: row[1] || "https://placehold.co/400x400/grey/white?text=pfp",
       username: row[2],
     }));
   }).catch(() => {
