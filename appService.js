@@ -519,10 +519,64 @@ async function createPost(body) {
       },
       { autoCommit: true }
     );
+    assignBadges(body["username"]);
     return true;
   }).catch(() => {
     return false;
   });
+}
+
+async function assignBadges(username) {
+  const award = async (badge_name) => {
+    return await withOracleDB(async (connection) => {
+      await connection.execute(
+        `INSERT INTO Earns VALUES (:username, :badge_name)`,
+        {
+          username,
+          badge_name: badge_name,
+        },
+        { autoCommit: true }
+      );
+    });
+  };
+
+  return await withOracleDB(async (connection) => {
+    // reducing counts so data population is less painful
+    // enthusiast => 3
+    // explorer => 5
+    // connoisseur => 10
+    // collector => 3 from one location
+    // explorer => 3 diff locations location
+    const already_earned_rows = await connection.execute(
+      "SELECT badge_name FROM Earns WHERE username = :username",
+      [username]
+    );
+    const already_earned = already_earned_rows.rows.map((row) => row[0]);
+    const post_counts = (
+      await connection.execute("SELECT count(post_id) FROM Post")
+    ).rows[0][0];
+    const post_from_location = await connection.execute(
+      "SELECT count(p.post_id) FROM Post p, ArtPiece ap, Collection c WHERE p.piece_id = ap.piece_id AND ap.collection_title = c.title AND ap.collection_curator = c.curator GROUP BY c.location_name HAVING count(p.post_id) > 3"
+    );
+    const locations = await connection.execute(
+      "SELECT count(c.location_name) FROM Post p, ArtPiece ap, Collection c WHERE p.piece_id = ap.piece_id AND ap.collection_title = c.title AND ap.collection_curator = c.curator"
+    );
+    if (post_counts >= 3 && !already_earned.includes("Enthusiast")) {
+      award("Enthusiast");
+    }
+    if (post_counts >= 5 && !already_earned.includes("Explorer")) {
+      award("Explorer");
+    }
+    if (post_counts >= 10 && !already_earned.includes("Connoisseur")) {
+      award("Connoisseur");
+    }
+    if (post_from_location.rows.length >= 1) {
+      award("Collector");
+    }
+    if (locations.rows.length >= 3) {
+      award("Explorer");
+    }
+  }).catch(() => {});
 }
 
 async function deletePost(post_id) {
