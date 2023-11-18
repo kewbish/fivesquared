@@ -135,7 +135,29 @@ async function verifyLogin(username, password) {
   });
 }
 
+async function uploadImage(image_contents) {
+  const form = new FormData();
+  form.append(
+    "image",
+    image_contents.replace(/^data:image\/(png|jpg|jpeg);base64,/, "")
+  );
+  const image_req = await fetch("https://api.imgur.com/3/image", {
+    method: "POST",
+    headers: { Authorization: "Client-ID c3fc6d6a9597073" },
+    body: form,
+  });
+  const resp = await image_req.json();
+  if (!("data" in resp) || !("link" in resp["data"])) {
+    return "";
+  }
+  return resp["data"]["link"];
+}
+
 async function signup(username, password, bio, dob, img_url, age) {
+  const link = uploadImage(img_url);
+  if (!link) {
+    return false;
+  }
   return await withOracleDB(async (connection) => {
     const result = await connection.execute(
       "SELECT * FROM AppUserAge WHERE dob = TO_DATE(:dob, 'YYYY-MM-DD')",
@@ -153,11 +175,11 @@ async function signup(username, password, bio, dob, img_url, age) {
     let result2 = await connection.execute(
       `INSERT INTO AppUser VALUES (:username, :bio, TO_DATE(:dob, 'YYYY-MM-DD'), :password, :image_url)`,
       {
-        username: username,
-        bio: bio,
-        dob: dob,
-        password: password,
-        image_url: { val: img_url, type: oracledb.CLOB },
+        username,
+        bio,
+        dob,
+        password,
+        image_url: { val: link, type: oracledb.CLOB },
       },
       { autoCommit: true }
     );
@@ -477,6 +499,10 @@ async function createPost(body) {
   ) {
     return false;
   }
+  const link = uploadImage(body["image_url"]);
+  if (!link) {
+    return false;
+  }
   return await withOracleDB(async (connection) => {
     const result = await connection.execute("SELECT max(post_id) FROM Post");
     const id = result.rows[0][0] + 1;
@@ -489,7 +515,7 @@ async function createPost(body) {
         age_restricted: body["age_restricted"] || 0,
         username: body["username"],
         piece_id: body["piece_id"],
-        image_url: { val: body["image_url"], type: oracledb.CLOB },
+        image_url: { val: link, type: oracledb.CLOB },
       },
       { autoCommit: true }
     );
