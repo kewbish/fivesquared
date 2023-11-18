@@ -2,13 +2,15 @@ import { useParams } from 'react-router-dom'
 import { useCookies } from "react-cookie";
 import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import Post from "../../components/post/Post";
 
 const Profile = () => {
-    const [cookies, setCookie, removeCookie] = useCookies(["login_cookie"]);
+    const [cookies] = useCookies(["login_cookie"]);
     const [profileData, setProfileData] = useState(null);
     const [following, setFollowing] = useState(false);
     const { tag } = useParams();
     const navigate = useNavigate();
+    const [posts, setPosts] = useState([]);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -17,7 +19,6 @@ const Profile = () => {
                     method: "GET",
                 });
                 const pjson = await response.json();
-                console.log("PJSON:", pjson);
                 setProfileData(pjson.profile);
                 if (pjson.profile) {
                   setFollowing(pjson.profile.followingStatus);
@@ -27,6 +28,22 @@ const Profile = () => {
 
         fetchProfile();
     }, [following]);
+
+    const getPosts = async () => {
+      console.log("Running getPosts");
+      const response = await fetch(`http://localhost:65535/posts/${tag}`, {
+          method: "GET",
+      });
+      console.log("Got response");
+      console.log(response);
+      const pjson = await response.json();
+      setPosts(pjson.posts);
+      console.log(pjson.posts);
+    };
+
+    useEffect(() => {
+      getPosts();
+    }, []);
 
     const followToggle = async () => {
       if (following) {
@@ -59,7 +76,6 @@ const Profile = () => {
           </div>
         );
     } else if (profileData) {
-        console.log(profileData);
         // NOTE: As was explicitly discussed and permitted by our TA Terry during the Milestone 3 review, we have based parts of the following component around
         // a component library example: https://freefrontend.com/tailwind-profiles/ . The code was not auto-generated, and we made significant
         // changes to the template to style it with our project's specific goals.
@@ -101,17 +117,21 @@ const Profile = () => {
     <h1 class="text-4xl font-medium text-gray-700">{tag}, <span class="font-light text-gray-500">{profileData.age}</span></h1>
     <p class="font-light text-gray-600 mt-3">{profileData.bio}</p>
 
-    <p class="mt-8 text-gray-500">(We could put recent posts here once we make up an endpoint for specific user posts. Didn't want to touch this right now while you guys are working on other posts functionality.)</p>
+    {/* <p class="mt-8 text-gray-500">(We could put recent posts here once we make up an endpoint for specific user posts. Didn't want to touch this right now while you guys are working on other posts functionality.)</p> */}
   </div>
 
-  {/* <div class="mt-12 flex flex-col justify-center">
-    <p class="text-gray-600 text-center font-light lg:px-16">An artist of considerable range, Ryan — the name taken by Melbourne-raised, Brooklyn-based Nick Murphy — writes, performs and records all of his own music, giving it a warm, intimate feel with a solid groove structure. An artist of considerable range.</p>
-    <button
-  class="text-indigo-500 py-2 px-4  font-medium mt-4"
->
-  Show more
-</button>
-  </div> */}
+  <div class="mt-12 flex flex-col justify-center gap-5">
+    <h2 class="font-bold text-center text-gray-800">Recent Posts</h2>
+    {posts.map((post) => (
+                        <Post post={post} onUpdate={getPosts} key={post["post_id"]} />
+                    ))}
+                    {(posts.length == 0) ? <div className="p-2 text-center">
+                        <h2 className="text-gray-800">
+                            {/*Should add the ability to click this to log in*/}
+                            No posts here yet! Exciting things are yet to come!
+                        </h2>
+                    </div> : <></>}
+  </div>
 
 </div>
 </div>
