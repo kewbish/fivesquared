@@ -135,7 +135,29 @@ async function verifyLogin(username, password) {
   });
 }
 
+async function uploadImage(image_contents) {
+  const form = new FormData();
+  form.append(
+    "image",
+    image_contents.replace(/^data:image\/(png|jpg|jpeg);base64,/, "")
+  );
+  const image_req = await fetch("https://api.imgur.com/3/image", {
+    method: "POST",
+    headers: { Authorization: "Client-ID c3fc6d6a9597073" },
+    body: form,
+  });
+  const resp = await image_req.json();
+  if (!("data" in resp) || !("link" in resp["data"])) {
+    return "";
+  }
+  return resp["data"]["link"];
+}
+
 async function signup(username, password, bio, dob, img_url, age) {
+  const link = uploadImage(img_url);
+  if (!link) {
+    return false;
+  }
   return await withOracleDB(async (connection) => {
     const result = await connection.execute(
       "SELECT * FROM AppUserAge WHERE dob = TO_DATE(:dob, 'YYYY-MM-DD')",
@@ -153,11 +175,11 @@ async function signup(username, password, bio, dob, img_url, age) {
     let result2 = await connection.execute(
       `INSERT INTO AppUser VALUES (:username, :bio, TO_DATE(:dob, 'YYYY-MM-DD'), :password, :image_url)`,
       {
-        username: username,
-        bio: bio,
-        dob: dob,
-        password: password,
-        image_url: { val: img_url, type: oracledb.CLOB },
+        username,
+        bio,
+        dob,
+        password,
+        image_url: { val: link, type: oracledb.CLOB },
       },
       { autoCommit: true }
     );
@@ -290,6 +312,96 @@ async function isPostLiked(post_id, username) {
   });
 }
 
+async function getAppUserData(tag) {
+  return await withOracleDB(async (connection) => {
+    oracledb.fetchAsString = [oracledb.CLOB];
+    const appUserResult = await connection.execute(
+      `SELECT bio, pfp_url FROM AppUser WHERE username = :tag`,
+      [tag],
+      { autoCommit: true }
+    );
+
+    return appUserResult;
+  }).catch(() => {
+    return null;
+  });
+}
+
+async function getAppUserAge(tag) {
+  return await withOracleDB(async (connection) => {
+    const appUserAgeResult = await connection.execute(
+      `SELECT age FROM AppUser au, AppUserAge aug WHERE au.username = :tag AND au.dob = aug.dob`,
+      [tag],
+      { autoCommit: true }
+    );
+    await new Promise((r) => setTimeout(r, 100));
+
+    return appUserAgeResult;
+  }).catch(() => {
+    return null;
+  });
+}
+
+async function getfolloweesData(tag) {
+  return await withOracleDB(async (connection) => {
+    const followeesResult = await connection.execute(
+      `SELECT * FROM Follows WHERE follower = :tag`,
+      [tag],
+      { autoCommit: true }
+    );
+    await new Promise((r) => setTimeout(r, 100));
+
+    return followeesResult;
+  }).catch(() => {
+    return null;
+  });
+}
+
+async function getFollowersData(tag) {
+  return await withOracleDB(async (connection) => {
+    const followersResult = await connection.execute(
+      `SELECT * FROM Follows WHERE followee = :tag`,
+      [tag],
+      { autoCommit: true }
+    );
+    await new Promise((r) => setTimeout(r, 100));
+
+    return followersResult;
+  }).catch(() => {
+    return null;
+  });
+}
+
+async function getFollowingData(username, tag) {
+  return await withOracleDB(async (connection) => {
+    const followingResult = await connection.execute(
+      `SELECT * FROM Follows WHERE followee = :tag AND follower = :username`,
+      [username, tag],
+      { autoCommit: true }
+    );
+    await new Promise((r) => setTimeout(r, 100));
+
+    return followingResult;
+  }).catch(() => {
+    return null;
+  });
+}
+
+async function getBadgesData(tag) {
+  return await withOracleDB(async (connection) => {
+    const badgesResult = await connection.execute(
+      `SELECT name, description, icon_url FROM Badge b, Earns e WHERE e.username = :tag AND e.badge_name = b.name`,
+      [tag],
+      { autoCommit: true }
+    );
+    await new Promise((r) => setTimeout(r, 100));
+
+    return badgesResult;
+  }).catch(() => {
+    return null;
+  });
+}
+
 async function getProfile(username, tag) {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
@@ -342,7 +454,9 @@ async function getProfile(username, tag) {
 
     const result = {
       bio: appUserResult.rows[0][0],
-      pfp_url: appUserResult.rows[0][1] || "https://placehold.co/400x400/grey/white?text=pfp",
+      pfp_url:
+        appUserResult.rows[0][1] ||
+        "https://placehold.co/400x400/grey/white?text=pfp",
       age: age,
       followeesCount: followeesCount,
       followersCount: followersCount,
@@ -385,6 +499,10 @@ async function createPost(body) {
   ) {
     return false;
   }
+  const link = uploadImage(body["image_url"]);
+  if (!link) {
+    return false;
+  }
   return await withOracleDB(async (connection) => {
     const result = await connection.execute("SELECT max(post_id) FROM Post");
     const id = result.rows[0][0] + 1;
@@ -397,7 +515,7 @@ async function createPost(body) {
         age_restricted: body["age_restricted"] || 0,
         username: body["username"],
         piece_id: body["piece_id"],
-        image_url: { val: body["image_url"], type: oracledb.CLOB },
+        image_url: { val: link, type: oracledb.CLOB },
       },
       { autoCommit: true }
     );
