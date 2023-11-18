@@ -16,6 +16,7 @@ import Location from "./pages/location/Location";
 import Collection from "./pages/collection/Collection";
 import Artist from "./pages/artist/Artist";
 import Projection from "./pages/projection/Projection";
+import Stats from "./pages/stats/Stats";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -28,6 +29,7 @@ root.render(
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<Signup />} />
           <Route path="visualizer" element={<Projection />} />
+          <Route path="stats" element={<Stats />} />
           <Route path=":tag" element={<Profile />} />
           <Route path="piece/:term" element={<Piece />} />
           <Route path="artist/:id" element={<Artist />} />

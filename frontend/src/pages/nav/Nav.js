@@ -54,6 +54,12 @@ const Nav = () => {
             >
               Visualizer
             </a>
+            <a
+              href="/stats"
+              class="block text-lg mt-4 lg:inline-block lg:mt-0 hover:text-white px-4 py-2 rounded hover:bg-blue-500 mr-2"
+            >
+              Stats
+            </a>
           </div>
         </div>
 
