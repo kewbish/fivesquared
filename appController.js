@@ -107,6 +107,14 @@ router.post("/posts", async (req, res) => {
   });
 });
 
+router.get("/posts/following/:username", async (req, res) => {
+  const posts = await appService.getPostsFollowing(req.params['username']);
+  res.json({
+    success: true,
+    posts
+  });
+});
+
 router.delete("/posts/:postId", async (req, res) => {
   const result = await appService.deletePost(req.params['postId']);
   res.json({

@@ -192,6 +192,28 @@ async function getPosts() {
   });
 }
 
+async function getPostsFollowing(username) {
+  return await withOracleDB(async (connection) => {
+    oracledb.fetchAsString = [oracledb.CLOB];
+    const result = await connection.execute(
+      "SELECT p.post_id, p.text, p.datetime, p.age_restricted, p.username, ap.title, p.image_url FROM Post p, ArtPiece ap WHERE p.piece_id = ap.piece_id AND p.username IN (SELECT followee FROM Follows WHERE follower = :username) ORDER BY p.datetime DESC",
+      [username],
+      { autoCommit: true }
+    );
+    return result.rows.map((row) => ({
+      post_id: row[0],
+      text: row[1],
+      datetime: row[2],
+      age_restricted: row[3],
+      username: row[4],
+      piece_id: row[5],
+      image_url: row[6] || "",
+    }));
+  }).catch(() => {
+    return [];
+  });
+}
+
 async function getPostLikes(post_id) {
   return await withOracleDB(async (connection) => {
     const result = await connection.execute(
@@ -522,6 +544,7 @@ async function deleteComment(post_id, comment_id) {
 module.exports = {
   testOracleConnection,
   getPosts,
+  getPostsFollowing,
   getPostLikes,
   likePost,
   unlikePost,

@@ -19,6 +19,8 @@ Our project is to create a social media website where users can post, discuss, a
 * [Milestone Three](./milestones/CPSC%20304%20Project%20-%20Milestone%20Three.pdf)
 
 ## Frontend Component Example Sources
+(Specific citations in code where these components are used)
 * https://freefrontend.com/tailwind-profiles/
 * https://tailwindui.com/components/application-ui/forms/sign-in-forms
 * https://tailwindcomponents.com/component/responsive-navbar-2
+* https://mambaui.com/components/toggle
