@@ -418,13 +418,13 @@ async function getProfile(username, tag) {
     );
 
     const followeesResult = await connection.execute(
-      `SELECT * FROM Follows WHERE follower = :tag`,
+      `SELECT bio, pfp_clob, username FROM AppUser WHERE username IN (SELECT followee FROM Follows WHERE follower = :tag)`,
       [tag],
       { autoCommit: true }
     );
 
     const followersResult = await connection.execute(
-      `SELECT * FROM Follows WHERE followee = :tag`,
+      `SELECT bio, pfp_clob, username FROM AppUser WHERE username IN (SELECT follower FROM Follows WHERE followee = :tag)`,
       [tag],
       { autoCommit: true }
     );
@@ -441,8 +441,16 @@ async function getProfile(username, tag) {
       { autoCommit: true }
     );
 
-    const followeesCount = followeesResult.rows.length;
-    const followersCount = followersResult.rows.length;
+    const followersData = followersResult.rows.map((row) => ({
+      bio: row[0],
+      pfp_url: row[1] || "https://placehold.co/400x400/grey/white?text=pfp",
+      username: row[2],
+    }));
+    const followeesData = followeesResult.rows.map((row) => ({
+      bio: row[0],
+      pfp_url: row[1] || "https://placehold.co/400x400/grey/white?text=pfp",
+      username: row[2],
+    }));
     const followingStatus = followingResult.rows.length > 0;
     const age = appUserAgeResult.rows[0][0];
 
@@ -458,8 +466,8 @@ async function getProfile(username, tag) {
         appUserResult.rows[0][1] ||
         "https://placehold.co/400x400/grey/white?text=pfp",
       age: age,
-      followeesCount: followeesCount,
-      followersCount: followersCount,
+      followees: followeesData,
+      followers: followersData,
       followingStatus: followingStatus,
       badges: badges,
       username: username,
