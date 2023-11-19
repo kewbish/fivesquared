@@ -76,7 +76,7 @@ function Signup() {
                 htmlFor="username"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
-                Choose a username
+                Choose a username (this cannot be changed)
               </label>
               <div className="mt-2">
                 <input

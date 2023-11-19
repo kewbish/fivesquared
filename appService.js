@@ -194,6 +194,47 @@ async function signup(username, password, bio, dob, img_url, age) {
   });
 }
 
+async function updateProfile(username, password, bio, dob, img_url, age) {
+  const link = uploadImage(img_url);
+  if (!link) {
+    return false;
+  }
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(
+      "SELECT * FROM AppUserAge WHERE dob = TO_DATE(:dob, 'YYYY-MM-DD')",
+      [dob],
+      { autoCommit: true }
+    );
+    if (result.rows.length === 0) {
+      await connection.execute(
+        `INSERT INTO AppUserAge VALUES (TO_DATE(:dob, 'YYYY-MM-DD'), :age)`,
+        [dob, age],
+        { autoCommit: true }
+      );
+    }
+
+    let result2 = await connection.execute(
+      `UPDATE AppUser SET bio = :bio, dob = TO_DATE(:dob, 'YYYY-MM-DD'), password = :password, pfp_clob = :image_url WHERE username = :username`,
+      {
+        username,
+        bio,
+        dob,
+        password,
+        image_url: { val: link, type: oracledb.CLOB },
+      },
+      { autoCommit: true }
+    );
+
+    if (result2.errorNum) {
+      return false;
+    }
+
+    return true;
+  }).catch(() => {
+    return false;
+  });
+}
+
 async function getPosts() {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
@@ -406,13 +447,13 @@ async function getProfile(username, tag) {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
     const appUserResult = await connection.execute(
-      `SELECT bio, pfp_clob FROM AppUser WHERE username = :tag`,
+      `SELECT bio, pfp_clob, password FROM AppUser WHERE username = :tag`,
       [tag],
       { autoCommit: true }
     );
 
     const appUserAgeResult = await connection.execute(
-      `SELECT age FROM AppUser au, AppUserAge aug WHERE au.username = :tag AND au.dob = aug.dob`,
+      `SELECT age, aug.dob FROM AppUser au, AppUserAge aug WHERE au.username = :tag AND au.dob = aug.dob`,
       [tag],
       { autoCommit: true }
     );
@@ -451,8 +492,8 @@ async function getProfile(username, tag) {
       pfp_url: row[1] || "https://placehold.co/400x400/grey/white?text=pfp",
       username: row[2],
     }));
+
     const followingStatus = followingResult.rows.length > 0;
-    const age = appUserAgeResult.rows[0][0];
 
     const badges = badgesResult.rows.map((row) => ({
       name: row[0],
@@ -465,7 +506,9 @@ async function getProfile(username, tag) {
       pfp_url:
         appUserResult.rows[0][1] ||
         "https://placehold.co/400x400/grey/white?text=pfp",
-      age: age,
+      password: appUserResult.rows[0][2],
+      age: appUserAgeResult.rows[0][0],
+      dob: appUserAgeResult.rows[0][1].toISOString().slice(0, 10),
       followees: followeesData,
       followers: followersData,
       followingStatus: followingStatus,
@@ -771,5 +814,6 @@ module.exports = {
   follow,
   unfollow,
   signup,
+  updateProfile,
   getProfiles,
 };
