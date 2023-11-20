@@ -299,6 +299,28 @@ async function getPostsUser(tag) {
   });
 }
 
+async function getPostsPiece(id) {
+  return await withOracleDB(async (connection) => {
+    oracledb.fetchAsString = [oracledb.CLOB];
+    const result = await connection.execute(
+      "SELECT p.post_id, p.text, p.datetime, p.age_restricted, p.username, ap.title, p.image_url FROM Post p, ArtPiece ap WHERE p.piece_id = ap.piece_id AND p.piece_id = :id ORDER BY p.datetime DESC",
+      [id],
+      { autoCommit: true }
+    );
+    return result.rows.map((row) => ({
+      post_id: row[0],
+      text: row[1],
+      datetime: row[2],
+      age_restricted: row[3],
+      username: row[4],
+      piece_id: row[5],
+      image_url: row[6] || "",
+    }));
+  }).catch(() => {
+    return [];
+  });
+}
+
 async function getPostLikes(post_id) {
   return await withOracleDB(async (connection) => {
     const result = await connection.execute(
@@ -537,6 +559,51 @@ async function getProfiles(term) {
       pfp_url: row[1] || "https://placehold.co/400x400/grey/white?text=pfp",
       username: row[2],
     }));
+  }).catch(() => {
+    return null;
+  });
+}
+
+async function getPieces(term) {
+  return await withOracleDB(async (connection) => {
+    let pattern = "%" + term + "%";
+    oracledb.fetchAsString = [oracledb.CLOB];
+    const result = await connection.execute(
+      `SELECT ap.title, ap.description, a.name, ap.piece_id FROM ArtPiece ap, Creates cr, Artist a WHERE cr.artist_id = a.artist_id and cr.piece_id = ap.piece_id and UPPER(ap.title) LIKE  :pattern`,
+      [pattern],
+      { autoCommit: true }
+    );
+
+    return result.rows.map((row) => ({
+      title: row[0],
+      description: row[1],
+      artist: row[2],
+      piece_id: row[3]
+    }));
+  }).catch(() => {
+    return null;
+  });
+}
+
+async function getPiece(id) {
+  return await withOracleDB(async (connection) => {
+    oracledb.fetchAsString = [oracledb.CLOB];
+    const result = await connection.execute(
+      `SELECT ap.title, ap.description, a.name, c.title, c.curator, ap.value, ap.year FROM ArtPiece ap, Creates cr, Artist a, Collection c WHERE cr.artist_id = a.artist_id and ap.collection_title = c.title and ap.collection_curator = c.curator and cr.piece_id = :id and ap.piece_id = :id`,
+      {id},
+      { autoCommit: true }
+    );
+
+    return {
+      title: result.rows[0][0],
+      description: result.rows[0][1],
+      artist: result.rows[0][2],
+      collection: result.rows[0][3],
+      curator: result.rows[0][4],
+      value: result.rows[0][5],
+      year: result.rows[0][6]
+    };
+
   }).catch(() => {
     return null;
   });
@@ -796,6 +863,7 @@ module.exports = {
   getPosts,
   getPostsFollowing,
   getPostsUser,
+  getPostsPiece,
   getPostLikes,
   likePost,
   unlikePost,
@@ -816,4 +884,6 @@ module.exports = {
   signup,
   updateProfile,
   getProfiles,
+  getPieces,
+  getPiece,
 };

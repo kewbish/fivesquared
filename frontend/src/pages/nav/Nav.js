@@ -6,7 +6,7 @@ import { useState } from 'react';
 const Nav = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [cookies, setCookie, removeCookie] = useCookies(['login_cookie']);
+  const [cookies, setCookie, removeCookie] = useCookies(['login_cookie', 'param_cookie']);
   const cookieName = 'login_cookie';
   const navigate = useNavigate();
 
@@ -24,7 +24,8 @@ const Nav = () => {
 
   const search = () => {
     if (searchTerm !== "") {
-      navigate("/search/" + searchTerm);
+      setCookie("param_cookie", searchTerm);
+      navigate("/search");
     }
   }
 
@@ -82,7 +83,7 @@ const Nav = () => {
                    class="block text-md px-4 py-2 rounded text-blue-500 ml-2 font-bold hover:text-white mt-4 hover:bg-blue-500 lg:mt-0">Sign
                     up</a> : <></>}
                     {loggedIn ? <a href={cookies[cookieName]}
-                   class="block text-md px-4 py-2 rounded text-blue-500 ml-2 font-bold hover:text-white mt-4 hover:bg-blue-500 lg:mt-0 cursor:pointer">Profile</a> : <></>}  
+                   class="block text-md px-4 py-2 rounded text-blue-500 ml-2 font-bold hover:text-white mt-4 hover:bg-blue-500 lg:mt-0 cursor:pointer">{"Welcome, " + cookies[cookieName] + "!"}</a> : <></>}  
                     {loggedIn ? <a onClick={onLogOutClick}
                    class="block text-md px-4 py-2 rounded text-blue-500 ml-2 font-bold hover:text-white mt-4 hover:bg-blue-500 lg:mt-0 cursor:pointer">Log
                     out</a> : <></>}    

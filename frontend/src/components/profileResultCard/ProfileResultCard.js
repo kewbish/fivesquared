@@ -4,7 +4,7 @@ function ProfileResultCard({profileData}) {
   // a component library example: https://freefrontend.com/tailwind-profiles/ . The code was not auto-generated, and we made significant
   // changes to the template to style it with our project's specific goals.
     return(
-<div className="flex flex-col justify-center max-w-xs p-6 shadow-md rounded-xl sm:px-12 bg-gray-50 text-gray-900">
+<div className="flex flex-col justify-center max-w-xs p-6 shadow-md rounded-xl bg-gray-50 text-gray-900">
 	<img src={profileData.pfp_url} alt="" className="w-32 h-32 mx-auto rounded-full bg-gray-500 aspect-square" />
 	<div className="space-y-4 text-center divide-y dark:divide-gray-700">
 		<div className="my-2 space-y-1">

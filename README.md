@@ -24,4 +24,3 @@ Our project is to create a social media website where users can post, discuss, a
 * https://tailwindui.com/components/application-ui/forms/sign-in-forms
 * https://tailwindcomponents.com/component/responsive-navbar-2
 * https://mambaui.com/components/toggle
-* https://www.material-tailwind.com/docs/react/dialog

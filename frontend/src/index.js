@@ -11,6 +11,7 @@ import "preline";
 import Profile from "./pages/profile/Profile";
 import Signup from "./pages/signup/Signup";
 import SearchResults from "./pages/search results/SearchResults";
+import Piece from "./pages/piece/Piece";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -22,8 +23,9 @@ root.render(
           <Route path="posts" element={<Posts />} />
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<Signup />} />
-          <Route path=":tag" pa element={<Profile />} />
-          <Route path="search/:term" pa element={<SearchResults />} />
+          <Route path=":tag" element={<Profile />} />
+          <Route path="piece" element={<Piece />} />
+          <Route path="search" element={<SearchResults />} />
           <Route path="*" element={<Nothing />} />
         </Route>
       </Routes>

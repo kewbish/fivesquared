@@ -123,6 +123,14 @@ router.get("/posts/:tag", async (req, res) => {
   });
 });
 
+router.get("/posts/piece/:id", async (req, res) => {
+  const posts = await appService.getPostsPiece(req.params['id']);
+  res.json({
+    success: true,
+    posts
+  });
+});
+
 router.delete("/posts/:postId", async (req, res) => {
   const result = await appService.deletePost(req.params['postId']);
   res.json({
@@ -181,14 +189,14 @@ router.delete("/posts/:postId/comments/:commentId", async (req, res) => {
 });
 
 router.post("/login/verify/", async (req, res) => {
-    username = req.body.username;
-    password = req.body.password;
+  username = req.body.username;
+  password = req.body.password;
 
-    const result = await appService.verifyLogin(username, password);
+  const result = await appService.verifyLogin(username, password);
 
-    res.json({
-       success: result
-    });
+  res.json({
+    success: result
+  });
 });
 
 router.post("/signup", async (req, res) => {
@@ -200,13 +208,13 @@ router.post("/signup", async (req, res) => {
 
   let bday = Date.parse(dob);
   let now = new Date();
-  let diff = now-bday;
-  let age = Math.floor(diff/31557600000);
+  let diff = now - bday;
+  let age = Math.floor(diff / 31557600000);
 
   const result = await appService.signup(username, password, bio, dob, img_url, age);
 
   res.json({
-     success: result
+    success: result
   });
 });
 
@@ -219,13 +227,13 @@ router.post("/updateProfile", async (req, res) => {
 
   let bday = Date.parse(dob);
   let now = new Date();
-  let diff = now-bday;
-  let age = Math.floor(diff/31557600000);
+  let diff = now - bday;
+  let age = Math.floor(diff / 31557600000);
 
   const result = await appService.updateProfile(username, password, bio, dob, img_url, age);
 
   res.json({
-     success: result
+    success: result
   });
 });
 
@@ -233,7 +241,7 @@ router.post("/follow/:username/:tag", async (req, res) => {
   const result = await appService.follow(req.params.username, req.params.tag);
 
   res.json({
-     success: result
+    success: result
   });
 });
 
@@ -241,27 +249,45 @@ router.delete("/unfollow/:username/:tag", async (req, res) => {
   const result = await appService.unfollow(req.params.username, req.params.tag);
 
   res.json({
-     success: result
+    success: result
   });
 });
 
 router.get("/profile/:username/:tag", async (req, res) => {
-    // username is the currently signed-in user. tag is the profile being viewed
-    const result = await appService.getProfile(req.params.username, req.params.tag);
-    
-    res.json({
-        profile: result,
-    });
+  // username is the currently signed-in user. tag is the profile being viewed
+  const result = await appService.getProfile(req.params.username, req.params.tag);
 
+  res.json({
+    profile: result,
   });
 
-  router.get("/search/profiles/:term", async (req, res) => {
-    const result = await appService.getProfiles(req.params.term);
-    
-    res.json({
-        profile: result,
-    });
+});
 
-  });  
+router.get("/search/profiles/:term", async (req, res) => {
+  const result = await appService.getProfiles(req.params.term);
+
+  res.json({
+    profile: result,
+  });
+
+});
+
+router.get("/search/pieces/:term", async (req, res) => {
+  const result = await appService.getPieces(req.params.term);
+
+  res.json({
+    pieces: result,
+  });
+
+});
+
+router.get("/piece/:id", async (req, res) => {
+  const result = await appService.getPiece(req.params.id);
+
+  res.json({
+    piece: result,
+  });
+
+});
 
 module.exports = router;
