@@ -527,7 +527,7 @@ async function getProfiles(term) {
     let pattern = "%" + term + "%";
     oracledb.fetchAsString = [oracledb.CLOB];
     const result = await connection.execute(
-      `SELECT bio, pfp_clob, username FROM AppUser WHERE username LIKE  :pattern`,
+      `SELECT bio, pfp_clob, username FROM AppUser WHERE UPPER(username) LIKE  :pattern`,
       [pattern],
       { autoCommit: true }
     );

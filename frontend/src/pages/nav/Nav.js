@@ -61,7 +61,7 @@ const Nav = () => {
             <div class="relative mx-auto text-gray-600 lg:block hidden">
 
                 <input
-                    onKeyDown={handleKeyPress} onChange={(e) => setSearchTerm(e.target.value)} class="border-2 border-gray-300 bg-white h-10 pl-2 pr-8 rounded-lg text-sm focus:outline-none"
+                    onKeyDown={handleKeyPress} onChange={(e) => setSearchTerm(e.target.value.toUpperCase())} class="border-2 border-gray-300 bg-white h-10 pl-2 pr-8 rounded-lg text-sm focus:outline-none"
                     type="search" name="search" placeholder="Search"/>
                 <button onClick={search} type="submit" class="absolute right-0 top-0 mt-3 mr-2">
                     <svg class="text-gray-600 h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg"
