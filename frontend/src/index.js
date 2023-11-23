@@ -12,6 +12,8 @@ import Profile from "./pages/profile/Profile";
 import Signup from "./pages/signup/Signup";
 import SearchResults from "./pages/search results/SearchResults";
 import Piece from "./pages/piece/Piece";
+import Location from "./pages/location/Location"
+import Collection from "./pages/collection/Collection";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -25,6 +27,8 @@ root.render(
           <Route path="signup" element={<Signup />} />
           <Route path=":tag" element={<Profile />} />
           <Route path="piece" element={<Piece />} />
+          <Route path="location" element={<Location />} />
+          <Route path="collection" element={<Collection />} />
           <Route path="search" element={<SearchResults />} />
           <Route path="*" element={<Nothing />} />
         </Route>
