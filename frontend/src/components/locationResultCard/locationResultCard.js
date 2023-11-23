@@ -1,13 +1,10 @@
-import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 
 function LocationResultCard({ locationData }) {
-	const [cookies, setCookie, removeCookie] = useCookies(['param_cookie']);
 	const navigate = useNavigate();
 
 	const goToLocation = () => {
-		setCookie("param_cookie", locationData.name)
-		navigate("/location");
+		navigate(`/location/${locationData.name}`);
 	};
 
 

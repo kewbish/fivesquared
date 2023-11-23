@@ -26,10 +26,10 @@ root.render(
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<Signup />} />
           <Route path=":tag" element={<Profile />} />
-          <Route path="piece" element={<Piece />} />
-          <Route path="location" element={<Location />} />
-          <Route path="collection" element={<Collection />} />
-          <Route path="search" element={<SearchResults />} />
+          <Route path="piece/:term" element={<Piece />} />
+          <Route path="location/:name" element={<Location />} />
+          <Route path="collection/:title/:curator" element={<Collection />} />
+          <Route path="search/:term" element={<SearchResults />} />
           <Route path="*" element={<Nothing />} />
         </Route>
       </Routes>

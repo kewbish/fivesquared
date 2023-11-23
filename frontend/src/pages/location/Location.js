@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import Post from "../../components/post/Post";
-import { useCookies } from "react-cookie";
+import { useParams } from 'react-router-dom';
 
 const Location = () => {
-  const [cookies, setCookie, removeCookie] = useCookies(["param_cookie"]);
+  const { name } = useParams();
   const [locationData, setLocationData] = useState(null);
   const [posts, setPosts] = useState([]);
 
   const fetchLocation = async () => {
-    const response = await fetch(`http://localhost:65535/location/${cookies["param_cookie"]}`, {
+    const response = await fetch(`http://localhost:65535/location/${name}`, {
       method: "GET",
     });
     const pjson = await response.json();
@@ -17,7 +17,7 @@ const Location = () => {
   };
 
   const getPosts = async () => {
-    const response = await fetch(`http://localhost:65535/posts/location/${cookies["param_cookie"]}`, {
+    const response = await fetch(`http://localhost:65535/posts/location/${name}`, {
       method: "GET",
     });
     const pjson = await response.json();

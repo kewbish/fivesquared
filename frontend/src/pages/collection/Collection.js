@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
 import Post from "../../components/post/Post";
-import { useCookies } from "react-cookie";
+import { useParams } from 'react-router-dom';
 
 const Collection = () => {
-  const [cookies, setCookie, removeCookie] = useCookies(["param_cookie"]);
+  const { title, curator } = useParams();
   const [collectionData, setCollectionData] = useState(null);
   const [posts, setPosts] = useState([]);
 
   const fetchCollection = async () => {
-    console.log(cookies["param_cookie"]);
-    const response = await fetch(`http://localhost:65535/collection/${cookies["param_cookie"]}`, {
+    const response = await fetch(`http://localhost:65535/collection/${title}&${curator}`, {
       method: "GET",
     });
     const pjson = await response.json();
@@ -18,7 +17,7 @@ const Collection = () => {
   };
 
   const getPosts = async () => {
-    const response = await fetch(`http://localhost:65535/posts/collection/${cookies["param_cookie"]}`, {
+    const response = await fetch(`http://localhost:65535/posts/collection/${title}&${curator}`, {
       method: "GET",
     });
     const pjson = await response.json();

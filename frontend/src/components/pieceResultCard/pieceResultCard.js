@@ -1,13 +1,10 @@
-import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 
 function PieceResultCard({ pieceData }) {
-	const [cookies, setCookie, removeCookie] = useCookies(['param_cookie']);
 	const navigate = useNavigate();
 
 	const goToPiece = () => {
-		setCookie("param_cookie", pieceData.piece_id)
-		navigate(`/piece`);
+		navigate(`/piece/${pieceData.piece_id}`);
 	};
 
 

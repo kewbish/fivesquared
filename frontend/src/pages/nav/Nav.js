@@ -6,7 +6,7 @@ import { useState } from 'react';
 const Nav = () => {
   const [loggedIn, setLoggedIn] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [cookies, setCookie, removeCookie] = useCookies(['login_cookie', 'param_cookie']);
+  const [cookies, setCookie, removeCookie] = useCookies(['login_cookie']);
   const cookieName = 'login_cookie';
   const navigate = useNavigate();
 
@@ -24,8 +24,7 @@ const Nav = () => {
 
   const search = () => {
     if (searchTerm !== "") {
-      setCookie("param_cookie", searchTerm);
-      navigate("/search");
+      navigate(`/search/${searchTerm}`);
     }
   }
 

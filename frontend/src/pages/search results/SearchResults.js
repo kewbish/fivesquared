@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom';
 import { useCookies } from "react-cookie";
 import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
@@ -8,8 +8,9 @@ import LocationResultCard from "../../components/locationResultCard/locationResu
 import CollectionResultCard from "../../components/collectionResultCard/collectionResultCard";
 
 const SearchResults = () => {
-  const [cookies, setCookie, removeCookie] = useCookies(["login_cookie", "param_cookie"]);
+  const [cookies, setCookie, removeCookie] = useCookies(["login_cookie"]);
   // we could have different lists for the results of different search types (collection, artwork, profile, etc.)
+  const { term } = useParams();
   const [profileResults, setProfileResults] = useState([]);
   const [pieceResults, setPieceResults] = useState([]);
   const [collectionResults, setCollectionResults] = useState([]);
@@ -19,7 +20,7 @@ const SearchResults = () => {
   useEffect(() => {
     const fetchProfiles = async () => {
       if (cookies['login_cookie']) {
-        const response = await fetch(`http://localhost:65535/search/profiles/${cookies['param_cookie']}`, {
+        const response = await fetch(`http://localhost:65535/search/profiles/${term}`, {
           method: "GET",
         });
         const pjson = await response.json();
@@ -32,7 +33,7 @@ const SearchResults = () => {
 
     const fetchPieces = async () => {
       if (cookies['login_cookie']) {
-        const response = await fetch(`http://localhost:65535/search/pieces/${cookies['param_cookie']}`, {
+        const response = await fetch(`http://localhost:65535/search/pieces/${term}`, {
           method: "GET",
         });
         const pjson = await response.json();
@@ -45,7 +46,7 @@ const SearchResults = () => {
 
     const fetchCollections = async () => {
       if (cookies['login_cookie']) {
-        const response = await fetch(`http://localhost:65535/search/collections/${cookies['param_cookie']}`, {
+        const response = await fetch(`http://localhost:65535/search/collections/${term}`, {
           method: "GET",
         });
         const pjson = await response.json();
@@ -58,7 +59,7 @@ const SearchResults = () => {
 
     const fetchLocations = async () => {
       if (cookies['login_cookie']) {
-        const response = await fetch(`http://localhost:65535/search/locations/${cookies['param_cookie']}`, {
+        const response = await fetch(`http://localhost:65535/search/locations/${term}`, {
           method: "GET",
         });
         const pjson = await response.json();

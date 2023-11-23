@@ -1,13 +1,10 @@
-import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 
 function CollectionResultCard({ collectionData }) {
-	const [cookies, setCookie, removeCookie] = useCookies(['param_cookie']);
 	const navigate = useNavigate();
 
 	const goToCollection = () => {
-		setCookie("param_cookie", `${collectionData.title}&${collectionData.curator}`)
-		navigate("/collection");
+		navigate(`/collection/${collectionData.title}/${collectionData.curator}`);
 	};
 
 
