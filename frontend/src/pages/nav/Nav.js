@@ -30,7 +30,7 @@ const Nav = () => {
   }
 
   const handleKeyPress = (e) => {
-    if(e.key == 'Enter'){
+    if(e.key === 'Enter'){
        search();
      }
    }

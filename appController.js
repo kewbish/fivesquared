@@ -131,6 +131,22 @@ router.get("/posts/piece/:id", async (req, res) => {
   });
 });
 
+router.get("/posts/collection/:title&:curator", async (req, res) => {
+  const posts = await appService.getPostsLocation(req.params['title'], req.params['curator']);
+  res.json({
+    success: true,
+    posts
+  });
+});
+
+router.get("/posts/location/:name", async (req, res) => {
+  const posts = await appService.getPostsLocation(req.params['name']);
+  res.json({
+    success: true,
+    posts
+  });
+});
+
 router.delete("/posts/:postId", async (req, res) => {
   const result = await appService.deletePost(req.params['postId']);
   res.json({
@@ -174,7 +190,6 @@ router.get("/posts/:postId/comments/:commentId/like/:username", async (req, res)
 });
 
 router.post("/posts/:postId/comments", async (req, res) => {
-  console.log("we are here!");
   const result = await appService.createComment(Number.parseInt(req.params.postId), req.body);
   res.json({
     success: result,
@@ -281,13 +296,44 @@ router.get("/search/pieces/:term", async (req, res) => {
 
 });
 
+router.get("/search/locations/:term", async (req, res) => {
+  const result = await appService.getLocations(req.params.term);
+
+  res.json({
+    locations: result,
+  });
+
+});
+
+router.get("/search/collections/:term", async (req, res) => {
+  const result = await appService.getCollections(req.params.term);
+
+  res.json({
+    collections: result,
+  });
+
+});
+
 router.get("/piece/:id", async (req, res) => {
   const result = await appService.getPiece(req.params.id);
 
   res.json({
     piece: result,
   });
+});
 
+router.get("/location/:name", async (req, res) => {
+  const result = await appService.getLocation(req.params.name);
+  res.json({
+    location: result,
+  });
+});
+
+router.get("/collection/:title&:curator", async (req, res) => {
+  const result = await appService.getCollection(req.params.title, req.params.curator);
+  res.json({
+    collection: result,
+  });
 });
 
 module.exports = router;
