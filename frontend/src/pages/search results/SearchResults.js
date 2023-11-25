@@ -6,6 +6,7 @@ import ProfileResultCard from '../../components/profileResultCard/ProfileResultC
 import PieceResultCard from '../../components/pieceResultCard/pieceResultCard';
 import LocationResultCard from "../../components/locationResultCard/locationResultCard";
 import CollectionResultCard from "../../components/collectionResultCard/collectionResultCard";
+import ArtistResultCard from '../../components/artistResultCard/artistResultCard';
 
 const SearchResults = () => {
   const [cookies, setCookie, removeCookie] = useCookies(["login_cookie"]);
@@ -15,6 +16,7 @@ const SearchResults = () => {
   const [pieceResults, setPieceResults] = useState([]);
   const [collectionResults, setCollectionResults] = useState([]);
   const [locationResults, setLocationResults] = useState([]);
+  const [artistResults, setArtistResults] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -70,10 +72,24 @@ const SearchResults = () => {
       }
     };
 
+    const fetchArtists = async () => {
+      if (cookies['login_cookie']) {
+        const response = await fetch(`http://localhost:65535/search/artists/${term}`, {
+          method: "GET",
+        });
+        const pjson = await response.json();
+        console.log("Artists PJSON:", pjson);
+        if (pjson.artists) {
+          setArtistResults(pjson.artists);
+        }
+      }
+    };
+
     fetchProfiles();
     fetchPieces();
     fetchCollections();
     fetchLocations();
+    fetchArtists();
   }, [cookies]);
 
   const goToLogin = () => {
@@ -88,7 +104,7 @@ const SearchResults = () => {
         </h2>
       </div>
     );
-  } else if (profileResults.length + pieceResults.length + collectionResults.length + locationResults.length > 0) {
+  } else if (profileResults.length + pieceResults.length + collectionResults.length + locationResults.length + artistResults.length > 0) {
     return (
       <div >
         {profileResults.length > 0 ? <body class="px-10 py-20 gap-5">   <h2 className="text-xl font-semibold sm:text-2xl mb-4 text-center">Profile Results</h2>
@@ -103,6 +119,15 @@ const SearchResults = () => {
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
             {pieceResults.map((piece) => (
               <PieceResultCard pieceData={piece} />
+            ))}
+
+          </div>
+        </body> : <></>}
+        {artistResults.length > 0 ? <body class="px-10 py-5 gap-5">
+          <h2 className="text-xl font-semibold sm:text-2xl mb-4 text-center">Artist Results</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
+            {artistResults.map((artist) => (
+              <ArtistResultCard artistData={artist} />
             ))}
 
           </div>

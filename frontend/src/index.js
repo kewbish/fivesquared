@@ -14,6 +14,7 @@ import SearchResults from "./pages/search results/SearchResults";
 import Piece from "./pages/piece/Piece";
 import Location from "./pages/location/Location"
 import Collection from "./pages/collection/Collection";
+import Artist from "./pages/artist/Artist";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -27,6 +28,7 @@ root.render(
           <Route path="signup" element={<Signup />} />
           <Route path=":tag" element={<Profile />} />
           <Route path="piece/:term" element={<Piece />} />
+          <Route path="artist/:id" element={<Artist />} />
           <Route path="location/:name" element={<Location />} />
           <Route path="collection/:title/:curator" element={<Collection />} />
           <Route path="search/:term" element={<SearchResults />} />

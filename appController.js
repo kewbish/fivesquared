@@ -131,6 +131,14 @@ router.get("/posts/piece/:id", async (req, res) => {
   });
 });
 
+router.get("/posts/artist/:id", async (req, res) => {
+  const posts = await appService.getPostsArtist(req.params['id']);
+  res.json({
+    success: true,
+    posts
+  });
+});
+
 router.get("/posts/collection/:title&:curator", async (req, res) => {
   const posts = await appService.getPostsLocation(req.params['title'], req.params['curator']);
   res.json({
@@ -296,6 +304,15 @@ router.get("/search/pieces/:term", async (req, res) => {
 
 });
 
+router.get("/search/artists/:term", async (req, res) => {
+  const result = await appService.getArtists(req.params.term);
+
+  res.json({
+    artists: result,
+  });
+
+});
+
 router.get("/search/locations/:term", async (req, res) => {
   const result = await appService.getLocations(req.params.term);
 
@@ -319,6 +336,14 @@ router.get("/piece/:id", async (req, res) => {
 
   res.json({
     piece: result,
+  });
+});
+
+router.get("/artist/:id", async (req, res) => {
+  const result = await appService.getArtist(req.params.id);
+
+  res.json({
+    artist: result,
   });
 });
 

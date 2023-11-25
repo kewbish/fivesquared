@@ -303,14 +303,46 @@ async function getPostsPiece(id) {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
     const result = await connection.execute(
-        `SELECT p.post_id, p.text, p.datetime, p.age_restricted, p.username, ap.title, p.image_url
+      `SELECT p.post_id, p.text, p.datetime, p.age_restricted, p.username, ap.title, p.image_url
          FROM Post p,
               ArtPiece ap
          WHERE p.piece_id = ap.piece_id
            AND p.piece_id = :id
          ORDER BY p.datetime DESC`,
-        [id],
-        {autoCommit: true}
+      [id],
+      { autoCommit: true }
+    );
+    return result.rows.map((row) => ({
+      post_id: row[0],
+      text: row[1],
+      datetime: row[2],
+      age_restricted: row[3],
+      username: row[4],
+      piece_id: row[5],
+      image_url: row[6] || "",
+    }));
+  }).catch(() => {
+    return [];
+  });
+}
+
+
+async function getPostsArtist(id) {
+  return await withOracleDB(async (connection) => {
+    oracledb.fetchAsString = [oracledb.CLOB];
+    const result = await connection.execute(
+      `SELECT p.post_id, p.text, p.datetime, p.age_restricted, p.username, ap.title, p.image_url
+         FROM Post p,
+              ArtPiece ap,
+              Creates cr,
+              Artist a
+         WHERE cr.artist_id = a.artist_id
+           and cr.piece_id = ap.piece_id
+           and p.piece_id = ap.piece_id
+           and a.artist_id = :id
+         ORDER BY p.datetime DESC`,
+      [id],
+      { autoCommit: true }
     );
     return result.rows.map((row) => ({
       post_id: row[0],
@@ -330,7 +362,7 @@ async function getPostsLocation(name) {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
     const result = await connection.execute(
-        `SELECT p.post_id, p.text, p.datetime, p.age_restricted, p.username, ap.title, p.image_url
+      `SELECT p.post_id, p.text, p.datetime, p.age_restricted, p.username, ap.title, p.image_url
          FROM POST p,
               ARTPIECE ap,
               COLLECTION c
@@ -339,8 +371,8 @@ async function getPostsLocation(name) {
            AND ap.collection_title = c.title
            AND c.location_name = :name
          ORDER BY p.datetime DESC`,
-        [name],
-        {autoCommit: true}
+      [name],
+      { autoCommit: true }
     );
     return result.rows.map((row) => ({
       post_id: row[0],
@@ -360,7 +392,7 @@ async function getPostsCollection(title, curator) {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
     const result = await connection.execute(
-        `SELECT p.post_id, p.text, p.datetime, p.age_restricted, p.username, ap.title, p.image_url
+      `SELECT p.post_id, p.text, p.datetime, p.age_restricted, p.username, ap.title, p.image_url
          FROM POST p,
               ARTPIECE ap,
               COLLECTION c
@@ -368,8 +400,8 @@ async function getPostsCollection(title, curator) {
            AND ap.collection_title = :title
            AND ap.collection_curator = :curator
          ORDER BY p.datetime DESC`,
-        [title, curator],
-        {autoCommit: true}
+      [title, curator],
+      { autoCommit: true }
     );
     return result.rows.map((row) => ({
       post_id: row[0],
@@ -633,15 +665,15 @@ async function getPieces(term) {
     let pattern = "%" + term + "%";
     oracledb.fetchAsString = [oracledb.CLOB];
     const result = await connection.execute(
-        `SELECT ap.title, ap.description, a.name, ap.piece_id
+      `SELECT ap.title, ap.description, a.name, ap.piece_id
          FROM ArtPiece ap,
               Creates cr,
               Artist a
          WHERE cr.artist_id = a.artist_id
            and cr.piece_id = ap.piece_id
            and UPPER(ap.title) LIKE :pattern`,
-        [pattern],
-        {autoCommit: true}
+      [pattern],
+      { autoCommit: true }
     );
 
     return result.rows.map((row) => ({
@@ -659,7 +691,7 @@ async function getPiece(id) {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
     const result = await connection.execute(
-        `SELECT ap.title, ap.description, a.name, c.title, c.curator, ap.value, ap.year
+      `SELECT ap.title, ap.description, a.name, c.title, c.curator, ap.value, ap.year
          FROM ArtPiece ap,
               Creates cr,
               Artist a,
@@ -669,8 +701,8 @@ async function getPiece(id) {
            and ap.collection_curator = c.curator
            and cr.piece_id = :id
            and ap.piece_id = :id`,
-        {id},
-        {autoCommit: true}
+      { id },
+      { autoCommit: true }
     );
 
     return {
@@ -688,12 +720,57 @@ async function getPiece(id) {
   });
 }
 
+async function getArtists(term) {
+  return await withOracleDB(async (connection) => {
+    let pattern = "%" + term + "%";
+    oracledb.fetchAsString = [oracledb.CLOB];
+    const result = await connection.execute(
+      `SELECT description, name, artist_id
+         FROM Artist
+         WHERE UPPER(name) LIKE :pattern`,
+      [pattern],
+      { autoCommit: true }
+    );
+
+    return result.rows.map((row) => ({
+      description: row[0],
+      name: row[1],
+      artist_id: row[2]
+    }));
+  }).catch(() => {
+    return null;
+  });
+}
+
+async function getArtist(id) {
+  return await withOracleDB(async (connection) => {
+    oracledb.fetchAsString = [oracledb.CLOB];
+    const result = await connection.execute(
+      `SELECT name, description, dob, dod
+         FROM Artist
+         WHERE artist_id = :id`,
+      { id },
+      { autoCommit: true }
+    );
+
+    return {
+      name: result.rows[0][0],
+      description: result.rows[0][1],
+      dob: result.rows[0][2].toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+      dod: result.rows[0][3].toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+    };
+
+  }).catch(() => {
+    return null;
+  });
+}
+
 async function getLocations(term) {
   return await withOracleDB(async (connection) => {
     let pattern = "%" + term + "%";
     oracledb.fetchAsString = [oracledb.CLOB];
     const result = await connection.execute(
-        `SELECT l.name, l.country, l.st_address, p.city, p.region, l.postcode, l.yr_est
+      `SELECT l.name, l.country, l.st_address, p.city, p.region, l.postcode, l.yr_est
          FROM Location l,
               Postcode p
          WHERE l.postcode = p.postcode
@@ -701,8 +778,8 @@ async function getLocations(term) {
            OR UPPER(l.country) LIKE :pattern
            OR UPPER(p.city) LIKE :pattern
            OR UPPER(p.region) LIKE :pattern)`,
-        [pattern, pattern, pattern, pattern],
-        {autoCommit: true}
+      [pattern, pattern, pattern, pattern],
+      { autoCommit: true }
     );
 
     return result.rows.map((row) => ({
@@ -723,13 +800,13 @@ async function getLocation(name) {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
     const result = await connection.execute(
-        `SELECT l.name, l.country, l.st_address, p.city, p.region, l.postcode, l.yr_est
+      `SELECT l.name, l.country, l.st_address, p.city, p.region, l.postcode, l.yr_est
          FROM Location l,
               Postcode p
          WHERE l.name = :name
            AND l.postcode = p.postcode`,
-        {name},
-        {autoCommit: true}
+      { name },
+      { autoCommit: true }
     );
 
     return {
@@ -752,12 +829,12 @@ async function getCollections(term) {
     let pattern = "%" + term + "%";
     oracledb.fetchAsString = [oracledb.CLOB];
     const result = await connection.execute(
-        `SELECT title, curator, theme, description
+      `SELECT title, curator, theme, description
          FROM COLLECTION
          WHERE UPPER(title) LIKE :pattern
             OR UPPER(curator) LIKE :pattern`,
-        [pattern, pattern],
-        {autoCommit: true}
+      [pattern, pattern],
+      { autoCommit: true }
     );
 
     return result.rows.map((row) => ({
@@ -775,12 +852,12 @@ async function getCollection(title, curator) {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
     const result = await connection.execute(
-        `SELECT title, curator, theme, description
+      `SELECT title, curator, theme, description
          FROM Collection
          WHERE title = :title
            AND curator = :curator`,
-        [title, curator],
-        {autoCommit: true}
+      [title, curator],
+      { autoCommit: true }
     );
 
     return {
@@ -885,7 +962,7 @@ async function assignBadges(username) {
     if (locations.rows.length >= 3) {
       award("Explorer");
     }
-  }).catch(() => {});
+  }).catch(() => { });
 }
 
 async function deletePost(post_id) {
@@ -1077,5 +1154,8 @@ module.exports = {
   getLocation,
   getLocations,
   getCollection,
-  getCollections
+  getCollections,
+  getArtists,
+  getArtist,
+  getPostsArtist,
 };
