@@ -1170,10 +1170,10 @@ async function projectColumns(tableName, body) {
 
 async function getPieceSummary() {
   return await withOracleDB(async (connection) => {
-    const rows = await connection.execute(
+    const result = await connection.execute(
       `SELECT ap.piece_id, ap.title, a.name FROM ArtPiece ap, Creates c, Artist a WHERE ap.piece_id = c.piece_id AND c.artist_id = a.artist_id`
     );
-    return rows.map((row) => ({
+    return result.rows.map((row) => ({
       piece_id: row[0],
       title: row[1],
       artist: row[2],
