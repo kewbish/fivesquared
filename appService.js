@@ -1186,7 +1186,7 @@ async function getPieceSummary() {
 async function postedAboutAll() {
   return await withOracleDB(async (connection) => {
     const users = await connection.execute(
-      `SELECT a.username FROM AppUser a WHERE NOT EXISTS ((SELECT piece_id FROM ArtPiece) MINUS (SELECT p.piece_id FROM Post p WHERE p.username = a.username))`
+      `SELECT a.username FROM AppUser a WHERE NOT EXISTS ((SELECT piece_id FROM ArtPiece) MINUS (SELECT p.piece_id FROM Post p WHERE p.username = a.username)) ORDER BY a.username`
     );
     return users.rows.map((user) => user[0]);
   }).catch(() => {
@@ -1197,7 +1197,7 @@ async function postedAboutAll() {
 async function totalPostsPerAge() {
   return await withOracleDB(async (connection) => {
     const posts = await connection.execute(
-      `SELECT age.age, count(p.post_id) FROM AppUser a, AppUserAge age, Post p WHERE a.username = p.username AND a.dob = age.dob GROUP BY age.age`
+      `SELECT age.age, count(p.post_id) as cnt FROM AppUser a, AppUserAge age, Post p WHERE a.username = p.username AND a.dob = age.dob GROUP BY age.age ORDER BY cnt DESC`
     );
     return posts.rows.map((post) => ({ age: post[0], count: post[1] }));
   }).catch(() => {
@@ -1208,7 +1208,7 @@ async function totalPostsPerAge() {
 async function totalNSFWPostsByActiveUsers() {
   return await withOracleDB(async (connection) => {
     const posts = await connection.execute(
-      `SELECT age.age, count(p.post_id) FROM AppUser a, AppUserAge age, Post p WHERE a.username = p.username AND a.dob = age.dob AND p.age_restricted = 1 GROUP BY age.age HAVING count(p.post_id) > 5`
+      `SELECT age.age, count(p.post_id) as cnt FROM AppUser a, AppUserAge age, Post p WHERE a.username = p.username AND a.dob = age.dob AND p.age_restricted = 1 GROUP BY age.age HAVING count(p.post_id) > 5 ORDER BY cnt DESC`
     );
     return posts.rows.map((post) => ({ age: post[0], count: post[1] }));
   }).catch(() => {
@@ -1221,7 +1221,16 @@ async function mostExpensiveArtPieces() {
     const pieces = await connection.execute(
       `SELECT ap.year, max(ap.value) FROM ArtPiece ap GROUP BY ap.year HAVING 3 <= (SELECT count(*) FROM ArtPiece ap2 WHERE ap2.year = ap.year)`
     );
-    return pieces.rows.map((piece) => ({ year: piece[0], cost: post[1] }));
+    const formatter = new Intl.NumberFormat("en-CA", {
+      style: "currency",
+      currency: "CAD",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    });
+    return pieces.rows.map((piece) => ({
+      year: piece[0],
+      cost: formatter.format(piece[1]),
+    }));
   }).catch(() => {
     return false;
   });
