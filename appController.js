@@ -123,7 +123,6 @@ router.get("/posts/:tag", async (req, res) => {
   res.json({
     success: true,
     posts,
-<<<<<<< HEAD
   });
 });
 
@@ -159,8 +158,6 @@ router.get("/posts/location/:name", async (req, res) => {
   res.json({
     success: true,
     posts,
-=======
->>>>>>> f6babb6 (Add stats queries and route)
   });
 });
 
@@ -219,10 +216,6 @@ router.get(
 );
 
 router.post("/posts/:postId/comments", async (req, res) => {
-<<<<<<< HEAD
-=======
-  console.log("we are here!");
->>>>>>> f6babb6 (Add stats queries and route)
   const result = await appService.createComment(
     Number.parseInt(req.params.postId),
     req.body
@@ -276,7 +269,6 @@ router.post("/signup", async (req, res) => {
 
   res.json({
     success: result,
-<<<<<<< HEAD
   });
 });
 
@@ -303,8 +295,6 @@ router.post("/updateProfile", async (req, res) => {
 
   res.json({
     success: result,
-=======
->>>>>>> f6babb6 (Add stats queries and route)
   });
 });
 
@@ -344,7 +334,6 @@ router.get("/search/profiles/:term", async (req, res) => {
   });
 });
 
-<<<<<<< HEAD
 router.get("/search/pieces/:term", async (req, res) => {
   const result = await appService.getPieces(req.params.term);
 
@@ -438,14 +427,15 @@ router.get("/pieces", async (req, res) => {
   const pieces = await appService.getPieceSummary();
   res.json({
     pieces,
-=======
+  });
+});
+
 router.get("/stats", async (req, res) => {
   res.json({
     postedAboutAll: await appService.postedAboutAll(),
     totalPostsPerAge: await appService.totalPostsPerAge(),
     totalNSFWPostsByActiveUsers: await appService.totalNSFWPostsByActiveUsers(),
     mostExpensiveArtPieces: await appService.mostExpensiveArtPieces(),
->>>>>>> f6babb6 (Add stats queries and route)
   });
 });
 

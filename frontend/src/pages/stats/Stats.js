@@ -11,22 +11,7 @@ const Stats = () => {
       const response = await fetch("http://localhost:65535/stats", {
         method: "GET",
       });
-      //const pjson = await response.json();
-      const pjson = {
-        postedAboutAll: ["kewbish", "johnnie_banks"],
-        totalPostsPerAge: [
-          { age: 17, count: 40 },
-          { age: 20, count: 2 },
-        ],
-        totalNSFWPostsByActiveUsers: [
-          { age: 17, count: 40 },
-          { age: 20, count: 2 },
-        ],
-        mostExpensiveArtPieces: [
-          { year: 2000, cost: "$3,000,000" },
-          { year: 2012, cost: "$4,100,000" },
-        ],
-      };
+      const pjson = await response.json();
       setPostedAboutAll(pjson.postedAboutAll);
       setTotalPostsPerAge(pjson.totalPostsPerAge);
       setTotalNSFWPostsByActiveUsers(pjson.totalNSFWPostsByActiveUsers);
@@ -69,6 +54,14 @@ const Stats = () => {
                             </tr>
                           );
                         })}
+
+                        {postedAboutAll.length === 0 ? (
+                          <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-600 bg-sky-50">
+                              No one yet.
+                            </td>
+                          </tr>
+                        ) : null}
                       </tbody>
                     </table>
                   </div>
@@ -157,6 +150,16 @@ const Stats = () => {
                             </tr>
                           );
                         })}
+                        {totalNSFWPostsByActiveUsers?.length === 0 ? (
+                          <tr>
+                            <td
+                              class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-600 bg-rose-50"
+                              colSpan={2}
+                            >
+                              No ages with active users yet.
+                            </td>
+                          </tr>
+                        ) : null}
                       </tbody>
                     </table>
                   </div>
