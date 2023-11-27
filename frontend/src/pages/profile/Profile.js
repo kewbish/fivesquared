@@ -8,6 +8,7 @@ import ProfileResultCard from '../../components/profileResultCard/ProfileResultC
 import BadgeCard from '../../components/badgeCard/BadgeCard';
 import ImageUpload from "../../components/ImageUpload";
 import { useForm } from "react-hook-form";
+import { makeToast } from "../nav/Nav";
 
 const Profile = () => {
   const [cookies] = useCookies(["login_cookie"]);
@@ -73,8 +74,10 @@ const Profile = () => {
     const result = await response.json();
     if (result.success) {
       console.log("RESULT: ", result);
+      makeToast('Profile updated successfully!');
       toggleEdit();
     } else {
+      makeToast('Something went wrong!', false);
       console.log("RESULT: ", result);
     }
   };

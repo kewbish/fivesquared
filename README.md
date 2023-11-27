@@ -34,3 +34,4 @@ Our project is a social media website where users can post, discuss, and learn a
 * react-dom (https://www.npmjs.com/package/react-dom)
 * react-hook-form (https://www.npmjs.com/package/react-hook-form)
 * react-scripts (https://www.npmjs.com/package/react-scripts)
+* react-hot-toast (https://react-hot-toast.com/)

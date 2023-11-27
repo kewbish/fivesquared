@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
+import { makeToast } from "../nav/Nav";
 
 function Login() {
   const [cookies, setCookie, removeCookie] = useCookies(['login_cookie']);
@@ -26,8 +27,10 @@ function Login() {
     const result = await response.json();
     if (result.success) {
         setCookie('login_cookie', data.username);
+        makeToast('Logged in!');
         navigate(-1);
     } else {
+        makeToast('Incorrect password!');
         setIncorrectPassword(true);
     }
   };

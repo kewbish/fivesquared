@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import ImageUpload from "../../components/ImageUpload";
+import { makeToast } from "../nav/Nav";
 
 function CreatePost({ onUpdate }) {
   const [imageUrl, setImageUrl] = useState("");
@@ -30,6 +31,7 @@ function CreatePost({ onUpdate }) {
     if (pieceId === null) {
       return;
     }
+    var pjson;
     const response = await fetch("http://localhost:65535/posts", {
       method: "POST",
       body: JSON.stringify({
@@ -41,7 +43,13 @@ function CreatePost({ onUpdate }) {
       }),
       headers: { "Content-Type": "application/json" },
     });
-    const pjson = await response.json();
+    pjson = await response.json();
+
+    if (pjson.success) {
+      makeToast('Post published!');
+    } else {
+      makeToast('There was a problem publishing your post.', false);
+    }
     setText("");
     setImageUrl("");
     onUpdate();
