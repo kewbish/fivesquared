@@ -12,9 +12,11 @@ import Profile from "./pages/profile/Profile";
 import Signup from "./pages/signup/Signup";
 import SearchResults from "./pages/search results/SearchResults";
 import Piece from "./pages/piece/Piece";
-import Location from "./pages/location/Location"
+import Location from "./pages/location/Location";
 import Collection from "./pages/collection/Collection";
 import Artist from "./pages/artist/Artist";
+import Projection from "./pages/projection/Projection";
+import Stats from "./pages/stats/Stats";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -26,6 +28,8 @@ root.render(
           <Route path="posts" element={<Posts />} />
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<Signup />} />
+          <Route path="visualizer" element={<Projection />} />
+          <Route path="stats" element={<Stats />} />
           <Route path=":tag" element={<Profile />} />
           <Route path="piece/:term" element={<Piece />} />
           <Route path="artist/:id" element={<Artist />} />

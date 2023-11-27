@@ -94,7 +94,10 @@ router.delete("/posts/:postId/like", async (req, res) => {
 });
 
 router.get("/posts/:postId/like/:username", async (req, res) => {
-  const result = await appService.isPostLiked(req.params['postId'], req.params['username']);
+  const result = await appService.isPostLiked(
+    req.params["postId"],
+    req.params["username"]
+  );
   res.json({
     success: result,
   });
@@ -108,69 +111,77 @@ router.post("/posts", async (req, res) => {
 });
 
 router.get("/posts/following/:username", async (req, res) => {
-  const posts = await appService.getPostsFollowing(req.params['username']);
+  const posts = await appService.getPostsFollowing(req.params["username"]);
   res.json({
     success: true,
-    posts
+    posts,
   });
 });
 
 router.get("/posts/:tag", async (req, res) => {
-  const posts = await appService.getPostsUser(req.params['tag']);
+  const posts = await appService.getPostsUser(req.params["tag"]);
   res.json({
     success: true,
-    posts
+    posts,
   });
 });
 
 router.get("/posts/piece/:id", async (req, res) => {
-  const posts = await appService.getPostsPiece(req.params['id']);
+  const posts = await appService.getPostsPiece(req.params["id"]);
   res.json({
     success: true,
-    posts
+    posts,
   });
 });
 
 router.get("/posts/artist/:id", async (req, res) => {
-  const posts = await appService.getPostsArtist(req.params['id']);
+  const posts = await appService.getPostsArtist(req.params["id"]);
   res.json({
     success: true,
-    posts
+    posts,
   });
 });
 
 router.get("/posts/collection/:title&:curator", async (req, res) => {
-  const posts = await appService.getPostsCollection(req.params['title'], req.params['curator']);
+  const posts = await appService.getPostsCollection(
+    req.params["title"],
+    req.params["curator"]
+  );
   res.json({
     success: true,
-    posts
+    posts,
   });
 });
 
 router.get("/posts/location/:name", async (req, res) => {
-  const posts = await appService.getPostsLocation(req.params['name']);
+  const posts = await appService.getPostsLocation(req.params["name"]);
   res.json({
     success: true,
-    posts
+    posts,
   });
 });
 
 router.delete("/posts/:postId", async (req, res) => {
-  const result = await appService.deletePost(req.params['postId']);
+  const result = await appService.deletePost(req.params["postId"]);
   res.json({
     success: result,
   });
 });
 
 router.get("/posts/:postId/comments", async (req, res) => {
-  const result = await appService.getComments(Number.parseInt(req.params.postId));
+  const result = await appService.getComments(
+    Number.parseInt(req.params.postId)
+  );
   res.json({
     success: result,
   });
 });
 
 router.get("/posts/:postId/comments/:commentId/like", async (req, res) => {
-  const result = await appService.getCommentLikes(req.params['postId'], req.params['commentId']);
+  const result = await appService.getCommentLikes(
+    req.params["postId"],
+    req.params["commentId"]
+  );
   res.json({
     success: result,
   });
@@ -190,22 +201,35 @@ router.delete("/posts/:postId/comments/:commentId/like", async (req, res) => {
   });
 });
 
-router.get("/posts/:postId/comments/:commentId/like/:username", async (req, res) => {
-  const result = await appService.isCommentLiked(req.params['postId'], req.params['commentId'], req.params['username']);
-  res.json({
-    success: result,
-  });
-});
+router.get(
+  "/posts/:postId/comments/:commentId/like/:username",
+  async (req, res) => {
+    const result = await appService.isCommentLiked(
+      req.params["postId"],
+      req.params["commentId"],
+      req.params["username"]
+    );
+    res.json({
+      success: result,
+    });
+  }
+);
 
 router.post("/posts/:postId/comments", async (req, res) => {
-  const result = await appService.createComment(Number.parseInt(req.params.postId), req.body);
+  const result = await appService.createComment(
+    Number.parseInt(req.params.postId),
+    req.body
+  );
   res.json({
     success: result,
   });
 });
 
 router.delete("/posts/:postId/comments/:commentId", async (req, res) => {
-  const result = await appService.deleteComment(req.params['postId'], req.params['commentId']);
+  const result = await appService.deleteComment(
+    req.params["postId"],
+    req.params["commentId"]
+  );
   res.json({
     success: result,
   });
@@ -218,7 +242,7 @@ router.post("/login/verify/", async (req, res) => {
   const result = await appService.verifyLogin(username, password);
 
   res.json({
-    success: result
+    success: result,
   });
 });
 
@@ -234,10 +258,17 @@ router.post("/signup", async (req, res) => {
   let diff = now - bday;
   let age = Math.floor(diff / 31557600000);
 
-  const result = await appService.signup(username, password, bio, dob, img_url, age);
+  const result = await appService.signup(
+    username,
+    password,
+    bio,
+    dob,
+    img_url,
+    age
+  );
 
   res.json({
-    success: result
+    success: result,
   });
 });
 
@@ -253,10 +284,17 @@ router.post("/updateProfile", async (req, res) => {
   let diff = now - bday;
   let age = Math.floor(diff / 31557600000);
 
-  const result = await appService.updateProfile(username, password, bio, dob, img_url, age);
+  const result = await appService.updateProfile(
+    username,
+    password,
+    bio,
+    dob,
+    img_url,
+    age
+  );
 
   res.json({
-    success: result
+    success: result,
   });
 });
 
@@ -264,7 +302,7 @@ router.post("/follow/:username/:tag", async (req, res) => {
   const result = await appService.follow(req.params.username, req.params.tag);
 
   res.json({
-    success: result
+    success: result,
   });
 });
 
@@ -272,18 +310,20 @@ router.delete("/unfollow/:username/:tag", async (req, res) => {
   const result = await appService.unfollow(req.params.username, req.params.tag);
 
   res.json({
-    success: result
+    success: result,
   });
 });
 
 router.get("/profile/:username/:tag", async (req, res) => {
   // username is the currently signed-in user. tag is the profile being viewed
-  const result = await appService.getProfile(req.params.username, req.params.tag);
+  const result = await appService.getProfile(
+    req.params.username,
+    req.params.tag
+  );
 
   res.json({
     profile: result,
   });
-
 });
 
 router.get("/search/profiles/:term", async (req, res) => {
@@ -292,7 +332,6 @@ router.get("/search/profiles/:term", async (req, res) => {
   res.json({
     profile: result,
   });
-
 });
 
 router.get("/search/pieces/:term", async (req, res) => {
@@ -301,7 +340,6 @@ router.get("/search/pieces/:term", async (req, res) => {
   res.json({
     pieces: result,
   });
-
 });
 
 router.get("/search/artists/:term", async (req, res) => {
@@ -310,7 +348,6 @@ router.get("/search/artists/:term", async (req, res) => {
   res.json({
     artists: result,
   });
-
 });
 
 router.get("/search/locations/:term", async (req, res) => {
@@ -319,7 +356,6 @@ router.get("/search/locations/:term", async (req, res) => {
   res.json({
     locations: result,
   });
-
 });
 
 router.get("/search/collections/:term", async (req, res) => {
@@ -328,7 +364,6 @@ router.get("/search/collections/:term", async (req, res) => {
   res.json({
     collections: result,
   });
-
 });
 
 router.get("/piece/:id", async (req, res) => {
@@ -355,9 +390,52 @@ router.get("/location/:name", async (req, res) => {
 });
 
 router.get("/collection/:title&:curator", async (req, res) => {
-  const result = await appService.getCollection(req.params.title, req.params.curator);
+  const result = await appService.getCollection(
+    req.params.title,
+    req.params.curator
+  );
   res.json({
     collection: result,
+  });
+});
+
+router.get("/tables", async (req, res) => {
+  const tables = await appService.getTables();
+
+  res.json({
+    tables,
+  });
+});
+
+router.get("/tables/:tableName/columns", async (req, res) => {
+  const columns = await appService.getColumns(req.params.tableName);
+
+  res.json({
+    columns,
+  });
+});
+
+router.post("/tables/:tableName/visualize", async (req, res) => {
+  const result = await appService.projectColumns(
+    req.params.tableName,
+    req.body
+  );
+  res.json(result);
+});
+
+router.get("/pieces", async (req, res) => {
+  const pieces = await appService.getPieceSummary();
+  res.json({
+    pieces,
+  });
+});
+
+router.get("/stats", async (req, res) => {
+  res.json({
+    postedAboutAll: await appService.postedAboutAll(),
+    totalPostsPerAge: await appService.totalPostsPerAge(),
+    totalNSFWPostsByActiveUsers: await appService.totalNSFWPostsByActiveUsers(),
+    mostExpensiveArtPieces: await appService.mostExpensiveArtPieces(),
   });
 });
 

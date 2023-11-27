@@ -345,7 +345,6 @@ async function getPostsPiece(id) {
   });
 }
 
-
 async function getPostsArtist(id) {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
@@ -703,7 +702,7 @@ async function getPieces(term) {
       title: row[0],
       description: row[1],
       artist: row[2],
-      piece_id: row[3]
+      piece_id: row[3],
     }));
   }).catch(() => {
     return null;
@@ -738,7 +737,6 @@ async function getPiece(id) {
       value: result.rows[0][6],
       year: result.rows[0][7]
     };
-
   }).catch(() => {
     return null;
   });
@@ -759,7 +757,7 @@ async function getArtists(term) {
     return result.rows.map((row) => ({
       description: row[0],
       name: row[1],
-      artist_id: row[2]
+      artist_id: row[2],
     }));
   }).catch(() => {
     return null;
@@ -780,10 +778,17 @@ async function getArtist(id) {
     return {
       name: result.rows[0][0],
       description: result.rows[0][1],
-      dob: result.rows[0][2].toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-      dod: result.rows[0][3].toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+      dob: result.rows[0][2].toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }),
+      dod: result.rows[0][3].toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }),
     };
-
   }).catch(() => {
     return null;
   });
@@ -813,7 +818,7 @@ async function getLocations(term) {
       city: row[3],
       region: row[4],
       postcode: row[5],
-      yr_est: row[6]
+      yr_est: row[6],
     }));
   }).catch(() => {
     return null;
@@ -840,9 +845,8 @@ async function getLocation(name) {
       city: result.rows[0][3],
       region: result.rows[0][4],
       postcode: result.rows[0][5],
-      yr_est: result.rows[0][6]
+      yr_est: result.rows[0][6],
     };
-
   }).catch(() => {
     return null;
   });
@@ -865,7 +869,7 @@ async function getCollections(term) {
       title: row[0],
       curator: row[1],
       theme: row[2],
-      description: row[3]
+      description: row[3],
     }));
   }).catch(() => {
     return null;
@@ -891,7 +895,6 @@ async function getCollection(title, curator) {
       description: result.rows[0][3],
       location_name: result.rows[0][4]
     };
-
   }).catch(() => {
     return null;
   });
@@ -987,7 +990,7 @@ async function assignBadges(username) {
     if (locations.rows.length >= 3) {
       award("Explorer");
     }
-  }).catch(() => { });
+  }).catch(() => {});
 }
 
 async function deletePost(post_id) {
@@ -1146,6 +1149,118 @@ async function deleteComment(post_id, comment_id) {
   });
 }
 
+async function getTables() {
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(
+      `SELECT table_name FROM all_tables WHERE owner = 'ORA_KEWBISH'`
+    );
+    return result.rows.map((row) => row[0]);
+  }).catch(() => {
+    return [];
+  });
+}
+
+async function getColumns(tableName) {
+  if (!!tableName.match(/DROP|CREATE|UPDATE|SET|SELECT|FROM|WHERE/g)) {
+    // basic sanitation
+    return false;
+  }
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(`SELECT * FROM ` + tableName);
+    return result.metaData.map((data) => data.name);
+  }).catch(() => {
+    return [];
+  });
+}
+
+async function projectColumns(tableName, body) {
+  if (!!tableName.match(/DROP|CREATE|UPDATE|SET|SELECT|FROM|WHERE/g)) {
+    // basic sanitation
+    return false;
+  }
+  for (const column of body["columns"]) {
+    if (!!column.match(/DROP|CREATE|UPDATE|SET|SELECT|FROM|WHERE/g)) {
+      return false;
+    }
+  }
+  const columns = body["columns"].join(",");
+  return await withOracleDB(async (connection) => {
+    oracledb.fetchAsString = [oracledb.CLOB];
+    const result = await connection.execute(
+      `SELECT ${columns} FROM ` + tableName
+    );
+    return result.rows;
+  });
+}
+
+async function getPieceSummary() {
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(
+      `SELECT ap.piece_id, ap.title, a.name FROM ArtPiece ap, Creates c, Artist a WHERE ap.piece_id = c.piece_id AND c.artist_id = a.artist_id`
+    );
+    return result.rows.map((row) => ({
+      piece_id: row[0],
+      title: row[1],
+      artist: row[2],
+    }));
+  }).catch(() => {
+    return [];
+  });
+}
+
+async function postedAboutAll() {
+  return await withOracleDB(async (connection) => {
+    const users = await connection.execute(
+      `SELECT a.username FROM AppUser a WHERE NOT EXISTS ((SELECT piece_id FROM ArtPiece) MINUS (SELECT p.piece_id FROM Post p WHERE p.username = a.username)) ORDER BY a.username`
+    );
+    return users.rows.map((user) => user[0]);
+  }).catch(() => {
+    return false;
+  });
+}
+
+async function totalPostsPerAge() {
+  return await withOracleDB(async (connection) => {
+    const posts = await connection.execute(
+      `SELECT age.age, count(p.post_id) as cnt FROM AppUser a, AppUserAge age, Post p WHERE a.username = p.username AND a.dob = age.dob GROUP BY age.age ORDER BY cnt DESC`
+    );
+    return posts.rows.map((post) => ({ age: post[0], count: post[1] }));
+  }).catch(() => {
+    return false;
+  });
+}
+
+async function totalNSFWPostsByActiveUsers() {
+  return await withOracleDB(async (connection) => {
+    const posts = await connection.execute(
+      `SELECT age.age, count(p.post_id) as cnt FROM AppUser a, AppUserAge age, Post p WHERE a.username = p.username AND a.dob = age.dob AND p.age_restricted = 1 GROUP BY age.age HAVING count(p.post_id) > 5 ORDER BY cnt DESC`
+    );
+    return posts.rows.map((post) => ({ age: post[0], count: post[1] }));
+  }).catch(() => {
+    return false;
+  });
+}
+
+async function mostExpensiveArtPieces() {
+  return await withOracleDB(async (connection) => {
+    const pieces = await connection.execute(
+      `SELECT ap.year, max(ap.value) FROM ArtPiece ap GROUP BY ap.year HAVING 3 <= (SELECT count(*) FROM ArtPiece ap2 WHERE ap2.year = ap.year)`
+    );
+    const formatter = new Intl.NumberFormat("en-CA", {
+      style: "currency",
+      currency: "CAD",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    });
+    return pieces.rows.map((piece) => ({
+      year: piece[0],
+      cost: formatter.format(piece[1]),
+    }));
+  }).catch(() => {
+    return false;
+  });
+}
+
 module.exports = {
   testOracleConnection,
   getPosts,
@@ -1183,4 +1298,12 @@ module.exports = {
   getArtists,
   getArtist,
   getPostsArtist,
+  getTables,
+  getColumns,
+  projectColumns,
+  getPieceSummary,
+  postedAboutAll,
+  totalPostsPerAge,
+  totalNSFWPostsByActiveUsers,
+  mostExpensiveArtPieces,
 };
