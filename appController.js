@@ -52,13 +52,13 @@ router.post("/update-name-demotable", async (req, res) => {
 router.get('/count-demotable', async (req, res) => {
     const tableCount = await appService.countDemotable();
     if (tableCount >= 0) {
-        res.json({ 
-            success: true,  
+        res.json({
+            success: true,
             count: tableCount
         });
     } else {
-        res.status(500).json({ 
-            success: false, 
+        res.status(500).json({
+            success: false,
             count: tableCount
         });
     }
@@ -140,7 +140,7 @@ router.get("/posts/artist/:id", async (req, res) => {
 });
 
 router.get("/posts/collection/:title&:curator", async (req, res) => {
-  const posts = await appService.getPostsLocation(req.params['title'], req.params['curator']);
+  const posts = await appService.getPostsCollection(req.params['title'], req.params['curator']);
   res.json({
     success: true,
     posts

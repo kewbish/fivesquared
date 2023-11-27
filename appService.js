@@ -259,9 +259,14 @@ async function getPostsFollowing(username) {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
     const result = await connection.execute(
-      "SELECT p.post_id, p.text, p.datetime, p.age_restricted, p.username, ap.title, p.image_url FROM Post p, ArtPiece ap WHERE p.piece_id = ap.piece_id AND p.username IN (SELECT followee FROM Follows WHERE follower = :username) ORDER BY p.datetime DESC",
-      [username],
-      { autoCommit: true }
+        `SELECT p.post_id, p.text, p.datetime, p.age_restricted, p.username, ap.title, p.image_url
+         FROM Post p,
+              ArtPiece ap
+         WHERE p.piece_id = ap.piece_id
+           AND p.username IN (SELECT followee FROM Follows WHERE follower = :username)
+         ORDER BY p.datetime DESC`,
+        [username],
+        {autoCommit: true}
     );
     return result.rows.map((row) => ({
       post_id: row[0],
@@ -281,9 +286,14 @@ async function getPostsUser(tag) {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
     const result = await connection.execute(
-      "SELECT p.post_id, p.text, p.datetime, p.age_restricted, p.username, ap.title, p.image_url FROM Post p, ArtPiece ap WHERE p.piece_id = ap.piece_id AND p.username = :tag ORDER BY p.datetime DESC",
-      [tag],
-      { autoCommit: true }
+        `SELECT p.post_id, p.text, p.datetime, p.age_restricted, p.username, ap.title, p.image_url
+         FROM Post p,
+              ArtPiece ap
+         WHERE p.piece_id = ap.piece_id
+           AND p.username = :tag
+         ORDER BY p.datetime DESC`,
+        [tag],
+        {autoCommit: true}
     );
     return result.rows.map((row) => ({
       post_id: row[0],
@@ -391,11 +401,11 @@ async function getPostsLocation(name) {
 async function getPostsCollection(title, curator) {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
+
     const result = await connection.execute(
       `SELECT p.post_id, p.text, p.datetime, p.age_restricted, p.username, ap.title, p.image_url
          FROM POST p,
-              ARTPIECE ap,
-              COLLECTION c
+              ARTPIECE ap
          WHERE p.piece_id = ap.piece_id
            AND ap.collection_title = :title
            AND ap.collection_curator = :curator
@@ -403,6 +413,7 @@ async function getPostsCollection(title, curator) {
       [title, curator],
       { autoCommit: true }
     );
+
     return result.rows.map((row) => ({
       post_id: row[0],
       text: row[1],
