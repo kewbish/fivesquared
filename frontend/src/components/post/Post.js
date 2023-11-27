@@ -2,10 +2,9 @@ import {useEffect, useState} from "react";
 import Comment from "./Comment";
 import CreateComment from "./CreateComment";
 import {useCookies} from "react-cookie";
-import { useNavigate } from "react-router-dom";
 
 function Post({post, onUpdate}) {
-    const [cookies, setCookie, removeCookie] = useCookies(['login_cookie', 'y_pos']);
+    const [cookies, setCookie, removeCookie] = useCookies(['login_cookie']);
     const [comments, setComments] = useState([]);
     const [likes, setLikes] = useState(0);
     const [liked, setLiked] = useState(false);
@@ -31,7 +30,6 @@ function Post({post, onUpdate}) {
         setLikes(pjson.success);
         setLoaded(true);
     };
-    const navigate = useNavigate();
 
     const likePost = async () => {
         if (!cookies.login_cookie) return null;
@@ -97,12 +95,8 @@ function Post({post, onUpdate}) {
             {
                 method: "DELETE",
             });
-        const pjson = await response.json();
+        await response.json();
         onUpdate();
-    }
-
-    const tagClicked = () => {
-        navigate("/" + post["username"]);
     }
 
     useEffect(() => {
@@ -117,15 +111,16 @@ function Post({post, onUpdate}) {
                 <img
                     className="w-full h-auto rounded-t-xl"
                     src={post["image_url"]}
-                    alt={"Photo of piece ID " + post["piece_id"]}
+                    alt={"Photo of piece ID " + post["piece_title"]}
                 /></>}
             <div className="p-4 md:p-4">
                 <div className="flex flex-row items-start justify-between">
                     {post["text"] &&
                     (post["age_restricted"] === 0 ? (
-                        <p className="my-1 text-gray-800 self-start">
-                            {post["text"]} — @ art piece {post["piece_id"]}
-                        </p>
+                        <div>
+                        <p className="my-1 text-gray-800 self-start">{post["text"]}</p>
+                        <p className="text-gray-400">About <a className="cursor-pointer underline" href={"/piece/" + post["piece_id"]}>{post["piece_title"]}</a></p>
+                        </div>
                     ) : (
                         <p className="my-1 text-gray-800 self-start">Age restricted.</p>
                     ))}
@@ -143,7 +138,7 @@ function Post({post, onUpdate}) {
                     <div>
                         <div>
                             <p className="text-gray-400 text-small text-left">
-                                Posted by <a className="cursor-pointer underline" onClick={tagClicked}>@{post["username"]}</a>
+                                Posted by <a className="cursor-pointer underline" href={"/" + post["username"]}>@{post["username"]}</a>
                             </p>
                             <p className="text-gray-400 text-small">
                                 {new Date(post["datetime"]).toGMTString()}

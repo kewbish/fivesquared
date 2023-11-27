@@ -90,6 +90,7 @@ const SearchResults = () => {
     fetchCollections();
     fetchLocations();
     fetchArtists();
+    // window.location.reload();
   }, [cookies]);
 
   const goToLogin = () => {
@@ -107,43 +108,43 @@ const SearchResults = () => {
   } else if (profileResults.length + pieceResults.length + collectionResults.length + locationResults.length + artistResults.length > 0) {
     return (
       <div >
-        {profileResults.length > 0 ? <body class="px-10 py-20 gap-5">   <h2 className="text-xl font-semibold sm:text-2xl mb-4 text-center">Profile Results</h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
+        {profileResults.length > 0 ? <body className="px-10 py-20 gap-5">   <h2 className="text-xl font-semibold sm:text-2xl mb-4 text-center">Profile Results</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
             {profileResults.map((profile) => (
               <ProfileResultCard profileData={profile} />
             ))}
 
           </div> </body> : <></>}
-        {pieceResults.length > 0 ? <body class="px-10 py-5 gap-5">
+        {pieceResults.length > 0 ? <body className="px-10 py-5 gap-5">
           <h2 className="text-xl font-semibold sm:text-2xl mb-4 text-center">Art Piece Results</h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
             {pieceResults.map((piece) => (
               <PieceResultCard pieceData={piece} />
             ))}
 
           </div>
         </body> : <></>}
-        {artistResults.length > 0 ? <body class="px-10 py-5 gap-5">
+        {artistResults.length > 0 ? <body className="px-10 py-5 gap-5">
           <h2 className="text-xl font-semibold sm:text-2xl mb-4 text-center">Artist Results</h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
             {artistResults.map((artist) => (
               <ArtistResultCard artistData={artist} />
             ))}
 
           </div>
         </body> : <></>}
-        {collectionResults.length > 0 ? <body class="px-10 py-5 gap-5">
+        {collectionResults.length > 0 ? <body className="px-10 py-5 gap-5">
           <h2 className="text-xl font-semibold sm:text-2xl mb-4 text-center">Collection Results</h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
             {collectionResults.map((collection) => (
               <CollectionResultCard collectionData={collection} />
             ))}
 
           </div>
         </body> : <></>}
-        {locationResults.length > 0 ? <body class="px-10 py-5 gap-5">
+        {locationResults.length > 0 ? <body className="px-10 py-5 gap-5">
           <h2 className="text-xl font-semibold sm:text-2xl mb-4 text-center">Location Results</h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
             {locationResults.map((location) => (
               <LocationResultCard locationData={location} />
             ))}
