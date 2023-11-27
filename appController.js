@@ -361,4 +361,27 @@ router.get("/collection/:title&:curator", async (req, res) => {
   });
 });
 
+  router.get("/tables", async (req, res) => {
+    const tables = await appService.getTables();
+    
+    res.json({
+        tables
+    });
+
+  });  
+
+  router.get("/tables/:tableName/columns", async (req, res) => {
+    const columns = await appService.getColumns(req.params.tableName);
+    
+    res.json({
+       columns 
+    });
+
+  });  
+
+router.post("/tables/:tableName/visualize", async (req, res) => {
+  const result = await appService.projectColumns(req.params.tableName, req.body);
+  res.json(result);
+});
+
 module.exports = router;

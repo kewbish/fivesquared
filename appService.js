@@ -326,7 +326,6 @@ async function getPostsPiece(id) {
   });
 }
 
-
 async function getPostsArtist(id) {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
@@ -680,7 +679,7 @@ async function getPieces(term) {
       title: row[0],
       description: row[1],
       artist: row[2],
-      piece_id: row[3]
+      piece_id: row[3],
     }));
   }).catch(() => {
     return null;
@@ -712,9 +711,8 @@ async function getPiece(id) {
       collection: result.rows[0][3],
       curator: result.rows[0][4],
       value: result.rows[0][5],
-      year: result.rows[0][6]
+      year: result.rows[0][6],
     };
-
   }).catch(() => {
     return null;
   });
@@ -735,7 +733,7 @@ async function getArtists(term) {
     return result.rows.map((row) => ({
       description: row[0],
       name: row[1],
-      artist_id: row[2]
+      artist_id: row[2],
     }));
   }).catch(() => {
     return null;
@@ -756,10 +754,17 @@ async function getArtist(id) {
     return {
       name: result.rows[0][0],
       description: result.rows[0][1],
-      dob: result.rows[0][2].toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
-      dod: result.rows[0][3].toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+      dob: result.rows[0][2].toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }),
+      dod: result.rows[0][3].toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }),
     };
-
   }).catch(() => {
     return null;
   });
@@ -789,7 +794,7 @@ async function getLocations(term) {
       city: row[3],
       region: row[4],
       postcode: row[5],
-      yr_est: row[6]
+      yr_est: row[6],
     }));
   }).catch(() => {
     return null;
@@ -816,9 +821,8 @@ async function getLocation(name) {
       city: result.rows[0][3],
       region: result.rows[0][4],
       postcode: result.rows[0][5],
-      yr_est: result.rows[0][6]
+      yr_est: result.rows[0][6],
     };
-
   }).catch(() => {
     return null;
   });
@@ -841,7 +845,7 @@ async function getCollections(term) {
       title: row[0],
       curator: row[1],
       theme: row[2],
-      description: row[3]
+      description: row[3],
     }));
   }).catch(() => {
     return null;
@@ -864,9 +868,8 @@ async function getCollection(title, curator) {
       title: result.rows[0][0],
       curator: result.rows[0][1],
       theme: result.rows[0][2],
-      description: result.rows[0][3]
+      description: result.rows[0][3],
     };
-
   }).catch(() => {
     return null;
   });
@@ -962,7 +965,7 @@ async function assignBadges(username) {
     if (locations.rows.length >= 3) {
       award("Explorer");
     }
-  }).catch(() => { });
+  }).catch(() => {});
 }
 
 async function deletePost(post_id) {
@@ -1121,6 +1124,52 @@ async function deleteComment(post_id, comment_id) {
   });
 }
 
+async function getTables() {
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(
+      `SELECT table_name FROM all_tables WHERE owner = 'ORA_KEWBISH'`
+    );
+    return result.rows.map((row) => row[0]);
+  }).catch(() => {
+    return [];
+  });
+}
+
+async function getColumns(tableName) {
+  if (!!tableName.match(/DROP|CREATE|UPDATE|SET|SELECT|FROM|WHERE/g)) {
+    // basic sanitation
+    return false;
+  }
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(`SELECT * FROM ` + tableName);
+    return result.metaData.map((data) => data.name);
+  }).catch(() => {
+    return [];
+  });
+}
+
+async function projectColumns(tableName, body) {
+  if (!!tableName.match(/DROP|CREATE|UPDATE|SET|SELECT|FROM|WHERE/g)) {
+    // basic sanitation
+    return false;
+  }
+  for (const column of body["columns"]) {
+    if (!!column.match(/DROP|CREATE|UPDATE|SET|SELECT|FROM|WHERE/g)) {
+      return false;
+    }
+  }
+  const columns = body["columns"].join(",");
+  return await withOracleDB(async (connection) => {
+    oracledb.fetchAsString = [oracledb.CLOB];
+    const result = await connection.execute(
+      `SELECT ${columns} FROM ` + tableName
+    );
+    return result.rows;
+  }).catch(() => {
+    return [];
+  });
+}
+
 module.exports = {
   testOracleConnection,
   getPosts,
@@ -1158,4 +1207,7 @@ module.exports = {
   getArtists,
   getArtist,
   getPostsArtist,
+  getTables,
+  getColumns,
+  projectColumns,
 };
