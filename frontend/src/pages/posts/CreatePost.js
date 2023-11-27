@@ -95,17 +95,17 @@ function CreatePost({ onUpdate }) {
           )}
           <div className="flex justify-between items-center">
             <div className="flex gap-4 items-center">
-              <div class="hs-dropdown relative inline-flex">
+              <div className="hs-dropdown relative inline-flex">
                 <button
                   id="hs-dropdown-default"
                   type="button"
-                  class="hs-dropdown-toggle py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 max-w-[240px]"
+                  className="max-h-80 overflow-scroll hs-dropdown-toggle py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 max-w-[240px]"
                 >
                   <p className="truncate">
                     {pieceId === null ? "Select Art Piece" : pieceDisplay}
                   </p>
                   <svg
-                    class="hs-dropdown-open:rotate-180 w-4 h-4"
+                    className="hs-dropdown-open:rotate-180 w-4 h-4"
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
                     height="24"
