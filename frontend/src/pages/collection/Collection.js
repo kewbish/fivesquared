@@ -36,31 +36,32 @@ const Collection = () => {
     // changes to the template to style it with our project's specific goals.
     return (
       <>
-        <div class="p-16">
-          <div class="p-8 bg-white border shadow-sm rounded-xl mt-24">
-            <div class="grid grid-cols-1 md:grid-cols-3">
-              <div class="grid grid-cols-3 text-center order-last md:order-first mt-20 md:mt-0">
-                <div>
-                  <p class="font-bold text-gray-700 text-xl">{posts.length}</p>
-                  <p class="text-gray-400">Related Posts</p>
+        <div className="p-16">
+          <div className="p-8 bg-white border shadow-sm rounded-xl mt-24">
+            <div className="grid grid-cols-1 md:grid-cols-3">
+              <div className="text-center">
+                <p className="font-bold text-gray-700 text-xl">{posts.length}</p>
+                <p className="text-gray-400">Related Posts</p>
+              </div>
+              <div className="relative">
+                <div className="w-48 h-48 bg-indigo-100 mx-auto rounded-full shadow-2xl absolute inset-x-0 top-0 -mt-24 flex items-center justify-center text-indigo-500">
+                  <img src="https://cdn0.iconfinder.com/data/icons/job-seeker/256/folder_job_seeker_employee_unemployee_work-512.png" style={{ borderRadius: "50%" }}
+                  alt={"placeholder icon for collection"} viewBox="0 0 20 20" />
                 </div>
               </div>
-              <div class="relative">
-                <div class="w-48 h-48 bg-indigo-100 mx-auto rounded-full shadow-2xl absolute inset-x-0 top-0 -mt-24 flex items-center justify-center text-indigo-500">
-                  <img src="https://cdn0.iconfinder.com/data/icons/job-seeker/256/folder_job_seeker_employee_unemployee_work-512.png" style={{ borderRadius: "50%" }} viewBox="0 0 20 20" />
-                </div>
-              </div>
-              <div class="space-x-8 flex justify-between mt-32 md:mt-0 md:justify-center">
+              <div className="text-center">
+                <a className="font-bold text-gray-700 text-xl" href={`/location/${collectionData.location_name}`}>{collectionData.location_name}</a>
+                <p className="text-gray-400">Location</p>
               </div>
             </div>
 
-            <div class="mt-20 text-center pb-12">
-              <h1 class="text-4xl font-medium text-gray-700">{collectionData.title}, <span class="font-light text-gray-500">{collectionData.curator}</span></h1>
-              <p class="font-light text-gray-600 mt-3">{collectionData.description}</p>
+            <div className="mt-20 text-center pb-12">
+              <h1 className="text-4xl font-medium text-gray-700">{collectionData.title}<span className="font-light text-gray-500"> by {collectionData.curator}</span></h1>
+              <p className="font-light text-gray-600 mt-3">{collectionData.description}</p>
             </div>
             <div className="flex justify-center">
-              <div class="flex flex-col gap-5 w-3/5">
-                <h2 class="font-bold text-center text-gray-800">Recent Posts</h2>
+              <div className="flex flex-col gap-5 w-3/5">
+                <h2 className="font-bold text-center text-gray-800">Recent Posts</h2>
                 {posts.map((post) => (
                   <Post post={post} onUpdate={getPosts} key={post["post_id"]} />
                 ))}

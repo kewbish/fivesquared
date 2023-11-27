@@ -1,13 +1,4 @@
-import { useNavigate } from "react-router-dom";
-
 function CollectionResultCard({ collectionData }) {
-	const navigate = useNavigate();
-
-	const goToCollection = () => {
-		navigate(`/collection/${collectionData.title}/${collectionData.curator}`);
-	};
-
-
 	// NOTE: As was explicitly discussed and permitted by our TA Terry during the Milestone 3 review, we have based parts of the following component around
 	// a component library example: https://freefrontend.com/tailwind-profiles/ . The code was not auto-generated, and we made significant
 	// changes to the template to style it with our project's specific goals.
@@ -20,7 +11,8 @@ function CollectionResultCard({ collectionData }) {
 					<p className="px-5 text-xs sm:text-base text-gray-600">{collectionData.curator}</p>
 				</div>
 				<div className="flex justify-center pt-2 space-x-4 align-center">
-					<button className="cursor-pointer underline text-gray-400" onClick={() => {goToCollection()}}>View collection</button>
+					<a className="cursor-pointer underline text-gray-400"
+					   href={`/collection/${collectionData.title}/${collectionData.curator}`}>View collection</a>
 				</div>
 			</div>
 		</div>

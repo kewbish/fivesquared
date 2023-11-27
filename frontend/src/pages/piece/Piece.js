@@ -39,39 +39,44 @@ function Piece()  {
     // changes to the template to style it with our project's specific goals.
     return (
       <>
-        <div class="p-16">
-          <div class="p-8 bg-white border shadow-sm rounded-xl mt-24">
-            <div class="grid grid-cols-1 md:grid-cols-3">
-              <div class="grid grid-cols-3 text-center order-last md:order-first mt-20 md:mt-0">
+        <div className="p-16">
+          <div className="p-8 bg-white border shadow-sm rounded-xl mt-24">
+            <div className="grid grid-cols-1 md:grid-cols-3">
+              <div className="grid grid-cols-3 text-center order-last md:order-first mt-20 md:mt-0">
                 <div>
-                  <p class="font-bold text-gray-700 text-xl">{"$" + pieceData.value}</p>
-                  <p class="text-gray-400">Value</p>
+                  <p className="font-bold text-gray-700 text-xl">{"$" + pieceData.value}</p>
+                  <p className="text-gray-400">Value</p>
                 </div>
                 <div>
-                  <p class="font-bold text-gray-700 text-xl">{pieceData.year}</p>
-                  <p class="text-gray-400">Year</p>
+                  <p className="font-bold text-gray-700 text-xl">{pieceData.year}</p>
+                  <p className="text-gray-400">Year</p>
                 </div>
                 <div>
-                  <p class="font-bold text-gray-700 text-xl">{posts.length}</p>
-                  <p class="text-gray-400">Related Posts</p>
+                  <p className="font-bold text-gray-700 text-xl">{posts.length}</p>
+                  <p className="text-gray-400">Related Posts</p>
                 </div>
               </div>
-              <div class="relative">
-                <div class="w-48 h-48 bg-indigo-100 mx-auto rounded-full shadow-2xl absolute inset-x-0 top-0 -mt-24 flex items-center justify-center text-indigo-500">
+              <div className="relative">
+                <div className="w-48 h-48 bg-indigo-100 mx-auto rounded-full shadow-2xl absolute inset-x-0 top-0 -mt-24 flex items-center justify-center text-indigo-500">
                   <img src="https://cdn2.iconfinder.com/data/icons/circle-icons-1/64/art-1024.png" style={{ borderRadius: "50%" }} viewBox="0 0 20 20" />
                 </div>
               </div>
-              <div class="space-x-8 flex justify-between mt-32 md:mt-0 md:justify-center">
+              <div className="text-center">
+                <a className="font-semibold text-gray-700 text-xl" href={`/collection/${pieceData.collection}/${pieceData.curator}`}>{pieceData.collection} by {pieceData.curator}</a>
+                <p className="text-gray-400">Collection</p>
+              </div>
+              <div className="space-x-8 flex justify-between mt-32 md:mt-0 md:justify-center">
               </div>
             </div>
 
-            <div class="mt-20 text-center pb-12">
-              <h1 class="text-4xl font-medium text-gray-700">{pieceData.title}, <span class="font-light text-gray-500">{pieceData.artist}</span></h1>
-              <p class="font-light text-gray-600 mt-3">{`${pieceData.title} was created by ${pieceData.artist} in ${pieceData.year}. Now worth an estimated $${pieceData.value}, it resides in the ${pieceData.collection} collection under curator ${pieceData.curator}. It is described: "${pieceData.description}"`}</p>
+            <div className="mt-20 text-center pb-12">
+              <h1 className="text-4xl font-medium text-gray-700">{pieceData.title}, <a className="font-light text-gray-500" href={`/artist/${pieceData.artist_id}`}>{pieceData.artist_name}</a></h1>
+              <h2 className="text-3xl font-medium text-gray-700">{pieceData.collection} <a className="font-light text-gray-500" href={`/collection/${pieceData.collection}/${pieceData.curator}`}>by {pieceData.curator}</a></h2>
+              <p className="font-light text-gray-600 mt-3">{pieceData.description}</p>
             </div>
             <div className="flex justify-center">
-              <div class="flex flex-col gap-5 w-3/5">
-                <h2 class="font-bold text-center text-gray-800">Recent Posts</h2>
+              <div className="flex flex-col gap-5 w-3/5">
+                <h2 className="font-bold text-center text-gray-800">Recent Posts</h2>
                 {posts.map((post) => (
                   <Post post={post} onUpdate={getPosts} key={post["post_id"]} />
                 ))}
@@ -95,6 +100,6 @@ function Piece()  {
       </div>
     );
   }
-};
+}
 
 export default Piece;
