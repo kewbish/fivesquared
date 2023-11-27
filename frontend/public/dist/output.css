@@ -973,6 +973,18 @@ select {
   height: auto;
 }
 
+.max-h-5 {
+  max-height: 1.25rem;
+}
+
+.max-h-20 {
+  max-height: 5rem;
+}
+
+.max-h-80 {
+  max-height: 20rem;
+}
+
 .min-h-full {
   min-height: 100%;
 }
@@ -1231,6 +1243,10 @@ select {
 
 .overflow-hidden {
   overflow: hidden;
+}
+
+.overflow-scroll {
+  overflow: scroll;
 }
 
 .overflow-x-auto {
