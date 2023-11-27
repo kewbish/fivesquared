@@ -430,4 +430,13 @@ router.get("/pieces", async (req, res) => {
   });
 });
 
+router.get("/stats", async (req, res) => {
+  res.json({
+    postedAboutAll: await appService.postedAboutAll(),
+    totalPostsPerAge: await appService.totalPostsPerAge(),
+    totalNSFWPostsByActiveUsers: await appService.totalNSFWPostsByActiveUsers(),
+    mostExpensiveArtPieces: await appService.mostExpensiveArtPieces(),
+  });
+});
+
 module.exports = router;
