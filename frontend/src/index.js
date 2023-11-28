@@ -17,6 +17,8 @@ import Collection from "./pages/collection/Collection";
 import Artist from "./pages/artist/Artist";
 import Projection from "./pages/projection/Projection";
 import Stats from "./pages/stats/Stats";
+import AdvancedSearchResults from "./pages/search results/advancedSearchResults";
+import AdvancedSearch from "./components/advancedSearch/AdvancedSearch";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -35,7 +37,9 @@ root.render(
           <Route path="artist/:id" element={<Artist />} />
           <Route path="location/:name" element={<Location />} />
           <Route path="collection/:title/:curator" element={<Collection />} />
-          <Route path="search/:term" element={<SearchResults />} />
+          <Route path="search" element={<SearchResults />} />
+          <Route path="other-search" element={<AdvancedSearch />} />
+          <Route path="advanced-search" element={<AdvancedSearchResults />} />
           <Route path="*" element={<Nothing />} />
         </Route>
       </Routes>

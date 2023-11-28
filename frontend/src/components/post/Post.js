@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
-import Comment from "./Comment";
-import CreateComment from "./CreateComment";
+import Comment from "../comment/Comment";
+import CreateComment from "../createComment/CreateComment";
 import {useCookies} from "react-cookie";
 
 function Post({post, onUpdate}) {

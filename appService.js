@@ -749,14 +749,68 @@ async function getArtists(term) {
     const result = await connection.execute(
       `SELECT description, name, artist_id
          FROM Artist
-         WHERE UPPER(name) LIKE :pattern`,
-      [pattern],
+         WHERE UPPER(name) LIKE :pattern
+            OR UPPER(description) LIKE :pattern`,
+      [pattern, pattern],
       { autoCommit: true }
     );
 
     return result.rows.map((row) => ({
       description: row[0],
       name: row[1],
+      artist_id: row[2],
+    }));
+  }).catch(() => {
+    return null;
+  });
+}
+
+async function getArtistsAdvanced(name, dob, dod, description) {
+  const condArray = [];
+  const values = [];
+
+  console.log(name, dob, dod, description);
+
+  if (name !== "\x00") {
+    condArray.push(`Upper(NAME) LIKE :name`);
+    values.push("%" + name.toUpperCase() + "%");
+  }
+
+  if (dob !== "\x00") {
+    // console.log(dob);
+    condArray.push(`DOB >= TO_DATE(:dob, 'YYYY-MM-DD')`);
+    values.push(dob);
+  }
+
+  if (dod !== "\x00") {
+    // console.log(dod);
+    condArray.push(`DOD <= TO_DATE(:dod, 'YYYY-MM-DD')`);
+    values.push(dod)
+  }
+
+  if (description !== "\x00") {
+    condArray.push(`Upper(DESCRIPTION) LIKE :description`);
+    values.push("%"+description.toUpperCase()+"%");
+  }
+
+  let cond = condArray.join(" AND ");
+  if (cond) cond = "OR " + cond;
+
+  console.log(cond);
+  console.log(values);
+
+  return await withOracleDB(async (connection) => {
+    oracledb.fetchAsString = [oracledb.CLOB];
+    const result = await connection.execute(
+        `SELECT name, description, artist_id
+         FROM Artist 
+         WHERE name <> name ` + cond,
+        values
+    );
+
+    return result.rows.map((row) => ({
+      name: row[0],
+      description: row[1],
       artist_id: row[2],
     }));
   }).catch(() => {
@@ -860,8 +914,10 @@ async function getCollections(term) {
       `SELECT title, curator, theme, description
          FROM COLLECTION
          WHERE UPPER(title) LIKE :pattern
-            OR UPPER(curator) LIKE :pattern`,
-      [pattern, pattern],
+            OR UPPER(curator) LIKE :pattern
+            OR UPPER(theme) LIKE :pattern
+            OR UPPER(description) LIKE :pattern`,
+      [pattern, pattern, pattern, pattern],
       { autoCommit: true }
     );
 
@@ -939,12 +995,13 @@ async function assignBadges(username) {
   const award = async (badge_name) => {
     return await withOracleDB(async (connection) => {
       await connection.execute(
-        `INSERT INTO Earns VALUES (:username, :badge_name)`,
-        {
-          username,
-          badge_name: badge_name,
-        },
-        { autoCommit: true }
+          `INSERT INTO Earns
+           VALUES (:username, :badge_name)`,
+          {
+            username,
+            badge_name: badge_name,
+          },
+          {autoCommit: true}
       );
     });
   };
@@ -1296,6 +1353,7 @@ module.exports = {
   getCollection,
   getCollections,
   getArtists,
+  getArtistsAdvanced,
   getArtist,
   getPostsArtist,
   getTables,

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./Posts.css";
 import Post from "../../components/post/Post";
-import CreatePost from "./CreatePost";
+import CreatePost from "../../components/createPost/CreatePost";
 import { useCookies } from "react-cookie";
 
 function Posts() {

@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import {useParams, useSearchParams} from 'react-router-dom';
 import { useCookies } from "react-cookie";
 import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
@@ -10,8 +10,7 @@ import ArtistResultCard from '../../components/artistResultCard/artistResultCard
 
 const SearchResults = () => {
   const [cookies, setCookie, removeCookie] = useCookies(["login_cookie"]);
-  // we could have different lists for the results of different search types (collection, artwork, profile, etc.)
-  const { term } = useParams();
+  const [searchParam] = useSearchParams();
   const [profileResults, setProfileResults] = useState([]);
   const [pieceResults, setPieceResults] = useState([]);
   const [collectionResults, setCollectionResults] = useState([]);
@@ -20,6 +19,7 @@ const SearchResults = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const term = searchParam.get("q").toUpperCase();
     const fetchProfiles = async () => {
       if (cookies['login_cookie']) {
         const response = await fetch(`http://localhost:65535/search/profiles/${term}`, {
