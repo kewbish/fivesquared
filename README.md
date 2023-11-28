@@ -5,6 +5,7 @@
 * Our milestone 1, 2, 3, and 4 submissions are in a folder called milestones. They are also linked directly below.
 * As was explicitly discussed and approved in the Milestone 3 Discussion, we have used some example frontend code from component libraries in the design of our frontend. Some example code was copied from these sources (and extensively modified to fit our project's needs). Sources Below. All backend and SQL code was written exclusively by us based on the project template, with no external code used.
 * Github Squash and Merge was used when merging some Pull Requests. As a result, the commit history for some pull requests shows only one commit. Looking in the closed PR's tab will show the incremental commits made during these PR's.
+* There is a note in the rubric about data sanitation to prevent SQL injection attacks. Due to our choice of tech stacks and our use of paramaterized database queries from our Express server, attacks like this will be prevented.
 
 ## Project Summary
 
