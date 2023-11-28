@@ -17,7 +17,7 @@ import Collection from "./pages/collection/Collection";
 import Artist from "./pages/artist/Artist";
 import Projection from "./pages/projection/Projection";
 import Stats from "./pages/stats/Stats";
-import AdvancedSearchResults from "./pages/search results/advancedSearchResults";
+import AdvancedSearchResults from "./pages/search results/AdvancedSearchResults";
 import AdvancedSearch from "./components/advancedSearch/AdvancedSearch";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));

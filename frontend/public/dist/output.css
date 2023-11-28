@@ -2428,6 +2428,10 @@ select {
     width: auto;
   }
 
+  .lg\:flex-grow {
+    flex-grow: 1;
+  }
+
   .lg\:items-center {
     align-items: center;
   }

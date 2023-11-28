@@ -24,7 +24,7 @@ const Nav = () => {
 
   const search = () => {
     if (searchTerm !== "") {
-      navigate(`/search/${searchTerm}`);
+      navigate(`/search?q=${searchTerm}`);
     }
   };
 
