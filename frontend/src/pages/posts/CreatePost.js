@@ -46,9 +46,9 @@ function CreatePost({ onUpdate }) {
     pjson = await response.json();
 
     if (pjson.success) {
-      makeToast('Post published!');
+      makeToast("Post published!");
     } else {
-      makeToast('There was a problem publishing your post.', false);
+      makeToast("There was a problem publishing your post.", false);
     }
     setText("");
     setImageUrl("");
@@ -107,7 +107,7 @@ function CreatePost({ onUpdate }) {
                 <button
                   id="hs-dropdown-default"
                   type="button"
-                  className="max-h-80 overflow-scroll hs-dropdown-toggle py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 max-w-[240px]"
+                  className="max-h-80 hs-dropdown-toggle py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 max-w-[240px]"
                 >
                   <p className="truncate">
                     {pieceId === null ? "Select Art Piece" : pieceDisplay}
