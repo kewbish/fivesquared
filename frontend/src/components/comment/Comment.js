@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import {useCookies} from "react-cookie";
 import { useNavigate } from "react-router-dom";
+import { makeToast } from "../../pages/nav/Nav";
 
 function Comment({comment, onUpdate}) {
     const [cookies, setCookie, removeCookie] = useCookies(['login_cookie', 'y_pos']);
@@ -87,6 +88,11 @@ function Comment({comment, onUpdate}) {
                 method: "DELETE",
             });
         const cjson = await response.json();
+        if (cjson.success) {
+            makeToast('Comment deleted!');
+        } else {
+            makeToast("We couldn't delete your comment.", false);
+        }
         onUpdate();
     }
 

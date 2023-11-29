@@ -1,9 +1,10 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import Comment from "../comment/Comment";
 import CreateComment from "../createComment/CreateComment";
-import {useCookies} from "react-cookie";
+import { useCookies } from "react-cookie";
+import { makeToast } from "../../pages/nav/Nav";
 
-function Post({post, onUpdate}) {
+function Post({ post, onUpdate }) {
     const [cookies, setCookie, removeCookie] = useCookies(['login_cookie']);
     const [comments, setComments] = useState([]);
     const [likes, setLikes] = useState(0);
@@ -36,13 +37,13 @@ function Post({post, onUpdate}) {
         console.log("liked!");
         const response = await fetch(
             `http://localhost:65535/posts/${post["post_id"]}/like`, {
-                method: "POST",
-                body: JSON.stringify({
-                    username: cookies.login_cookie,
-                    post_id: post["post_id"]
-                }),
-                headers: {"Content-Type": "application/json"},
-            });
+            method: "POST",
+            body: JSON.stringify({
+                username: cookies.login_cookie,
+                post_id: post["post_id"]
+            }),
+            headers: { "Content-Type": "application/json" },
+        });
         const pjson = await response.json();
         if (pjson.success) {
             setLoaded(false);
@@ -57,13 +58,13 @@ function Post({post, onUpdate}) {
         console.log("unliked!");
         const response = await fetch(
             `http://localhost:65535/posts/${post["post_id"]}/like`, {
-                method: "DELETE",
-                body: JSON.stringify({
-                    username: cookies.login_cookie,
-                    post_id: post["post_id"]
-                }),
-                headers: {"Content-Type": "application/json"},
-            });
+            method: "DELETE",
+            body: JSON.stringify({
+                username: cookies.login_cookie,
+                post_id: post["post_id"]
+            }),
+            headers: { "Content-Type": "application/json" },
+        });
         const pjson = await response.json();
         if (pjson.success) {
             setLoaded(false);
@@ -88,6 +89,7 @@ function Post({post, onUpdate}) {
     }
 
     const deletePost = async () => {
+        console.log('DELETE POST LOGIC');
         if (!cookies['login_cookie']) return null;
 
         const response = await fetch(
@@ -95,7 +97,14 @@ function Post({post, onUpdate}) {
             {
                 method: "DELETE",
             });
-        await response.json();
+        let djson = await response.json();
+        console.log('djson', djson);
+        if (djson.success) {
+            makeToast('Post deleted!');
+        } else {
+            makeToast("We couldn't delete that one.", false);
+        }
+
         onUpdate();
     }
 
@@ -116,14 +125,14 @@ function Post({post, onUpdate}) {
             <div className="p-4 md:p-4">
                 <div className="flex flex-row items-start justify-between">
                     {post["text"] &&
-                    (post["age_restricted"] === 0 ? (
-                        <div>
-                        <p className="my-1 text-gray-800 self-start">{post["text"]}</p>
-                        <p className="text-gray-400">About <a className="cursor-pointer underline" href={"/piece/" + post["piece_id"]}>{post["piece_title"]}</a></p>
-                        </div>
-                    ) : (
-                        <p className="my-1 text-gray-800 self-start">Age restricted.</p>
-                    ))}
+                        (post["age_restricted"] === 0 ? (
+                            <div>
+                                <p className="my-1 text-gray-800 self-start">{post["text"]}</p>
+                                <p className="text-gray-400">About <a className="cursor-pointer underline" href={"/piece/" + post["piece_id"]}>{post["piece_title"]}</a></p>
+                            </div>
+                        ) : (
+                            <p className="my-1 text-gray-800 self-start">Age restricted.</p>
+                        ))}
                     {(cookies.login_cookie === post.username) &&
                         <button
                             type="button"
@@ -156,7 +165,7 @@ function Post({post, onUpdate}) {
                         <button
                             type="button"
                             className={liked ?
-                                "py-[.344rem] px-2 inline-flex justify-center items-center gap-2 rounded-md font-semibold text-red-400 transition-all":
+                                "py-[.344rem] px-2 inline-flex justify-center items-center gap-2 rounded-md font-semibold text-red-400 transition-all" :
                                 "py-[.344rem] px-2 inline-flex justify-center items-center gap-2 rounded-md font-semibold text-gray-400 transition-all"
                             }
                             onClick={cookies.login_cookie ? (liked ? unlikePost : likePost) : null}
@@ -171,7 +180,7 @@ function Post({post, onUpdate}) {
                 <hr></hr>
             </div>
             <div>
-                <CreateComment postId={post["post_id"]} onUpdate={getComments}/>
+                <CreateComment postId={post["post_id"]} onUpdate={getComments} />
             </div>
             {comments.length > 0 && <>
                 <div className="pb-4">
@@ -179,11 +188,11 @@ function Post({post, onUpdate}) {
                 </div>
                 <div className="ml-6 flex flex-col justify-center">
                     {comments.map((comment) => (
-                            <div>
-                                <Comment comment={comment} onUpdate={getComments} key={comment["comment_id"]}/>
-                                &nbsp;
-                            </div>
-                        )
+                        <div>
+                            <Comment comment={comment} onUpdate={getComments} key={comment["comment_id"]} />
+                            &nbsp;
+                        </div>
+                    )
                     )}
                 </div>
             </>}

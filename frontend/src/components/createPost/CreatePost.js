@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import ImageUpload from "../ImageUpload";
+import { makeToast } from "/Nav";
 
 function CreatePost({ onUpdate }) {
   const [imageUrl, setImageUrl] = useState("");
@@ -30,6 +31,7 @@ function CreatePost({ onUpdate }) {
     if (pieceId === null) {
       return;
     }
+    var pjson;
     const response = await fetch("http://localhost:65535/posts", {
       method: "POST",
       body: JSON.stringify({
@@ -41,7 +43,13 @@ function CreatePost({ onUpdate }) {
       }),
       headers: { "Content-Type": "application/json" },
     });
-    const pjson = await response.json();
+    pjson = await response.json();
+
+    if (pjson.success) {
+      makeToast("Post published!");
+    } else {
+      makeToast("There was a problem publishing your post.", false);
+    }
     setText("");
     setImageUrl("");
     onUpdate();
@@ -99,7 +107,7 @@ function CreatePost({ onUpdate }) {
                 <button
                   id="hs-dropdown-default"
                   type="button"
-                  className="max-h-80 overflow-scroll hs-dropdown-toggle py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 max-w-[240px]"
+                  className="max-h-80 hs-dropdown-toggle py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 max-w-[240px]"
                 >
                   <p className="truncate">
                     {pieceId === null ? "Select Art Piece" : pieceDisplay}

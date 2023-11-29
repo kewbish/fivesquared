@@ -40,6 +40,7 @@ const Projection = () => {
       }
       const filteredCols = columns.filter((_, i) => selectedColumns[i]);
       if (!filteredCols.length) {
+        setResults(null);
         return;
       }
       const result = await fetch(
@@ -111,7 +112,7 @@ const Projection = () => {
                     setSelectedColumns((selCol) => [
                       ...selCol.slice(0, i),
                       !selCol[i],
-                      ...selCol.slice(i, selCol.length),
+                      ...selCol.slice(i + 1, selCol.length),
                     ])
                   }
                   checked={selectedColumns[i]}

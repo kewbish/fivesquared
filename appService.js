@@ -50,72 +50,6 @@ async function testOracleConnection() {
   });
 }
 
-async function fetchDemotableFromDb() {
-  return await withOracleDB(async (connection) => {
-    const result = await connection.execute("SELECT * FROM DEMOTABLE");
-    return result.rows;
-  }).catch(() => {
-    return [];
-  });
-}
-
-async function initiateDemotable() {
-  return await withOracleDB(async (connection) => {
-    try {
-      await connection.execute(`DROP TABLE DEMOTABLE`);
-    } catch (err) {
-      console.log("Table might not exist, proceeding to create...");
-    }
-
-    const result = await connection.execute(`
-            CREATE TABLE DEMOTABLE (
-                id NUMBER PRIMARY KEY,
-                name VARCHAR2(20)
-            )
-        `);
-    return true;
-  }).catch(() => {
-    return false;
-  });
-}
-
-async function insertDemotable(id, name) {
-  return await withOracleDB(async (connection) => {
-    const result = await connection.execute(
-      `INSERT INTO DEMOTABLE (id, name) VALUES (:id, :name)`,
-      [id, name],
-      { autoCommit: true }
-    );
-
-    return result.rowsAffected && result.rowsAffected > 0;
-  }).catch(() => {
-    return false;
-  });
-}
-
-async function updateNameDemotable(oldName, newName) {
-  return await withOracleDB(async (connection) => {
-    const result = await connection.execute(
-      `UPDATE DEMOTABLE SET name=:newName where name=:oldName`,
-      [newName, oldName],
-      { autoCommit: true }
-    );
-
-    return result.rowsAffected && result.rowsAffected > 0;
-  }).catch(() => {
-    return false;
-  });
-}
-
-async function countDemotable() {
-  return await withOracleDB(async (connection) => {
-    const result = await connection.execute("SELECT Count(*) FROM DEMOTABLE");
-    return result.rows[0][0];
-  }).catch(() => {
-    return -1;
-  });
-}
-
 async function verifyLogin(username, password) {
   return await withOracleDB(async (connection) => {
     const result = await connection.execute(
@@ -1208,8 +1142,8 @@ async function assignBadges(username) {
 
   return await withOracleDB(async (connection) => {
     // reducing counts so data population is less painful
-    // enthusiast => 3
-    // explorer => 5
+    // enthusiast => 5
+    // expert => 25
     // connoisseur => 10
     // collector => 3 from one location
     // explorer => 3 diff locations location
@@ -1232,19 +1166,19 @@ async function assignBadges(username) {
       "SELECT count(c.location_name) FROM Post p, ArtPiece ap, Collection c WHERE p.piece_id = ap.piece_id AND ap.collection_title = c.title AND ap.collection_curator = c.curator AND p.username = :username",
       [username]
     );
-    if (post_counts >= 3 && !already_earned.includes("Enthusiast")) {
+    if (post_counts >= 5 && !already_earned.includes("Enthusiast")) {
       award("Enthusiast");
     }
-    if (post_counts >= 5 && !already_earned.includes("Explorer")) {
-      award("Explorer");
+    if (post_counts >= 25 && !already_earned.includes("Expert")) {
+      award("Expert");
     }
     if (post_counts >= 10 && !already_earned.includes("Connoisseur")) {
       award("Connoisseur");
     }
-    if (post_from_location.rows.length >= 1) {
+    if (post_from_location.rows.length >= 3 && !already_earned.includes("Collector")) {
       award("Collector");
     }
-    if (locations.rows.length >= 3) {
+    if (locations.rows.length >= 3 && !already_earned.includes("Explorer")) {
       award("Explorer");
     }
   }).catch(() => {});

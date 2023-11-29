@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { useState } from "react";
+import toast, { Toaster } from 'react-hot-toast';
 
 const Nav = () => {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -20,6 +21,7 @@ const Nav = () => {
 
   const onLogOutClick = () => {
     removeCookie(["login_cookie"]);
+    makeToast('Logged out!');
   };
 
   const search = () => {
@@ -39,6 +41,7 @@ const Nav = () => {
   // changes to the template to style it with our project's specific goals.
   return (
     <>
+      <Toaster toastOptions={{ duration: 3000 }} />
       <nav className="flex items-center justify-between flex-wrap bg-white py-4 lg:px-12 shadow border-solid border-t-2 border-blue-500">
         <div className="flex justify-between lg:w-auto w-full lg:border-b-0 pl-6 pr-2 border-solid border-b-2 border-gray-300 pb-5 lg:pb-0">
           <div className="flex items-center flex-shrink-0 text-gray-800 mr-16">
@@ -156,3 +159,11 @@ const Nav = () => {
 };
 
 export default Nav;
+
+export function makeToast(message, success=true) {
+  if (success) {
+    toast.success(message);
+  } else {
+    toast.error(message)
+  }
+}

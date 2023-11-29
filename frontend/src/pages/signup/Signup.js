@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import ImageUpload from "../../components/ImageUpload";
+import { makeToast } from "../nav/Nav";
 
 function Signup() {
   const [cookies, setCookie, removeCookie] = useCookies(["login_cookie"]);
@@ -44,9 +45,11 @@ function Signup() {
     if (result.success) {
       console.log("RESULT: ", result);
       setCookie("login_cookie", data.username);
+      makeToast('Signup successful!');
       navigate(-1);
     } else {
       console.log("RESULT: ", result);
+      makeToast('Username taken. Please try a different one.', false);
       setIssue(true);
     }
   };
