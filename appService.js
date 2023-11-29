@@ -621,7 +621,7 @@ async function getPieces(term) {
     let pattern = "%" + term + "%";
     oracledb.fetchAsString = [oracledb.CLOB];
     const result = await connection.execute(
-      `SELECT ap.title, ap.description, a.name, ap.piece_id
+      `SELECT ap.title, ap.description, ap.medium, a.name, ap.piece_id
          FROM ArtPiece ap,
               Creates cr,
               Artist a
@@ -635,8 +635,9 @@ async function getPieces(term) {
     return result.rows.map((row) => ({
       title: row[0],
       description: row[1],
-      artist: row[2],
-      piece_id: row[3],
+      medium: row[2],
+      artist: row[3],
+      piece_id: row[4],
     }));
   }).catch(() => {
     return null;
@@ -659,17 +660,17 @@ async function getPiecesAdvanced(title, artist, medium, col, cur, loc, lo, hi, d
     }
 
     if (medium !== "\x00") {
-      condArray.push(`Upper(A.MEDIUM) LIKE :medium`);
+      condArray.push(`Upper(AP.MEDIUM) LIKE :medium`);
       values.push("%" + medium.toUpperCase() + "%");
     }
 
     if (col !== "\x00") {
-      condArray.push(`Upper(A.COLLECTION_TITLE) LIKE :col`);
+      condArray.push(`Upper(AP.COLLECTION_TITLE) LIKE :col`);
       values.push("%" + col.toUpperCase() + "%");
     }
 
     if (cur !== "\x00") {
-      condArray.push(`Upper(A.COLLECTION_CURATOR) LIKE :cur`);
+      condArray.push(`Upper(AP.COLLECTION_CURATOR) LIKE :cur`);
       values.push("%" + cur.toUpperCase() + "%");
     }
 
@@ -689,7 +690,7 @@ async function getPiecesAdvanced(title, artist, medium, col, cur, loc, lo, hi, d
     }
 
     if (desc !== "\x00") {
-      condArray.push(`Upper(A.DESCRIPTION) LIKE :description`);
+      condArray.push(`Upper(AP.DESCRIPTION) LIKE :description`);
       values.push("%" + desc.toUpperCase() + "%");
     }
 
@@ -698,7 +699,7 @@ async function getPiecesAdvanced(title, artist, medium, col, cur, loc, lo, hi, d
 
     oracledb.fetchAsString = [oracledb.CLOB];
     const result = await connection.execute(
-      `SELECT ap.title, ap.description, a.name, ap.piece_id
+      `SELECT ap.title, ap.description, ap.medium, a.name, ap.piece_id
          FROM ArtPiece ap,
               Creates cr,
               Artist a,
@@ -717,8 +718,9 @@ async function getPiecesAdvanced(title, artist, medium, col, cur, loc, lo, hi, d
     return result.rows.map((row) => ({
       title: row[0],
       description: row[1],
-      artist: row[2],
-      piece_id: row[3],
+      medium: row[2],
+      artist: row[3],
+      piece_id: row[4],
     }));
   }).catch(() => {
     return null;
@@ -729,7 +731,7 @@ async function getPiece(id) {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
     const result = await connection.execute(
-      `SELECT ap.title, ap.description, a.artist_id, a.name, c.title, c.curator, ap.value, ap.year
+      `SELECT ap.title, ap.description, ap.medium, a.artist_id, a.name, c.title, c.curator, ap.value, ap.year
          FROM ArtPiece ap,
               Creates cr,
               Artist a,
@@ -746,12 +748,13 @@ async function getPiece(id) {
     return {
       title: result.rows[0][0],
       description: result.rows[0][1],
-      artist_id: result.rows[0][2],
-      artist_name: result.rows[0][3],
-      collection: result.rows[0][4],
-      curator: result.rows[0][5],
-      value: result.rows[0][6],
-      year: result.rows[0][7]
+      medium: result.rows[0][2],
+      artist_id: result.rows[0][3],
+      artist_name: result.rows[0][4],
+      collection: result.rows[0][5],
+      curator: result.rows[0][6],
+      value: result.rows[0][7],
+      year: result.rows[0][8]
     };
   }).catch(() => {
     return null;

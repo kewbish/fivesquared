@@ -32,7 +32,7 @@ root.render(
           <Route path="signup" element={<Signup />} />
           <Route path="visualizer" element={<Projection />} />
           <Route path="stats" element={<Stats />} />
-          <Route path=":tag" element={<Profile />} />
+          <Route path="profile/:tag" element={<Profile />} />
           <Route path="piece/:term" element={<Piece />} />
           <Route path="artist/:id" element={<Artist />} />
           <Route path="location/:name" element={<Location />} />

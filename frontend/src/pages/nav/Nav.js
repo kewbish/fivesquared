@@ -132,7 +132,7 @@ const Nav = () => {
             )}
             {loggedIn ? (
               <a
-                href={cookies[cookieName]}
+                href={"/profile/" + cookies[cookieName]}
                 className="block text-md px-4 py-2 rounded text-blue-500 ml-2 font-bold hover:text-white mt-4 hover:bg-blue-500 lg:mt-0 cursor:pointer"
               >
                 {"Welcome, " + cookies[cookieName] + "!"}

@@ -56,17 +56,25 @@ function Piece()  {
                   <p className="text-gray-400">Related Posts</p>
                 </div>
               </div>
+
               <div className="relative">
                 <div className="w-48 h-48 bg-indigo-100 mx-auto rounded-full shadow-2xl absolute inset-x-0 top-0 -mt-24 flex items-center justify-center text-indigo-500">
                   <img src="https://cdn2.iconfinder.com/data/icons/circle-icons-1/64/art-1024.png" style={{ borderRadius: "50%" }} viewBox="0 0 20 20" />
                 </div>
               </div>
-              <div className="text-center">
-                <a className="font-semibold text-gray-700 text-xl" href={`/collection/${pieceData.collection}/${pieceData.curator}`}>{pieceData.collection} by {pieceData.curator}</a>
-                <p className="text-gray-400">Collection</p>
+
+
+              <div className="grid grid-cols-2 text-center order-last mt-20 md:mt-0">
+                <div className="text-center">
+                  <p className="font-semibold text-gray-700 text-xl">{pieceData.medium}</p>
+                  <p className="text-gray-400">Medium</p>
+                </div>
+                <div className="text-center">
+                  <a className="font-semibold text-gray-700 text-xl" href={`/collection/${pieceData.collection}/${pieceData.curator}`}>{pieceData.collection} by {pieceData.curator}</a>
+                  <p className="text-gray-400">Collection</p>
+                </div>
               </div>
-              <div className="space-x-8 flex justify-between mt-32 md:mt-0 md:justify-center">
-              </div>
+
             </div>
 
             <div className="mt-20 text-center pb-12">
