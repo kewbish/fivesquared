@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import ImageUpload from "../ImageUpload";
-import { makeToast } from "/Nav";
+import {makeToast} from "../../pages/nav/Nav";
 
 function CreatePost({ onUpdate }) {
   const [imageUrl, setImageUrl] = useState("");
@@ -11,10 +11,7 @@ function CreatePost({ onUpdate }) {
   const [pieceDisplay, setPieceDisplay] = useState("");
   const [pieces, setPieces] = useState([]);
   const [ageRestricted, setAgeRestricted] = useState(false);
-  const [cookies, setCookie, removeCookie] = useCookies([
-    "login_cookie",
-    "y_pos",
-  ]);
+  const [cookies] = useCookies(["login_cookie"]);
   const navigate = useNavigate();
 
   useEffect(() => {
