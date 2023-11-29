@@ -1,6 +1,5 @@
 import {useEffect, useState} from "react";
 import {useCookies} from "react-cookie";
-import { useNavigate } from "react-router-dom";
 import { makeToast } from "../../pages/nav/Nav";
 
 function Comment({comment, onUpdate}) {
@@ -21,7 +20,6 @@ function Comment({comment, onUpdate}) {
         setLikes(cjson.success);
         setLoaded(true);
     };
-    const navigate = useNavigate();
 
     const likeComment = async () => {
         if (!cookies.login_cookie) return null;
@@ -96,10 +94,6 @@ function Comment({comment, onUpdate}) {
         onUpdate();
     }
 
-    const tagClicked = () => {
-        navigate("/" + comment["username"]);
-    }
-
     useEffect(() => {
         getCommentLikes();
         isCommentLiked();
@@ -130,7 +124,7 @@ function Comment({comment, onUpdate}) {
                 <div className="flex flex-row justify-between items-end">
                     <div>
                         <p className="text-gray-400 text-small text-left">
-                            Commented by <a className="cursor-pointer underline" onClick={tagClicked}>@{comment["username"]}</a>
+                            Commented by <a className="cursor-pointer underline" href={"/profile/" + comment["username"]}>@{comment["username"]}</a>
                         </p>
                         <p className="text-gray-400 text-small">
                             {new Date(comment["datetime"]).toGMTString()}

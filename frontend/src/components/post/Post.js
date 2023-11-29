@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import Comment from "./Comment";
-import CreateComment from "./CreateComment";
+import Comment from "../comment/Comment";
+import CreateComment from "../createComment/CreateComment";
 import { useCookies } from "react-cookie";
 import { makeToast } from "../../pages/nav/Nav";
 
@@ -147,7 +147,7 @@ function Post({ post, onUpdate }) {
                     <div>
                         <div>
                             <p className="text-gray-400 text-small text-left">
-                                Posted by <a className="cursor-pointer underline" href={"/" + post["username"]}>@{post["username"]}</a>
+                                Posted by <a className="cursor-pointer underline" href={"/profile/" + post["username"]}>@{post["username"]}</a>
                             </p>
                             <p className="text-gray-400 text-small">
                                 {new Date(post["datetime"]).toGMTString()}

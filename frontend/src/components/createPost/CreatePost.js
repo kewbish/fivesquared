@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
-import ImageUpload from "../../components/ImageUpload";
-import { makeToast } from "../nav/Nav";
+import ImageUpload from "../ImageUpload";
+import {makeToast} from "../../pages/nav/Nav";
 
 function CreatePost({ onUpdate }) {
   const [imageUrl, setImageUrl] = useState("");
@@ -11,10 +11,7 @@ function CreatePost({ onUpdate }) {
   const [pieceDisplay, setPieceDisplay] = useState("");
   const [pieces, setPieces] = useState([]);
   const [ageRestricted, setAgeRestricted] = useState(false);
-  const [cookies, setCookie, removeCookie] = useCookies([
-    "login_cookie",
-    "y_pos",
-  ]);
+  const [cookies] = useCookies(["login_cookie"]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -87,7 +84,7 @@ function CreatePost({ onUpdate }) {
             <div className="relative">
               <button
                 type="button"
-                class="absolute top-4 right-4 py-1 px-2 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 disabled:opacity-50 disabled:pointer-events-none"
+                className="absolute top-4 right-4 py-1 px-2 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-gray-100 text-gray-800 hover:bg-gray-200 disabled:opacity-50 disabled:pointer-events-none"
                 onClick={() => setImageUrl("")}
               >
                 X
@@ -120,22 +117,22 @@ function CreatePost({ onUpdate }) {
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   >
                     <path d="m6 9 6 6 6-6" />
                   </svg>
                 </button>
 
                 <div
-                  class="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-[15rem] bg-white shadow-md rounded-lg p-2 mt-2 after:h-4 after:absolute after:-bottom-4 after:start-0 after:w-full before:h-4 before:absolute before:-top-4 before:start-0 before:w-full z-50"
+                  className="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-[15rem] bg-white shadow-md rounded-lg p-2 mt-2 after:h-4 after:absolute after:-bottom-4 after:start-0 after:w-full before:h-4 before:absolute before:-top-4 before:start-0 before:w-full z-50"
                   aria-labelledby="hs-dropdown-default"
                 >
                   {pieces &&
                     pieces.map((piece) => (
                       <p
-                        class="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                        className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
                         key={piece.piece_id}
                         onClick={() => {
                           setPieceId(piece.piece_id);
