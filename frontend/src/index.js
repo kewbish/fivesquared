@@ -38,8 +38,8 @@ root.render(
           <Route path="location/:name" element={<Location />} />
           <Route path="collection/:title/:curator" element={<Collection />} />
           <Route path="search" element={<SearchResults />} />
-          <Route path="other-search" element={<AdvancedSearch />} />
-          <Route path="advanced-search" element={<AdvancedSearchResults />} />
+          <Route path="advanced" element={<AdvancedSearch />} />
+          <Route path="advanced/search" element={<AdvancedSearchResults />} />
           <Route path="*" element={<Nothing />} />
         </Route>
       </Routes>

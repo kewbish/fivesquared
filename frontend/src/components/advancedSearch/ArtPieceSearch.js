@@ -30,13 +30,23 @@ const ArtPieceSearch = () => {
                 />
                 </div>
                 <div>
-                <label htmlFor="input-label" className="text-sm font-medium mb-2">Value</label>
-                    <input type="number"
-                       step="0.01"
-                       className="py-3 px-4 w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
-                       placeholder="$ 0.00"
-                       name="ap-val"
-                    />
+                    <label htmlFor="input-label" className="text-sm font-medium mb-2">Value</label>
+                    <div className="grid grid-cols-2 w-full gap-5">
+                        <input type="number"
+                               className="py-3 px-4 w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
+                               min={0}
+                               step={0.01}
+                               placeholder="Lowest"
+                               name="ap-lo"
+                        />
+                        <input type="number"
+                               className="py-3 px-4 w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
+                               min={0}
+                               step={0.01}
+                               placeholder="Highest"
+                               name="ap-hi"
+                        />
+                    </div>
                 </div>
                 <div>
                 <label htmlFor="input-label" className="text-sm font-medium mb-2">Collection</label>

@@ -709,6 +709,88 @@ async function getPieces(term) {
   });
 }
 
+async function getPiecesAdvanced(title, artist, medium, col, cur, loc, lo, hi, desc) {
+  return await withOracleDB(async (connection) => {
+    const condArray = [];
+    const values = [];
+
+    if (title !== "\x00") {
+      condArray.push(`Upper(AP.TITLE) LIKE :title`);
+      values.push("%" + title.toUpperCase() + "%");
+    }
+
+    if (artist !== "\x00") {
+      condArray.push(`Upper(A.NAME) LIKE :artist`);
+      values.push("%" + artist.toUpperCase() + "%");
+    }
+
+    if (medium !== "\x00") {
+      condArray.push(`Upper(A.MEDIUM) LIKE :medium`);
+      values.push("%" + medium.toUpperCase() + "%");
+    }
+
+    if (col !== "\x00") {
+      condArray.push(`Upper(A.COLLECTION_TITLE) LIKE :col`);
+      values.push("%" + col.toUpperCase() + "%");
+    }
+
+    if (cur !== "\x00") {
+      condArray.push(`Upper(A.COLLECTION_CURATOR) LIKE :cur`);
+      values.push("%" + cur.toUpperCase() + "%");
+    }
+
+    if (loc !== "\x00") {
+      condArray.push(`Upper(C.LOCATION_NAME) LIKE :cur`);
+      values.push("%" + cur.toUpperCase() + "%");
+    }
+
+    if (lo !== "\x00") {
+      condArray.push(`AP.VALUE >= :lo`);
+      values.push(lo);
+    }
+
+    if (hi !== "\x00") {
+      condArray.push(`AP.VALUE <= :hi`);
+      values.push(hi);
+    }
+
+    if (desc !== "\x00") {
+      condArray.push(`Upper(A.DESCRIPTION) LIKE :description`);
+      values.push("%" + desc.toUpperCase() + "%");
+    }
+
+    let cond = condArray.join(" AND ");
+    if (cond) cond = "OR " + cond;
+
+    oracledb.fetchAsString = [oracledb.CLOB];
+    const result = await connection.execute(
+      `SELECT ap.title, ap.description, a.name, ap.piece_id
+         FROM ArtPiece ap,
+              Creates cr,
+              Artist a,
+              Collection c
+         WHERE cr.artist_id = a.artist_id
+           and cr.piece_id = ap.piece_id
+           and c.title = ap.collection_title
+           and c.curator = ap.collection_curator
+           and (ap.title <> ap.title 
+               ${cond}
+               )`,
+      values,
+      { autoCommit: true }
+    );
+
+    return result.rows.map((row) => ({
+      title: row[0],
+      description: row[1],
+      artist: row[2],
+      piece_id: row[3],
+    }));
+  }).catch(() => {
+    return null;
+  });
+}
+
 async function getPiece(id) {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
@@ -769,8 +851,6 @@ async function getArtistsAdvanced(name, dob, dod, description) {
   const condArray = [];
   const values = [];
 
-  console.log(name, dob, dod, description);
-
   if (name !== "\x00") {
     condArray.push(`Upper(NAME) LIKE :name`);
     values.push("%" + name.toUpperCase() + "%");
@@ -795,9 +875,6 @@ async function getArtistsAdvanced(name, dob, dod, description) {
 
   let cond = condArray.join(" AND ");
   if (cond) cond = "OR " + cond;
-
-  console.log(cond);
-  console.log(values);
 
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
@@ -879,6 +956,76 @@ async function getLocations(term) {
   });
 }
 
+async function getLocationsAdvanced(name, earl, late, addr, city, regn, ctry, post) {
+  const condArray = [];
+  const values = [];
+
+  if (name !== "\x00") {
+    condArray.push(`Upper(L.NAME) LIKE :name`);
+    values.push("%" + name.toUpperCase() + "%");
+  }
+
+  if (earl !== "\x00") {
+    condArray.push(`L.YR_EST >= :earl`);
+    values.push(earl);
+  }
+
+  if (late !== "\x00") {
+    condArray.push(`L.YR_EST <= :late`);
+    values.push(late);
+  }
+
+  if (addr !== "\x00") {
+    condArray.push(`Upper(L.ST_ADDRESS) LIKE :addr`);
+    values.push("%" + addr.toUpperCase() + "%");
+  }
+
+  if (regn !== "\x00") {
+    condArray.push(`Upper(P.REGION) LIKE :regn`);
+    values.push("%" + regn.toUpperCase() + "%");
+  }
+
+  if (ctry !== "\x00") {
+    condArray.push(`Upper(L.COUNTRY) LIKE :ctry`);
+    values.push("%" + ctry.toUpperCase() + "%");
+  }
+
+  if (post !== "\x00") {
+    condArray.push(`Upper(L.POSTCODE) LIKE :post`);
+    values.push("%" + post.toUpperCase() + "%");
+  }
+
+  let cond = condArray.join(" AND ");
+  if (cond) cond = "OR " + cond;
+
+  // console.log(cond);
+
+  return await withOracleDB(async (connection) => {
+    oracledb.fetchAsString = [oracledb.CLOB];
+    const result = await connection.execute(
+      `SELECT l.name, l.country, l.st_address, p.city, p.region, l.postcode, l.yr_est
+         FROM Location l,
+              Postcode p
+         WHERE l.postcode = p.postcode
+           AND (l.name <> l.name ${cond})`,
+      values,
+      { autoCommit: true }
+    );
+
+    return result.rows.map((row) => ({
+      name: row[0],
+      country: row[1],
+      st_address: row[2],
+      city: row[3],
+      region: row[4],
+      postcode: row[5],
+      yr_est: row[6],
+    }));
+  }).catch(() => {
+    return null;
+  });
+}
+
 async function getLocation(name) {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
@@ -918,6 +1065,59 @@ async function getCollections(term) {
             OR UPPER(theme) LIKE :pattern
             OR UPPER(description) LIKE :pattern`,
       [pattern, pattern, pattern, pattern],
+      { autoCommit: true }
+    );
+
+    return result.rows.map((row) => ({
+      title: row[0],
+      curator: row[1],
+      theme: row[2],
+      description: row[3],
+    }));
+  }).catch(() => {
+    return null;
+  });
+}
+
+async function getCollectionsAdvanced(title, cur, theme, loc, desc) {
+  const condArray = [];
+  const values = [];
+
+  if (title !== "\x00") {
+    condArray.push(`Upper(TITLE) LIKE :title`);
+    values.push("%" + title.toUpperCase() + "%");
+  }
+
+  if (cur !== "\x00") {
+    condArray.push(`Upper(CURATOR) LIKE :cur`);
+    values.push("%" + cur.toUpperCase() + "%");
+  }
+
+  if (theme !== "\x00") {
+    condArray.push(`Upper(THEME) LIKE :theme`);
+    values.push("%" + theme.toUpperCase() + "%");
+  }
+
+  if (loc !== "\x00") {
+    condArray.push(`Upper(LOCATION_NAME) LIKE :loc`);
+    values.push("%" + loc.toUpperCase() + "%");
+  }
+
+  if (desc !== "\x00") {
+    condArray.push(`Upper(DESCRIPTION) LIKE :description`);
+    values.push("%" + desc.toUpperCase() + "%");
+  }
+
+  let cond = condArray.join(" AND ");
+  if (cond) cond = "OR " + cond;
+
+  return await withOracleDB(async (connection) => {
+    oracledb.fetchAsString = [oracledb.CLOB];
+    const result = await connection.execute(
+      `SELECT title, curator, theme, description
+         FROM COLLECTION
+         WHERE title <> title ` + cond,
+      values,
       { autoCommit: true }
     );
 
@@ -1347,11 +1547,14 @@ module.exports = {
   updateProfile,
   getProfiles,
   getPieces,
+  getPiecesAdvanced,
   getPiece,
-  getLocation,
   getLocations,
-  getCollection,
+  getLocationsAdvanced,
+  getLocation,
   getCollections,
+  getCollectionsAdvanced,
+  getCollection,
   getArtists,
   getArtistsAdvanced,
   getArtist,

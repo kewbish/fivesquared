@@ -36,7 +36,7 @@ const LocationSearch = () => {
                 <input type="text"
                        className="py-3 px-4 w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
                        placeholder="Line 1"
-                       name="l-add"
+                       name="l-addr"
                 />
                 </div>
             <div className="grid grid-cols-2 w-full gap-5">
@@ -53,7 +53,7 @@ const LocationSearch = () => {
                 <input type="text"
                        className="py-3 px-4 w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
                        placeholder="Region"
-                       name="l-reg"
+                       name="l-regn"
                 />
                 </div>
                 <div>
@@ -61,7 +61,7 @@ const LocationSearch = () => {
                 <input type="text"
                        className="py-3 px-4 w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
                        placeholder="Country"
-                       name="l-country"
+                       name="l-ctry"
                 />
                 </div>
                 <div>

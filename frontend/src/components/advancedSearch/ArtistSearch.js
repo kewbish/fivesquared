@@ -4,7 +4,7 @@ const ArtistSearch = () => {
             className="space-y-5"
         >
             <h1>Artist Search</h1>
-            <div className="inline-flex w-full space-x-5">
+            <div className="grid grid-cols-3 space-x-5">
                 <div>
                 <label htmlFor="input-label" className="text-sm font-medium mb-2">Name</label>
                 <input type="text"

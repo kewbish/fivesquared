@@ -61,7 +61,7 @@ const Nav = () => {
               Stats
             </a>
               <a
-              href="/other-search"
+              href="/advanced"
               className="block text-xl mt-4 lg:inline-block lg:mt-0 hover:text-white px-4 py-2 rounded hover:bg-blue-500 mr-2"
             >
               Advanced Search

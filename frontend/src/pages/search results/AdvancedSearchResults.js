@@ -17,90 +17,56 @@ const AdvancedSearchResults = () => {
     const [artistResults, setArtistResults] = useState([]);
     const navigate = useNavigate();
 
+    function parseString(key) {
+        return searchParam.get(key) ? searchParam.get(key).split(" ").join("_") : "\%00"
+    }
+
+    function parseDate(key) {
+        return isNaN(Date.parse(searchParam.get(key))) ? "\%00" : searchParam.get(key).toString();
+    }
+
+    function parseNumber(key) {
+        return searchParam.get(key) ? searchParam.get(key) : "\%00";
+    }
+
     useEffect(() => {
-        // const searchType = () => {
-        //     if (searchParam.has("p-user")) return 1;
-        //     if (searchParam.has("a-name")) return 2;
-        //     if (searchParam.has("ap-title")) return 3;
-        //     if (searchParam.has("c-title")) return 4;
-        //     if (searchParam.has("l-name")) return 5;
-        //     else return 0;
-        // }
+        const fetchPieces = async () => {
+            const title = parseString("ap-title");
+            const artist = parseString("ap-artist");
+            const medium = parseString("ap-med");
+            const col = parseString("ap-col");
+            const cur = parseString("ap-cur");
+            const loc = parseString("ap-loc");
+            const desc = parseString("ap-desc");
+            const lo = parseNumber("ap-lo");
+            const hi = parseNumber("ap-hi");
 
-        // const fetchProfiles = async () => {
-        //     const url = `http://localhost:65535/advanced-search/profiles?p=${}`
-        //     if (cookies['login_cookie']) {
-        //         const response = await fetch(url, {
-        //             method: "GET",
-        //         });
-        //         const pjson = await response.json();
-        //         console.log("PJSON:", pjson);
-        //         if (pjson.profile) {
-        //             setProfileResults(pjson.profile);
-        //         }
-        //     }
-        // };
+            const terms = [title, artist, medium, col, cur, loc, lo, hi, desc].join("/");
+            console.log(terms);
 
-        // const fetchPieces = async () => {
-        //     if (cookies['login_cookie']) {
-        //         const response = await fetch(`http://localhost:65535/search/pieces/${term}`, {
-        //             method: "GET",
-        //         });
-        //         const pjson = await response.json();
-        //         console.log("Pieces PJSON:", pjson);
-        //         if (pjson.pieces) {
-        //             setPieceResults(pjson.pieces);
-        //         }
-        //     }
-        // };
-        //
-        // const fetchCollections = async () => {
-        //     if (cookies['login_cookie']) {
-        //         const response = await fetch(`http://localhost:65535/search/collections/${term}`, {
-        //             method: "GET",
-        //         });
-        //         const pjson = await response.json();
-        //         console.log("Collection PJSON:", pjson);
-        //         if (pjson.collections) {
-        //             setCollectionResults(pjson.collections);
-        //         }
-        //     }
-        // };
-        //
-        // const fetchLocations = async () => {
-        //     if (cookies['login_cookie']) {
-        //         const response = await fetch(`http://localhost:65535/search/locations/${term}`, {
-        //             method: "GET",
-        //         });
-        //         const pjson = await response.json();
-        //         console.log("Location PJSON:", pjson);
-        //         if (pjson.locations) {
-        //             setLocationResults(pjson.locations);
-        //         }
-        //     }
-        // };
+            if (cookies['login_cookie']) {
+                const response = await fetch(`http://localhost:65535/advanced/search/pieces/${terms}`, {
+                    method: "GET",
+                });
+                const pjson = await response.json();
+                console.log("Pieces PJSON:", pjson);
+                if (pjson.pieces) {
+                    setPieceResults(pjson.pieces);
+                }
+            }
+        };
 
         const fetchArtists = async () => {
-            const name = searchParam.get("a-name") ? searchParam.get("a-name").split(" ").join("_") : "%00";
+            const name = parseString("a-name");
+            const desc = parseString("a-desc");
+            const dob = parseDate("a-dob");
+            const dod = parseDate("a-dod");
 
-            let dob;
-            if (isNaN(Date.parse(searchParam.get("a-dob")))) {
-                dob = "%00";
-            } else {
-                dob = searchParam.get("a-dob").toString();
-            }
+            const terms = [name, desc, dob, dod].join("/");
+            console.log(terms);
 
-            let dod;
-            if (isNaN(Date.parse(searchParam.get("a-dod")))) {
-                dod = "%00";
-            } else {
-                dod = searchParam.get("a-dod").toString();
-            }
-
-            const desc = searchParam.get("a-desc") ? searchParam.get("a-desc").split(" ").join("_") : "%00";
-            console.log(name, dob, dod, desc);
             if (cookies['login_cookie']) {
-                const response = await fetch(`http://localhost:65535/advanced-search/artists/${name}/${dob}/${dod}/${desc}`, {
+                const response = await fetch(`http://localhost:65535/advanced/search/artists/${terms}`, {
                     method: "GET",
                 });
                 const pjson = await response.json();
@@ -111,11 +77,58 @@ const AdvancedSearchResults = () => {
             }
         };
 
-        // fetchProfiles();
-        // fetchPieces();
-        // fetchCollections();
-        // fetchLocations();
-        if (searchParam.has("a-name")) fetchArtists();
+        const fetchCollections = async () => {
+            const title = parseString("c-title");
+            const cur = parseString("c-cur");
+            const theme = parseString("c-theme");
+            const loc = parseString("c-loc");
+            const desc = parseString("c-desc");
+
+            const terms = [title, cur, theme, loc, desc].join("/");
+            console.log(terms);
+
+
+            if (cookies['login_cookie']) {
+                const response = await fetch(`http://localhost:65535/advanced/search/collections/${terms}`, {
+                    method: "GET",
+                });
+                const pjson = await response.json();
+                console.log("Collection PJSON:", pjson);
+                if (pjson.collections) {
+                    setCollectionResults(pjson.collections);
+                }
+            }
+        };
+
+        const fetchLocations = async () => {
+            const name = parseString("l-name");
+            const earl = parseNumber("l-earl");
+            const late = parseNumber("l-late");
+            const addr = parseString("l-addr");
+            const city = parseString("l-city");
+            const regn = parseString("l-regn");
+            const ctry = parseString("l-ctry");
+            const post = parseString("l-post");
+
+            const terms = [name, earl, late, addr, city, regn, ctry, post].join("/");
+            console.log(terms);
+
+            if (cookies['login_cookie']) {
+                const response = await fetch(`http://localhost:65535/advanced/search/locations/${terms}`, {
+                    method: "GET",
+                });
+                const pjson = await response.json();
+                console.log("Location PJSON:", pjson);
+                if (pjson.locations) {
+                    setLocationResults(pjson.locations);
+                }
+            }
+        };
+
+        fetchPieces();
+        fetchArtists();
+        fetchCollections();
+        fetchLocations();
     }, [cookies]);
 
     const goToLogin = () => {

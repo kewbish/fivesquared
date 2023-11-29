@@ -10,17 +10,17 @@ function AdvancedSearch() {
     return (
         <div className="flex flex-col items-center">
         <form
-            action="/advanced-search"
-            className="flex justify-center py-10 flex-col w-1/2 content-center rounded-lg space-y-10"
+            action="/advanced/search"
+            className="flex flex-col justify-center p-10 content-center rounded-lg space-y-10"
         >
             <h1>Advanced Search</h1>
-            <ArtistSearch/>
-            {/*<hr></hr>*/}
-            {/*<ArtPieceSearch/>*/}
-            {/*<hr></hr>*/}
-            {/*<CollectionSearch/>*/}
-            {/*<hr></hr>*/}
-            {/*<LocationSearch/>*/}
+            <ArtPieceSearch />
+            <hr/>
+            <ArtistSearch />
+            <hr/>
+            <CollectionSearch />
+            <hr/>
+            <LocationSearch />
             <div>
             <input type="submit"
                    value="Search"

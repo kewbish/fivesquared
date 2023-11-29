@@ -366,7 +366,7 @@ router.get("/search/collections/:term", async (req, res) => {
   });
 });
 
-router.get("/advanced-search/profiles/:term", async (req, res) => {
+router.get("/advanced/search/profiles/:term", async (req, res) => {
   const result = await appService.getProfiles(req.params.term);
 
   res.json({
@@ -374,15 +374,14 @@ router.get("/advanced-search/profiles/:term", async (req, res) => {
   });
 });
 
-router.get("/advanced-search/pieces/:term", async (req, res) => {
-  const result = await appService.getPieces(req.params.term);
-
+router.get("/advanced/search/pieces/:title/:artist/:medium/:col/:cur/:loc/:lo/:hi/:desc", async (req, res) => {
+  const result = await appService.getPiecesAdvanced(req.params.title, req.params.artist, req.params.medium, req.params.col, req.params.cur, req.params.loc, req.params.lo, req.params.hi, req.params.desc);
   res.json({
     pieces: result,
   });
 });
 
-router.get("/advanced-search/artists/:name/:dob/:dod/:desc", async (req, res) => {
+router.get("/advanced/search/artists/:name/:dob/:dod/:desc", async (req, res) => {
   const result = await appService.getArtistsAdvanced(req.params.name, req.params.dob, req.params.dod, req.params.desc);
 
   res.json({
@@ -390,22 +389,21 @@ router.get("/advanced-search/artists/:name/:dob/:dod/:desc", async (req, res) =>
   });
 });
 
-router.get("/advanced-search/locations/:term", async (req, res) => {
-  const result = await appService.getLocations(req.params.term);
-
-  res.json({
-    locations: result,
-  });
-});
-
-router.get("/advanced-search/collections/:term", async (req, res) => {
-  const result = await appService.getCollections(req.params.term);
+router.get("/advanced/search/collections/:title/:cur/:theme/:loc/:desc", async (req, res) => {
+  const result = await appService.getCollectionsAdvanced(req.params.title, req.params.cur, req.params.theme, req.params.loc, req.params.desc);
 
   res.json({
     collections: result,
   });
 });
 
+router.get("/advanced/search/locations/:name/:earl/:late/:addr/:city/:regn/:ctry/:post", async (req, res) => {
+  const result = await appService.getLocationsAdvanced(req.params.name, req.params.earl, req.params.late, req.params.addr, req.params.city, req.params.regn, req.params.ctry, req.params.post);
+
+  res.json({
+    locations: result,
+  });
+});
 
 router.get("/piece/:id", async (req, res) => {
   const result = await appService.getPiece(req.params.id);
