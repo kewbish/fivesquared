@@ -4,9 +4,11 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import ProfileResultCard from '../../components/profileResultCard/ProfileResultCard';
 import PieceResultCard from '../../components/pieceResultCard/pieceResultCard';
-import LocationResultCard from "../../components/locationResultCard/locationResultCard";
 import CollectionResultCard from "../../components/collectionResultCard/collectionResultCard";
 import ArtistResultCard from '../../components/artistResultCard/artistResultCard';
+import MuseumResultCard from "../../components/locationResultCard/museumResultCard";
+import GalleryResultCard from "../../components/locationResultCard/galleryResultCard";
+import PrivateCollectionResultCard from "../../components/locationResultCard/privateCollectionResultCard";
 
 const SearchResults = () => {
   const [cookies, setCookie, removeCookie] = useCookies(["login_cookie"]);
@@ -15,6 +17,10 @@ const SearchResults = () => {
   const [pieceResults, setPieceResults] = useState([]);
   const [collectionResults, setCollectionResults] = useState([]);
   const [locationResults, setLocationResults] = useState([]);
+  const [museumResults, setMuseumResults] = useState([]);
+  const [galleryResults, setGalleryResults] = useState([]);
+  const [privateCollectionResults, setPrivateCollectionResults] = useState([]);
+
   const [artistResults, setArtistResults] = useState([]);
   const navigate = useNavigate();
 
@@ -67,7 +73,9 @@ const SearchResults = () => {
         const pjson = await response.json();
         console.log("Location PJSON:", pjson);
         if (pjson.locations) {
-          setLocationResults(pjson.locations);
+          setMuseumResults(pjson.locations.museums);
+          setGalleryResults(pjson.locations.galleries);
+          setPrivateCollectionResults(pjson.locations.privateCollections);
         }
       }
     };
@@ -109,7 +117,7 @@ const SearchResults = () => {
     return (
       <div >
         {profileResults.length > 0 ? <body className="px-10 py-20 gap-5">   <h2 className="text-xl font-semibold sm:text-2xl mb-4 text-center">Profile Results</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-6">
             {profileResults.map((profile) => (
               <ProfileResultCard profileData={profile} />
             ))}
@@ -117,7 +125,7 @@ const SearchResults = () => {
           </div> </body> : <></>}
         {pieceResults.length > 0 ? <body className="px-10 py-5 gap-5">
           <h2 className="text-xl font-semibold sm:text-2xl mb-4 text-center">Art Piece Results</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-6">
             {pieceResults.map((piece) => (
               <PieceResultCard pieceData={piece} />
             ))}
@@ -126,7 +134,7 @@ const SearchResults = () => {
         </body> : <></>}
         {artistResults.length > 0 ? <body className="px-10 py-5 gap-5">
           <h2 className="text-xl font-semibold sm:text-2xl mb-4 text-center">Artist Results</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-6">
             {artistResults.map((artist) => (
               <ArtistResultCard artistData={artist} />
             ))}
@@ -135,20 +143,25 @@ const SearchResults = () => {
         </body> : <></>}
         {collectionResults.length > 0 ? <body className="px-10 py-5 gap-5">
           <h2 className="text-xl font-semibold sm:text-2xl mb-4 text-center">Collection Results</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-6">
             {collectionResults.map((collection) => (
               <CollectionResultCard collectionData={collection} />
             ))}
 
           </div>
         </body> : <></>}
-        {locationResults.length > 0 ? <body className="px-10 py-5 gap-5">
+        {museumResults.length + galleryResults.length + privateCollectionResults.length > 0 ? <body className="px-10 py-5 gap-5">
           <h2 className="text-xl font-semibold sm:text-2xl mb-4 text-center">Location Results</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
-            {locationResults.map((location) => (
-              <LocationResultCard locationData={location} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-6">
+            {museumResults.map((museum) => (
+              <MuseumResultCard museumData={museum} />
             ))}
-
+            {galleryResults.map((gallery) => (
+              <GalleryResultCard galleryData={gallery} />
+            ))}
+            {privateCollectionResults.map((privateCollection) => (
+              <PrivateCollectionResultCard privateCollectionData={privateCollection} />
+            ))}
           </div>
         </body> : <></>}
       </div>

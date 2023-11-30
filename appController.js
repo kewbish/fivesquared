@@ -428,6 +428,27 @@ router.get("/location/:name", async (req, res) => {
   });
 });
 
+router.get("/museum/:name", async (req, res) => {
+  const result = await appService.getMuseum(req.params.name);
+  res.json({
+    museum: result,
+  });
+});
+
+router.get("/gallery/:name", async (req, res) => {
+  const result = await appService.getGallery(req.params.name);
+  res.json({
+    gallery: result,
+  });
+});
+
+router.get("/private-collection/:name", async (req, res) => {
+  const result = await appService.getPrivateCollection(req.params.name);
+  res.json({
+    privateCollection: result,
+  });
+});
+
 router.get("/collection/:title&:curator", async (req, res) => {
   const result = await appService.getCollection(
     req.params.title,

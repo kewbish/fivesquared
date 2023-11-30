@@ -866,20 +866,58 @@ async function getLocations(term) {
   return await withOracleDB(async (connection) => {
     let pattern = "%" + term + "%";
     oracledb.fetchAsString = [oracledb.CLOB];
-    const result = await connection.execute(
-      `SELECT l.name, l.country, l.st_address, p.city, p.region, l.postcode, l.yr_est
+    const museums = await connection.execute(
+        `SELECT l.name, l.country, l.st_address, p.city, p.region, l.postcode, l.yr_est
          FROM Location l,
               Postcode p
          WHERE l.postcode = p.postcode
-           AND (UPPER(l.name) LIKE :pattern
-           OR UPPER(l.country) LIKE :pattern
-           OR UPPER(p.city) LIKE :pattern
-           OR UPPER(p.region) LIKE :pattern)`,
-      [pattern, pattern, pattern, pattern],
-      { autoCommit: true }
+           AND EXISTS(SELECT m.name
+                      FROM Museum m
+                      WHERE l.name = m.name)
+           AND (
+           (UPPER(l.name) LIKE :pattern
+             OR UPPER(l.country) LIKE :pattern
+             OR UPPER(p.city) LIKE :pattern
+             OR UPPER(p.region) LIKE :pattern))`,
+        [pattern, pattern, pattern, pattern],
+        {autoCommit: true}
     );
 
-    return result.rows.map((row) => ({
+    const galleries = await connection.execute(
+        `SELECT l.name, l.country, l.st_address, p.city, p.region, l.postcode, l.yr_est
+         FROM Location l,
+              Postcode p
+         WHERE l.postcode = p.postcode
+           AND EXISTS(SELECT g.name
+                      FROM Gallery g
+                      WHERE l.name = g.name)
+           AND (
+           (UPPER(l.name) LIKE :pattern
+             OR UPPER(l.country) LIKE :pattern
+             OR UPPER(p.city) LIKE :pattern
+             OR UPPER(p.region) LIKE :pattern))`,
+        [pattern, pattern, pattern, pattern],
+        {autoCommit: true}
+    );
+
+    const privateCollections = await connection.execute(
+        `SELECT l.name, l.country, l.st_address, p.city, p.region, l.postcode, l.yr_est
+         FROM Location l,
+              Postcode p
+         WHERE l.postcode = p.postcode
+           AND EXISTS(SELECT pc.name
+                      FROM PrivateCollection pc
+                      WHERE l.name = pc.name)
+           AND (
+           (UPPER(l.name) LIKE :pattern
+             OR UPPER(l.country) LIKE :pattern
+             OR UPPER(p.city) LIKE :pattern
+             OR UPPER(p.region) LIKE :pattern))`,
+        [pattern, pattern, pattern, pattern],
+        {autoCommit: true}
+    );
+
+    const mapped = (row) => ({
       name: row[0],
       country: row[1],
       st_address: row[2],
@@ -887,7 +925,13 @@ async function getLocations(term) {
       region: row[4],
       postcode: row[5],
       yr_est: row[6],
-    }));
+    });
+
+    return {
+      museums: museums.rows.map((row) => mapped(row)),
+      galleries: galleries.rows.map((row) => mapped(row)),
+      privateCollections: privateCollections.rows.map((row) => mapped(row))
+    }
   }).catch(() => {
     return null;
   });
@@ -963,14 +1007,16 @@ async function getLocationsAdvanced(name, earl, late, addr, city, regn, ctry, po
   });
 }
 
-async function getLocation(name) {
+async function getMuseum(name) {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
     const result = await connection.execute(
-      `SELECT l.name, l.country, l.st_address, p.city, p.region, l.postcode, l.yr_est
+      `SELECT l.name, l.country, l.st_address, p.city, p.region, l.postcode, l.yr_est, m.num_visitors, m.ticket_price, m.benefactor
          FROM Location l,
-              Postcode p
-         WHERE l.name = :name
+              Postcode p,
+              Museum m
+         WHERE m.name = :name
+           AND l.name = m.name
            AND l.postcode = p.postcode`,
       { name },
       { autoCommit: true }
@@ -984,6 +1030,70 @@ async function getLocation(name) {
       region: result.rows[0][4],
       postcode: result.rows[0][5],
       yr_est: result.rows[0][6],
+      num_visitors: result.rows[0][7],
+      ticket_price: result.rows[0][8],
+      benefactor: result.rows[0][9]
+    };
+  }).catch(() => {
+    return null;
+  });
+}
+
+async function getGallery(name) {
+  return await withOracleDB(async (connection) => {
+    oracledb.fetchAsString = [oracledb.CLOB];
+    const result = await connection.execute(
+      `SELECT l.name, l.country, l.st_address, p.city, p.region, l.postcode, l.yr_est, g.num_pieces, g.curator
+         FROM Location l,
+              Postcode p,
+              Gallery g
+         WHERE g.name = :name
+           AND l.name = g.name
+           AND l.postcode = p.postcode`,
+      { name },
+      { autoCommit: true }
+    );
+
+    return {
+      name: result.rows[0][0],
+      country: result.rows[0][1],
+      st_address: result.rows[0][2],
+      city: result.rows[0][3],
+      region: result.rows[0][4],
+      postcode: result.rows[0][5],
+      yr_est: result.rows[0][6],
+      num_pieces: result.rows[0][7],
+      curator: result.rows[0][8]
+    };
+  }).catch(() => {
+    return null;
+  });
+}
+
+async function getPrivateCollection(name) {
+  return await withOracleDB(async (connection) => {
+    oracledb.fetchAsString = [oracledb.CLOB];
+    const result = await connection.execute(
+      `SELECT l.name, l.country, l.st_address, p.city, p.region, l.postcode, l.yr_est, pc.owner
+         FROM Location l,
+              Postcode p,
+              PrivateCollection pc
+         WHERE pc.name = :name
+           AND l.name = pc.name
+           AND l.postcode = p.postcode`,
+      { name },
+      { autoCommit: true }
+    );
+
+    return {
+      name: result.rows[0][0],
+      country: result.rows[0][1],
+      st_address: result.rows[0][2],
+      city: result.rows[0][3],
+      region: result.rows[0][4],
+      postcode: result.rows[0][5],
+      yr_est: result.rows[0][6],
+      owner: result.rows[0][7]
     };
   }).catch(() => {
     return null;
@@ -1488,7 +1598,9 @@ module.exports = {
   getPiece,
   getLocations,
   getLocationsAdvanced,
-  getLocation,
+  getMuseum,
+  getGallery,
+  getPrivateCollection,
   getCollections,
   getCollectionsAdvanced,
   getCollection,

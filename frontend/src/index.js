@@ -12,13 +12,15 @@ import Profile from "./pages/profile/Profile";
 import Signup from "./pages/signup/Signup";
 import SearchResults from "./pages/search results/SearchResults";
 import Piece from "./pages/piece/Piece";
-import Location from "./pages/location/Location";
 import Collection from "./pages/collection/Collection";
 import Artist from "./pages/artist/Artist";
 import Projection from "./pages/projection/Projection";
 import Stats from "./pages/stats/Stats";
 import AdvancedSearchResults from "./pages/search results/AdvancedSearchResults";
 import AdvancedSearch from "./components/advancedSearch/AdvancedSearch";
+import Museum from "./pages/location/Museum";
+import Gallery from "./pages/location/Gallery";
+import PrivateCollection from "./pages/location/PrivateCollection";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -35,7 +37,9 @@ root.render(
           <Route path="profile/:tag" element={<Profile />} />
           <Route path="piece/:term" element={<Piece />} />
           <Route path="artist/:id" element={<Artist />} />
-          <Route path="location/:name" element={<Location />} />
+          <Route path="museum/:name" element={<Museum />} />
+          <Route path="gallery/:name" element={<Gallery />} />
+          <Route path="private-collection/:name" element={<PrivateCollection />} />
           <Route path="collection/:title/:curator" element={<Collection />} />
           <Route path="search" element={<SearchResults />} />
           <Route path="advanced" element={<AdvancedSearch />} />
