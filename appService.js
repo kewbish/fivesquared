@@ -1022,6 +1022,10 @@ async function getMuseum(name) {
       { autoCommit: true }
     );
 
+    if (!result.rows[0]) {
+      return null;
+    }
+
     return {
       name: result.rows[0][0],
       country: result.rows[0][1],
@@ -1054,6 +1058,10 @@ async function getGallery(name) {
       { autoCommit: true }
     );
 
+    if (!result.rows[0]) {
+      return null;
+    }
+
     return {
       name: result.rows[0][0],
       country: result.rows[0][1],
@@ -1084,6 +1092,10 @@ async function getPrivateCollection(name) {
       { name },
       { autoCommit: true }
     );
+
+    if (!result.rows[0]) {
+      return null;
+    }
 
     return {
       name: result.rows[0][0],
