@@ -49,7 +49,7 @@ const Stats = () => {
                           return (
                             <tr key={user}>
                               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-sky-600 hover:text-sky-500 bg-sky-50">
-                                <a href={"/" + user}>{user}</a>
+                                <a href={"/profile/" + user}>{user}</a>
                               </td>
                             </tr>
                           );
