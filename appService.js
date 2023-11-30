@@ -173,7 +173,7 @@ async function getPosts() {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
     const result = await connection.execute(
-        `SELECT p.post_id, p.text, p.datetime, p.age_restricted, p.username, ap.title, p.image_url, ap.piece_id
+      `SELECT p.post_id, p.text, p.datetime, p.age_restricted, p.username, ap.title, p.image_url, ap.piece_id
          FROM Post p,
               ArtPiece ap
          WHERE p.piece_id = ap.piece_id
@@ -188,7 +188,7 @@ async function getPosts() {
       username: row[4],
       piece_title: row[5],
       image_url: row[6] || "",
-      piece_id: row[7]
+      piece_id: row[7],
     }));
   }).catch(() => {
     return [];
@@ -199,14 +199,14 @@ async function getPostsFollowing(username) {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
     const result = await connection.execute(
-        `SELECT p.post_id, p.text, p.datetime, p.age_restricted, p.username, ap.title, p.image_url, ap.piece_id
+      `SELECT p.post_id, p.text, p.datetime, p.age_restricted, p.username, ap.title, p.image_url, ap.piece_id
          FROM Post p,
               ArtPiece ap
          WHERE p.piece_id = ap.piece_id
            AND p.username IN (SELECT followee FROM Follows WHERE follower = :username)
          ORDER BY p.datetime DESC`,
-        [username],
-        {autoCommit: true}
+      [username],
+      { autoCommit: true }
     );
     return result.rows.map((row) => ({
       post_id: row[0],
@@ -216,7 +216,7 @@ async function getPostsFollowing(username) {
       username: row[4],
       piece_title: row[5],
       image_url: row[6] || "",
-      piece_id: row[7]
+      piece_id: row[7],
     }));
   }).catch(() => {
     return [];
@@ -227,14 +227,14 @@ async function getPostsUser(tag) {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
     const result = await connection.execute(
-        `SELECT p.post_id, p.text, p.datetime, p.age_restricted, p.username, ap.title, p.image_url, ap.piece_id
+      `SELECT p.post_id, p.text, p.datetime, p.age_restricted, p.username, ap.title, p.image_url, ap.piece_id
          FROM Post p,
               ArtPiece ap
          WHERE p.piece_id = ap.piece_id
            AND p.username = :tag
          ORDER BY p.datetime DESC`,
-        [tag],
-        {autoCommit: true}
+      [tag],
+      { autoCommit: true }
     );
     return result.rows.map((row) => ({
       post_id: row[0],
@@ -244,7 +244,7 @@ async function getPostsUser(tag) {
       username: row[4],
       piece_title: row[5],
       image_url: row[6] || "",
-      piece_id: row[7]
+      piece_id: row[7],
     }));
   }).catch(() => {
     return [];
@@ -272,7 +272,7 @@ async function getPostsPiece(id) {
       username: row[4],
       piece_title: row[5],
       image_url: row[6] || "",
-      piece_id: row[7]
+      piece_id: row[7],
     }));
   }).catch(() => {
     return [];
@@ -304,7 +304,7 @@ async function getPostsArtist(id) {
       username: row[4],
       piece_title: row[5],
       image_url: row[6] || "",
-      piece_id: row[7]
+      piece_id: row[7],
     }));
   }).catch(() => {
     return [];
@@ -335,7 +335,7 @@ async function getPostsLocation(name) {
       username: row[4],
       piece_title: row[5],
       image_url: row[6] || "",
-      piece_id: row[7]
+      piece_id: row[7],
     }));
   }).catch(() => {
     return [];
@@ -366,7 +366,7 @@ async function getPostsCollection(title, curator) {
       username: row[4],
       piece_title: row[5],
       image_url: row[6] || "",
-      piece_id: row[7]
+      piece_id: row[7],
     }));
   }).catch(() => {
     return [];
@@ -644,7 +644,17 @@ async function getPieces(term) {
   });
 }
 
-async function getPiecesAdvanced(title, artist, medium, col, cur, loc, lo, hi, desc) {
+async function getPiecesAdvanced(
+  title,
+  artist,
+  medium,
+  col,
+  cur,
+  loc,
+  lo,
+  hi,
+  desc
+) {
   return await withOracleDB(async (connection) => {
     const condArray = [];
     const values = [];
@@ -754,7 +764,7 @@ async function getPiece(id) {
       collection: result.rows[0][5],
       curator: result.rows[0][6],
       value: result.rows[0][7],
-      year: result.rows[0][8]
+      year: result.rows[0][8],
     };
   }).catch(() => {
     return null;
@@ -802,12 +812,12 @@ async function getArtistsAdvanced(name, dob, dod, description) {
   if (dod !== "\x00") {
     // console.log(dod);
     condArray.push(`DOD <= TO_DATE(:dod, 'YYYY-MM-DD')`);
-    values.push(dod)
+    values.push(dod);
   }
 
   if (description !== "\x00") {
     condArray.push(`Upper(DESCRIPTION) LIKE :description`);
-    values.push("%"+description.toUpperCase()+"%");
+    values.push("%" + description.toUpperCase() + "%");
   }
 
   let cond = condArray.join(" AND ");
@@ -816,10 +826,10 @@ async function getArtistsAdvanced(name, dob, dod, description) {
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
     const result = await connection.execute(
-        `SELECT name, description, artist_id
+      `SELECT name, description, artist_id
          FROM Artist 
          WHERE name <> name ` + cond,
-        values
+      values
     );
 
     return result.rows.map((row) => ({
@@ -867,7 +877,7 @@ async function getLocations(term) {
     let pattern = "%" + term + "%";
     oracledb.fetchAsString = [oracledb.CLOB];
     const museums = await connection.execute(
-        `SELECT l.name, l.country, l.st_address, p.city, p.region, l.postcode, l.yr_est
+      `SELECT l.name, l.country, l.st_address, p.city, p.region, l.postcode, l.yr_est
          FROM Location l,
               Postcode p
          WHERE l.postcode = p.postcode
@@ -879,12 +889,12 @@ async function getLocations(term) {
              OR UPPER(l.country) LIKE :pattern
              OR UPPER(p.city) LIKE :pattern
              OR UPPER(p.region) LIKE :pattern))`,
-        [pattern, pattern, pattern, pattern],
-        {autoCommit: true}
+      [pattern, pattern, pattern, pattern],
+      { autoCommit: true }
     );
 
     const galleries = await connection.execute(
-        `SELECT l.name, l.country, l.st_address, p.city, p.region, l.postcode, l.yr_est
+      `SELECT l.name, l.country, l.st_address, p.city, p.region, l.postcode, l.yr_est
          FROM Location l,
               Postcode p
          WHERE l.postcode = p.postcode
@@ -896,12 +906,12 @@ async function getLocations(term) {
              OR UPPER(l.country) LIKE :pattern
              OR UPPER(p.city) LIKE :pattern
              OR UPPER(p.region) LIKE :pattern))`,
-        [pattern, pattern, pattern, pattern],
-        {autoCommit: true}
+      [pattern, pattern, pattern, pattern],
+      { autoCommit: true }
     );
 
     const privateCollections = await connection.execute(
-        `SELECT l.name, l.country, l.st_address, p.city, p.region, l.postcode, l.yr_est
+      `SELECT l.name, l.country, l.st_address, p.city, p.region, l.postcode, l.yr_est
          FROM Location l,
               Postcode p
          WHERE l.postcode = p.postcode
@@ -913,8 +923,8 @@ async function getLocations(term) {
              OR UPPER(l.country) LIKE :pattern
              OR UPPER(p.city) LIKE :pattern
              OR UPPER(p.region) LIKE :pattern))`,
-        [pattern, pattern, pattern, pattern],
-        {autoCommit: true}
+      [pattern, pattern, pattern, pattern],
+      { autoCommit: true }
     );
 
     const mapped = (row) => ({
@@ -930,14 +940,23 @@ async function getLocations(term) {
     return {
       museums: museums.rows.map((row) => mapped(row)),
       galleries: galleries.rows.map((row) => mapped(row)),
-      privateCollections: privateCollections.rows.map((row) => mapped(row))
-    }
+      privateCollections: privateCollections.rows.map((row) => mapped(row)),
+    };
   }).catch(() => {
     return null;
   });
 }
 
-async function getLocationsAdvanced(name, earl, late, addr, city, regn, ctry, post) {
+async function getLocationsAdvanced(
+  name,
+  earl,
+  late,
+  addr,
+  city,
+  regn,
+  ctry,
+  post
+) {
   const condArray = [];
   const values = [];
 
@@ -980,8 +999,6 @@ async function getLocationsAdvanced(name, earl, late, addr, city, regn, ctry, po
   if (cond) cond = "OR " + cond;
 
   // console.log(cond);
-
-
 
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
@@ -1037,8 +1054,8 @@ async function getLocationsAdvanced(name, earl, late, addr, city, regn, ctry, po
     return {
       museums: museums.rows.map((row) => mapped(row)),
       galleries: galleries.rows.map((row) => mapped(row)),
-      privateCollections: privateCollections.rows.map((row) => mapped(row))
-    }
+      privateCollections: privateCollections.rows.map((row) => mapped(row)),
+    };
   }).catch(() => {
     return null;
   });
@@ -1073,7 +1090,7 @@ async function getMuseum(name) {
       yr_est: result.rows[0][6],
       num_visitors: result.rows[0][7],
       ticket_price: result.rows[0][8],
-      benefactor: result.rows[0][9]
+      benefactor: result.rows[0][9],
     };
   }).catch(() => {
     return null;
@@ -1108,7 +1125,7 @@ async function getGallery(name) {
       postcode: result.rows[0][5],
       yr_est: result.rows[0][6],
       num_pieces: result.rows[0][7],
-      curator: result.rows[0][8]
+      curator: result.rows[0][8],
     };
   }).catch(() => {
     return null;
@@ -1142,7 +1159,7 @@ async function getPrivateCollection(name) {
       region: result.rows[0][4],
       postcode: result.rows[0][5],
       yr_est: result.rows[0][6],
-      owner: result.rows[0][7]
+      owner: result.rows[0][7],
     };
   }).catch(() => {
     return null;
@@ -1245,7 +1262,7 @@ async function getCollection(title, curator) {
       curator: result.rows[0][1],
       theme: result.rows[0][2],
       description: result.rows[0][3],
-      location_name: result.rows[0][4]
+      location_name: result.rows[0][4],
     };
   }).catch(() => {
     return null;
@@ -1291,13 +1308,13 @@ async function assignBadges(username) {
   const award = async (badge_name) => {
     return await withOracleDB(async (connection) => {
       await connection.execute(
-          `INSERT INTO Earns
+        `INSERT INTO Earns
            VALUES (:username, :badge_name)`,
-          {
-            username,
-            badge_name: badge_name,
-          },
-          {autoCommit: true}
+        {
+          username,
+          badge_name: badge_name,
+        },
+        { autoCommit: true }
       );
     });
   };
@@ -1337,7 +1354,10 @@ async function assignBadges(username) {
     if (post_counts >= 10 && !already_earned.includes("Connoisseur")) {
       award("Connoisseur");
     }
-    if (post_from_location.rows.length >= 3 && !already_earned.includes("Collector")) {
+    if (
+      post_from_location.rows.length >= 3 &&
+      !already_earned.includes("Collector")
+    ) {
       award("Collector");
     }
     if (locations.rows.length >= 3 && !already_earned.includes("Explorer")) {
@@ -1588,7 +1608,7 @@ async function totalPostsPerAge() {
 async function totalNSFWPostsByActiveUsers() {
   return await withOracleDB(async (connection) => {
     const posts = await connection.execute(
-      `SELECT age.age, count(p.post_id) as cnt FROM AppUser a, AppUserAge age, Post p WHERE a.username = p.username AND a.dob = age.dob AND p.age_restricted = 1 GROUP BY age.age HAVING count(p.post_id) > 5 ORDER BY cnt DESC`
+      `SELECT age.age, count(p.post_id) as cnt FROM AppUser a, AppUserAge age, Post p WHERE a.username = p.username AND a.dob = age.dob AND p.age_restricted = 1 GROUP BY age.age HAVING count(p.post_id) >= 3 ORDER BY cnt DESC`
     );
     return posts.rows.map((post) => ({ age: post[0], count: post[1] }));
   }).catch(() => {

@@ -170,8 +170,8 @@ const Stats = () => {
           <div className="flex flex-col bg-violet-200 border border-violet-300 shadow-sm rounded-xl p-4 md:p-5 mt-3">
             <p className="font-bold text-l">Pretty Pennies</p>
             <p>
-              Cost of most expensive art pieces sold in a year with more than 3
-              sales.
+              Cost of most expensive art pieces created in a year with at least
+              3 pieces made.
             </p>
             <div className="flex flex-col mt-3">
               <div className="-m-1.5 overflow-x-auto">
