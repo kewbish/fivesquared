@@ -1505,7 +1505,9 @@ async function deleteComment(post_id, comment_id) {
 async function getTables() {
   return await withOracleDB(async (connection) => {
     const result = await connection.execute(
-      `SELECT table_name FROM all_tables WHERE owner = 'ORA_KEWBISH'`
+      `SELECT table_name FROM all_tables WHERE owner = :oracleUser`,
+      [envVariables.ORACLE_USER.toUpperCase()],
+      { autoCommit: true }
     );
     return result.rows.map((row) => row[0]);
   }).catch(() => {
