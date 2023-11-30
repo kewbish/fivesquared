@@ -6,6 +6,26 @@ const Collection = () => {
   const { title, curator } = useParams();
   const [collectionData, setCollectionData] = useState(null);
   const [posts, setPosts] = useState([]);
+  const [type, setType] = useState("");
+
+  const getType = async (data) => {
+    const mres = await fetch(`http://localhost:65535/museum/${data.location_name}`, {
+      method: "GET",
+    });
+    const museum = await mres.json();
+
+    const gres = await fetch(`http://localhost:65535/gallery/${data.location_name}`, {
+      method: "GET",
+    });
+    const gallery = await gres.json();
+
+    const pres = await fetch(`http://localhost:65535/private-collection/${data.location_name}`, {
+      method: "GET",
+    });
+    const privateCollection = await pres.json();
+
+    return !museum ? !gallery ? !privateCollection ? "undef" : "Private Collection" : "Gallery" : "Museum";
+  }
 
   const fetchCollection = async () => {
     const response = await fetch(`http://localhost:65535/collection/${title}&${curator}`, {
@@ -14,6 +34,7 @@ const Collection = () => {
     const pjson = await response.json();
     console.log("Collection Page PJSON", pjson);
     setCollectionData(pjson.collection);
+    setType(await getType(pjson.collection));
   };
 
   const getPosts = async () => {
@@ -25,8 +46,8 @@ const Collection = () => {
   };
 
   useEffect(() => {
-    fetchCollection();
-    getPosts();
+    fetchCollection().then(() => getPosts());
+    // getPosts();
   }, []);
 
 
@@ -50,8 +71,8 @@ const Collection = () => {
                 </div>
               </div>
               <div className="text-center">
-                <a className="font-bold text-gray-700 text-xl" href={`/location/${collectionData.location_name}`}>{collectionData.location_name}</a>
-                <p className="text-gray-400">Location</p>
+                <a className="font-bold text-gray-700 text-xl" href={`/${type.toLowerCase().split(" ").join("-")}/${collectionData.location_name}`}>{collectionData.location_name}</a>
+                <p className="text-gray-400">{type}</p>
               </div>
             </div>
 
