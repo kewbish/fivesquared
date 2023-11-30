@@ -981,19 +981,50 @@ async function getLocationsAdvanced(name, earl, late, addr, city, regn, ctry, po
 
   // console.log(cond);
 
+
+
   return await withOracleDB(async (connection) => {
     oracledb.fetchAsString = [oracledb.CLOB];
-    const result = await connection.execute(
+    const museums = await connection.execute(
       `SELECT l.name, l.country, l.st_address, p.city, p.region, l.postcode, l.yr_est
          FROM Location l,
               Postcode p
          WHERE l.postcode = p.postcode
+           AND EXISTS(SELECT m.name
+                      FROM Museum m
+                      WHERE l.name = m.name)
            AND (l.name <> l.name ${cond})`,
       values,
       { autoCommit: true }
     );
 
-    return result.rows.map((row) => ({
+    const galleries = await connection.execute(
+      `SELECT l.name, l.country, l.st_address, p.city, p.region, l.postcode, l.yr_est
+         FROM Location l,
+              Postcode p
+         WHERE l.postcode = p.postcode
+           AND EXISTS(SELECT g.name
+                      FROM Gallery g
+                      WHERE l.name = g.name)
+           AND (l.name <> l.name ${cond})`,
+      values,
+      { autoCommit: true }
+    );
+
+    const privateCollections = await connection.execute(
+      `SELECT l.name, l.country, l.st_address, p.city, p.region, l.postcode, l.yr_est
+         FROM Location l,
+              Postcode p
+         WHERE l.postcode = p.postcode
+           AND EXISTS(SELECT pc.name
+                      FROM PrivateCollection pc
+                      WHERE l.name = pc.name)
+           AND (l.name <> l.name ${cond})`,
+      values,
+      { autoCommit: true }
+    );
+
+    const mapped = (row) => ({
       name: row[0],
       country: row[1],
       st_address: row[2],
@@ -1001,7 +1032,13 @@ async function getLocationsAdvanced(name, earl, late, addr, city, regn, ctry, po
       region: row[4],
       postcode: row[5],
       yr_est: row[6],
-    }));
+    });
+
+    return {
+      museums: museums.rows.map((row) => mapped(row)),
+      galleries: galleries.rows.map((row) => mapped(row)),
+      privateCollections: privateCollections.rows.map((row) => mapped(row))
+    }
   }).catch(() => {
     return null;
   });

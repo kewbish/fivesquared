@@ -16,7 +16,6 @@ const SearchResults = () => {
   const [profileResults, setProfileResults] = useState([]);
   const [pieceResults, setPieceResults] = useState([]);
   const [collectionResults, setCollectionResults] = useState([]);
-  const [locationResults, setLocationResults] = useState([]);
   const [museumResults, setMuseumResults] = useState([]);
   const [galleryResults, setGalleryResults] = useState([]);
   const [privateCollectionResults, setPrivateCollectionResults] = useState([]);
@@ -113,7 +112,7 @@ const SearchResults = () => {
         </h2>
       </div>
     );
-  } else if (profileResults.length + pieceResults.length + collectionResults.length + locationResults.length + artistResults.length > 0) {
+  } else if (profileResults.length + pieceResults.length + collectionResults.length + museumResults.length + galleryResults.length + privateCollectionResults.length + artistResults.length > 0) {
     return (
       <div >
         {profileResults.length > 0 ? <body className="px-10 py-20 gap-5">   <h2 className="text-xl font-semibold sm:text-2xl mb-4 text-center">Profile Results</h2>

@@ -1,11 +1,13 @@
-import {useNavigate, useParams, useSearchParams} from 'react-router-dom';
+import {useNavigate, useSearchParams} from 'react-router-dom';
 import {useCookies} from "react-cookie";
 import {useEffect, useState} from 'react';
 import ProfileResultCard from '../../components/profileResultCard/ProfileResultCard';
 import PieceResultCard from '../../components/pieceResultCard/pieceResultCard';
-import LocationResultCard from "../../components/locationResultCard/locationResultCard";
 import CollectionResultCard from "../../components/collectionResultCard/collectionResultCard";
 import ArtistResultCard from '../../components/artistResultCard/artistResultCard';
+import MuseumResultCard from "../../components/locationResultCard/museumResultCard";
+import GalleryResultCard from "../../components/locationResultCard/galleryResultCard";
+import PrivateCollectionResultCard from "../../components/locationResultCard/privateCollectionResultCard";
 
 const AdvancedSearchResults = () => {
     const [cookies, setCookie, removeCookie] = useCookies(["login_cookie"]);
@@ -13,7 +15,9 @@ const AdvancedSearchResults = () => {
     const [profileResults, setProfileResults] = useState([]);
     const [pieceResults, setPieceResults] = useState([]);
     const [collectionResults, setCollectionResults] = useState([]);
-    const [locationResults, setLocationResults] = useState([]);
+    const [museumResults, setMuseumResults] = useState([]);
+    const [galleryResults, setGalleryResults] = useState([]);
+    const [privateCollectionResults, setPrivateCollectionResults] = useState([]);
     const [artistResults, setArtistResults] = useState([]);
     const navigate = useNavigate();
 
@@ -120,7 +124,9 @@ const AdvancedSearchResults = () => {
                 const pjson = await response.json();
                 console.log("Location PJSON:", pjson);
                 if (pjson.locations) {
-                    setLocationResults(pjson.locations);
+                    setMuseumResults(pjson.locations.museums);
+                    setGalleryResults(pjson.locations.galleries);
+                    setPrivateCollectionResults(pjson.locations.privateCollections);
                 }
             }
         };
@@ -143,7 +149,7 @@ const AdvancedSearchResults = () => {
                 </h2>
             </div>
         );
-    } else if (profileResults.length + pieceResults.length + collectionResults.length + locationResults.length + artistResults.length > 0) {
+    } else if (profileResults.length + pieceResults.length + collectionResults.length + museumResults.length + galleryResults.length + privateCollectionResults.length + artistResults.length > 0) {
         return (
             <div>
                 {profileResults.length > 0 ? <body className="px-10 py-20 gap-5"><h2
@@ -182,15 +188,21 @@ const AdvancedSearchResults = () => {
 
                 </div>
                 </body> : <></>}
-                {locationResults.length > 0 ? <body className="px-10 py-5 gap-5">
-                <h2 className="text-xl font-semibold sm:text-2xl mb-4 text-center">Location Results</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
-                    {locationResults.map((location) => (
-                        <LocationResultCard locationData={location}/>
-                    ))}
-
-                </div>
-                </body> : <></>}
+                {museumResults.length + galleryResults.length + privateCollectionResults.length > 0 ?
+                    <body className="px-10 py-5 gap-5">
+                    <h2 className="text-xl font-semibold sm:text-2xl mb-4 text-center">Location Results</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-6">
+                        {museumResults.map((museum) => (
+                            <MuseumResultCard museumData={museum}/>
+                        ))}
+                        {galleryResults.map((gallery) => (
+                            <GalleryResultCard galleryData={gallery}/>
+                        ))}
+                        {privateCollectionResults.map((privateCollection) => (
+                            <PrivateCollectionResultCard privateCollectionData={privateCollection}/>
+                        ))}
+                    </div>
+                    </body> : <></>}
             </div>
         );
     } else {
